@@ -1,0 +1,18 @@
+.body {
+	z-index: 1;
+	flex-grow: 1;
+	min-height: 0;
+	flex-shrink: 1;
+	overflow: hidden;
+	position: relative;
+	background-color: var(--table-bg);
+	color: var(--table-body-font-color);
+
+	// === hidden scroll bar ===
+	scrollbar-width: none !important;
+	-ms-overflow-style: none !important;
+	&::-webkit-scrollbar {
+		display: none !important;
+	}
+	// === hidden scroll bar ===
+}

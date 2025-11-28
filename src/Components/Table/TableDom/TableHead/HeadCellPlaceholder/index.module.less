@@ -1,0 +1,28 @@
+.head-cell-placeholder {
+	outline: none;
+	overflow: hidden;
+	position: relative;
+	box-sizing: border-box;
+	background-color: var(--table-head-cell-bg);
+	right: 0;
+	z-index: 20;
+	position: sticky;
+
+	&::after {
+		content: '';
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		border-bottom: var(--table-cell-border-width) solid var(--table-cell-border-color);
+	}
+
+	&.bordered::after {
+		border-left: var(--table-cell-border-width) solid var(--table-cell-border-color);
+	}
+
+	&.bordered.first-col::after {
+		border-left: 0 solid var(--table-cell-border-color);
+	}
+}

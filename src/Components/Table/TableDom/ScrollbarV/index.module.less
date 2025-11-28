@@ -1,0 +1,34 @@
+.v-scrollbar {
+	z-index: 20;
+	min-height: 0;
+	flex-shrink: 0;
+	position: relative;
+	overflow-x: hidden;
+	overflow-y: scroll;
+	background-color: var(--table-bg);
+
+	.v-scrollbar-inner {
+		position: relative;
+	}
+}
+
+.v-scrollbar-absolute {
+	z-index: 20;
+	height: 100%;
+	position: relative;
+	overflow-x: hidden;
+	overflow-y: scroll;
+	width: 17px;
+	min-width: 17px;
+	max-width: 17px;
+	top: 0;
+	right: 0;
+	position: absolute;
+
+	.v-scrollbar-absolute-inner {
+		width: 17px;
+		min-width: 17px;
+		max-width: 17px;
+		position: relative;
+	}
+}
