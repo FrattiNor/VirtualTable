@@ -9,7 +9,7 @@ export const useScrollBy = (direction: 'scrollTop' | 'scrollLeft') => {
 		const positive = offset > 0;
 		const start = el[direction];
 		let change = start + offset - start;
-		dateValueRef.current = new Date().valueOf();
+		dateValueRef.current = performance.now();
 
 		if (requestIdRef.current) {
 			cancelAnimationFrame(requestIdRef.current);
@@ -24,7 +24,7 @@ export const useScrollBy = (direction: 'scrollTop' | 'scrollLeft') => {
 		}
 
 		const animateScroll = () => {
-			const per = (new Date().valueOf() - dateValueRef.current) / duration;
+			const per = (performance.now() - dateValueRef.current) / duration;
 			const nextValue = start + Math.min(1, per) * change;
 			el[direction] = nextValue;
 			if (per <= 1) {

@@ -2,7 +2,7 @@ import { memo, useRef, useState, useEffect, startTransition } from 'react';
 
 import styles from './index.module.less';
 import StickyObserverItem from './StickyObserverItem';
-import useDebounce from '../../../TableHooks/useDebounce';
+import useThrottle from '../../../TableHooks/useThrottle';
 import { type TableColumnFixed } from '../../../TableTypes/type';
 import { getLeafColumn } from '../../../TableUtils';
 
@@ -16,7 +16,7 @@ type Props<T> = Required<
 >;
 
 const StickyObserver = <T,>(props: Props<T>) => {
-	const { debounce } = useDebounce();
+	const { throttle } = useThrottle();
 	const ref = useRef<HTMLDivElement | null>(null);
 	const { splitColumnsArr, bodyRef, setPingedMap, gridTemplateColumns, columnsKeyIndexMap } = props;
 	const [intersectionObserver, setIntersectionObserver] = useState<IntersectionObserver | null>(null);
@@ -26,7 +26,7 @@ const StickyObserver = <T,>(props: Props<T>) => {
 		if (bodyRef.current) {
 			const _observer = new IntersectionObserver(
 				(entries) => {
-					debounce(() => {
+					throttle(() => {
 						startTransition(() => {
 							setPingedMap((old) => {
 								let changed = false;
@@ -103,3 +103,4 @@ const StickyObserver = <T,>(props: Props<T>) => {
 };
 
 export default memo(StickyObserver) as typeof StickyObserver;
+

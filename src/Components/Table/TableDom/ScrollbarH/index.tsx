@@ -3,14 +3,14 @@ import { memo, useEffect } from 'react';
 import classNames from 'classnames';
 
 import styles from './index.module.less';
-import useDebounce from '../../TableHooks/useDebounce';
+import useThrottle from '../../TableHooks/useThrottle';
 import scrollbarStyles from '../../TableUtils/calcBorderWidth/index.module.less';
 import { type TableInstance } from '../../useTableInstance';
 
 type Props<T> = Required<Pick<TableInstance<T>, 'h_scrollbar' | 'v_scrollbar' | 'bordered' | 'hScrollbarRef' | 'bodyRef' | 'headRef'>>;
 
 const ScrollbarH = <T,>(props: Props<T>) => {
-	const { debounce } = useDebounce();
+	const { throttle } = useThrottle();
 	const { h_scrollbar, v_scrollbar, bordered, hScrollbarRef, bodyRef, headRef } = props;
 
 	useEffect(() => {
@@ -25,7 +25,7 @@ const ScrollbarH = <T,>(props: Props<T>) => {
 			})();
 
 			const handleScroll = () => {
-				debounce(() => {
+				throttle(() => {
 					if (headRef.current && headRef.current.scrollLeft !== hScrollbar.scrollLeft) {
 						headRef.current.scrollLeft = hScrollbar.scrollLeft;
 					}

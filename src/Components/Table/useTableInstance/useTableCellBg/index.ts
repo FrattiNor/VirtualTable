@@ -1,6 +1,6 @@
-import { startTransition, useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 
-import useDebounce from '../../TableHooks/useDebounce';
+import useThrottle from '../../TableHooks/useThrottle';
 
 import type useTableRequiredProps from '../useTableRequiredProps';
 import type useTableState from '../useTableState';
@@ -13,9 +13,9 @@ type Props<T> = {
 // 表格 单元格 背景色
 // 根据点击、hover、resize决定
 const useTableCellBg = <T>({ tableState, tableRequiredProps }: Props<T>) => {
-	const { debounce: debounce1 } = useDebounce();
-	const { debounce: debounce2 } = useDebounce();
-	const { debounce: debounce3 } = useDebounce();
+	const { throttle: throttle1 } = useThrottle();
+	const { throttle: throttle2 } = useThrottle();
+	const { throttle: throttle3 } = useThrottle();
 	const { rowClick, rowHover } = tableRequiredProps.rowBgHighlight;
 	const { resizeFlag, rowClickedMap, rowHoveredMap, setRowClickedMap, setRowHoveredMap } = tableState;
 
@@ -116,15 +116,13 @@ const useTableCellBg = <T>({ tableState, tableRequiredProps }: Props<T>) => {
 	const bodyRowMouseEnter = useMemo(() => {
 		if (rowHover) {
 			return ({ rowKeys }: { rowKeys: string[] }) => {
-				debounce1(() => {
-					startTransition(() => {
-						setRowHoveredMap(() => {
-							const next: Map<string, true> = new Map();
-							for (let i = 0; i < rowKeys.length; i++) {
-								next.set(rowKeys[i], true);
-							}
-							return next;
-						});
+				throttle1(() => {
+					setRowHoveredMap(() => {
+						const next: Map<string, true> = new Map();
+						for (let i = 0; i < rowKeys.length; i++) {
+							next.set(rowKeys[i], true);
+						}
+						return next;
 					});
 				});
 			};
@@ -135,19 +133,17 @@ const useTableCellBg = <T>({ tableState, tableRequiredProps }: Props<T>) => {
 	const bodyRowMouseLeave = useMemo(() => {
 		if (rowHover) {
 			return ({ rowKeys }: { rowKeys: string[] }) => {
-				debounce2(() => {
-					startTransition(() => {
-						setRowHoveredMap((old) => {
-							let changed = false;
-							for (let i = 0; i < rowKeys.length; i++) {
-								if (old.get(rowKeys[i]) === true) {
-									old.delete(rowKeys[i]);
-									changed = true;
-								}
+				throttle2(() => {
+					setRowHoveredMap((old) => {
+						let changed = false;
+						for (let i = 0; i < rowKeys.length; i++) {
+							if (old.get(rowKeys[i]) === true) {
+								old.delete(rowKeys[i]);
+								changed = true;
 							}
-							if (changed) return new Map(old);
-							return old;
-						});
+						}
+						if (changed) return new Map(old);
+						return old;
 					});
 				});
 			};
@@ -158,18 +154,16 @@ const useTableCellBg = <T>({ tableState, tableRequiredProps }: Props<T>) => {
 	const bodyRowClick = useMemo(() => {
 		if (rowClick) {
 			return ({ rowKeys }: { rowKeys: string[] }) => {
-				debounce3(() => {
-					startTransition(() => {
-						setRowClickedMap((old) => {
-							let isSame = true;
-							const next = new Map<string, true>();
-							for (let i = 0; i < rowKeys.length; i++) {
-								if (old.get(rowKeys[i]) !== true) isSame = false;
-								next.set(rowKeys[i], true);
-							}
-							if (!isSame) return next;
-							return new Map<string, true>();
-						});
+				throttle3(() => {
+					setRowClickedMap((old) => {
+						let isSame = true;
+						const next = new Map<string, true>();
+						for (let i = 0; i < rowKeys.length; i++) {
+							if (old.get(rowKeys[i]) !== true) isSame = false;
+							next.set(rowKeys[i], true);
+						}
+						if (!isSame) return next;
+						return new Map<string, true>();
 					});
 				});
 			};
@@ -181,3 +175,4 @@ const useTableCellBg = <T>({ tableState, tableRequiredProps }: Props<T>) => {
 };
 
 export default useTableCellBg;
+
