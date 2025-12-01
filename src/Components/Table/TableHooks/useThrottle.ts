@@ -20,8 +20,8 @@ const useThrottle = <T extends () => void>() => {
 			if (endCallbackRef.current) cancelAnimationFrame(endCallbackRef.current);
 			// 等下一帧允许执行下一次fn
 			requestAnimationFrame(() => {
-                // 开始执行当前fn
-			    fn();
+				// 开始执行当前fn
+				fn();
 				// 执行完毕，设置允许执行下一次fn
 				canDoRef.current = true;
 				// 开始执行endCallback

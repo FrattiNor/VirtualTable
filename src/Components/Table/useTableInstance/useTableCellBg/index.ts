@@ -175,4 +175,3 @@ const useTableCellBg = <T>({ tableState, tableRequiredProps }: Props<T>) => {
 };
 
 export default useTableCellBg;
-

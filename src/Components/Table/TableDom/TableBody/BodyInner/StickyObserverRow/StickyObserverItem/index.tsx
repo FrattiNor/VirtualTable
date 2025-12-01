@@ -1,7 +1,9 @@
 import { memo, startTransition, useEffect, useRef } from 'react';
 
-import type { TableColumn } from '../../../../TableTypes/typeColumn';
-import type { TableInstance } from '../../../../useTableInstance';
+import styles from './index.module.less';
+
+import type { TableColumn } from '../../../../../TableTypes/typeColumn';
+import type { TableInstance } from '../../../../../useTableInstance';
 
 type Props<T> = Required<Pick<TableInstance<T>, 'setPingedMap' | 'fixedLeftMap' | 'fixedRightMap' | 'bodyRef'>> & {
 	colIndex: number;
@@ -47,25 +49,16 @@ const StickyObserverItem = <T,>(props: Props<T>) => {
 	}, [intersectionObserver]);
 
 	return (
-		<div
-			style={{
-				position: 'relative',
-				gridRow: `${1}/${2}`,
-				gridColumn: `${colIndex + 1}/${colIndex + 2}`,
-			}}
-		>
+		<div className={styles['sticky-observer']} style={{ gridRow: `1/2`, gridColumn: `${colIndex + 1}/${colIndex + 2}` }}>
 			<div
 				ref={ref}
 				data-index={colIndex}
 				data-key={leafColumn.key}
 				data-fixed={leafColumn.fixed}
+				className={styles['sticky-observer-inner']}
 				style={{
-					top: -5,
-					height: 10,
-					position: 'absolute',
-					width: `calc(100% + ${stickySize}px)`,
-					left: leafColumn.fixed === 'left' ? undefined : 0,
-					right: leafColumn.fixed === 'right' ? undefined : 0,
+					left: leafColumn.fixed === 'left' ? undefined : stickySize,
+					right: leafColumn.fixed === 'right' ? undefined : stickySize,
 				}}
 			/>
 		</div>

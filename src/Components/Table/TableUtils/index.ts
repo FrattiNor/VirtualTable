@@ -22,6 +22,18 @@ export const getColKeys = <T>(splitColumnsArr: Array<Array<TableColumn<T> | Tabl
 	return colKeys;
 };
 
+// 根据span获取resize，如果是group，只要有一个子节点不能resize就不支持resize
+export const getResize = <T>(splitColumnsArr: Array<Array<TableColumn<T> | TableColumnGroup<T>>>, colIndexStart: number, colIndexEnd: number) => {
+	for (let i = colIndexStart; i <= colIndexEnd; i++) {
+		const splitColumns = splitColumnsArr[i];
+		if (splitColumns) {
+			const leafColumn = getLeafColumn(splitColumns);
+			if (leafColumn.resize === false) return false;
+		}
+	}
+	return true;
+};
+
 // 根据span获取rowKeys
 export const getRowKeys = <T>(rowKey: TableProps<T>['rowKey'], datasource: T[] | undefined, rowIndexStart: number, rowIndexEnd: number) => {
 	const rowKeys: string[] = [];
@@ -62,25 +74,6 @@ export const getNotLeafColumnByIndex = <T>(splitColumns: Array<TableColumnGroup<
 	const length = splitColumns.length;
 	if (length - 1 - index === 0) return null; // 只能获得非叶子节点
 	return splitColumns[length - 1 - index] as TableColumnGroup<T>;
-};
-
-// 获取Group的合成key，根据children的key合成
-export const getGroupColumnMergeKey = <T>(
-	splitColumnsArr: Array<Array<TableColumnGroup<T> | TableColumn<T> | null>>, // splitColumnsArr配置
-	rowIndex: number, // 当前行
-	deepLevel: number, // 最高行
-	colIndexStart: number, // 当前列[start]
-	colIndexEnd: number, // 当前列[end]
-) => {
-	const mergeKeyList = [];
-	for (let row = rowIndex; row <= deepLevel; row++) {
-		for (let col = colIndexStart; col <= colIndexEnd; col++) {
-			const column = splitColumnsArr[col][row];
-			if (column?.key) mergeKeyList.push(column.key);
-		}
-	}
-	const mergeKey = mergeKeyList.join('_');
-	return mergeKey;
 };
 
 // 将数字精度置为2

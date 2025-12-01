@@ -47,7 +47,7 @@ const Table = <T,>(_props: TableProps<T>) => {
 					bodyRef={props.bodyRef}
 					resized={props.resized}
 					bordered={props.bordered}
-					bodyWidth={props.bodyWidth}
+					tableWidth={props.tableWidth}
 					rowHeight={props.rowHeight}
 					resizeFlag={props.resizeFlag}
 					bodyRowClick={props.bodyRowClick}

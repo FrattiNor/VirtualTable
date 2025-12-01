@@ -1,10 +1,7 @@
 import { memo } from 'react';
 
-import classNames from 'classnames';
-
 import HeadCell from './HeadCell';
-import styles from './index.module.less';
-import { getNotLeafColumnByIndex, getGroupColumnMergeKey, getLeafColumn } from '../../../TableUtils';
+import { getNotLeafColumnByIndex, getLeafColumn } from '../../../TableUtils';
 
 import type { TableInstance } from '../../../useTableInstance';
 
@@ -33,6 +30,7 @@ const HeadRow = <T,>(props: Props<T>) => {
 
 	const renderRow = () => {
 		let colSameCount = 0;
+		let colNoRenderKey = '';
 		return splitColumnsArr.map((splitColumns) => {
 			const leafColumn = getLeafColumn(splitColumns);
 			const colIndex = columnsKeyIndexMap.get(leafColumn.key) ?? Infinity;
@@ -47,6 +45,7 @@ const HeadRow = <T,>(props: Props<T>) => {
 
 				return (
 					<HeadCell
+						isLeaf={true}
 						column={leafColumn}
 						key={leafColumn.key}
 						colIndexEnd={colIndexEnd}
@@ -76,20 +75,24 @@ const HeadRow = <T,>(props: Props<T>) => {
 					// 同行下一列和当前列相同【key和fixed都相同】，跳过当前渲染
 					if (column.key === nextColumn?.key && leafColumn.fixed === nextLeafColumn?.fixed) {
 						colSameCount++;
+						colNoRenderKey += `${leafColumn.key}_`;
 						return null;
 					}
 				}
 				// 开始渲染
+				const key = colNoRenderKey + leafColumn.key;
 				const colIndexStart = colIndex - colSameCount;
 				const colIndexEnd = colIndex;
 				const rowIndexStart = rowIndex;
 				const rowIndexEnd = rowIndex;
-				const key = getGroupColumnMergeKey(splitColumnsArr, rowIndex, deepLevel, colIndexStart, colIndexEnd);
+				// 重置计数器
 				colSameCount = 0;
+				colNoRenderKey = '';
 
 				return (
 					<HeadCell
 						key={key}
+						isLeaf={false}
 						column={column}
 						colIndexEnd={colIndexEnd}
 						rowIndexEnd={rowIndexEnd}
@@ -109,7 +112,7 @@ const HeadRow = <T,>(props: Props<T>) => {
 	};
 
 	return (
-		<div data-row={rowIndex + 1} className={classNames(styles['head-row'])}>
+		<div data-row={rowIndex + 1} style={{ display: 'contents' }}>
 			{renderRow()}
 		</div>
 	);

@@ -1,10 +1,7 @@
 import { memo } from 'react';
 
-import classNames from 'classnames';
-
 import BodyCell from './BodyCell';
 import BodyCellPlaceholder from './BodyCellPlaceholder';
-import styles from './index.module.less';
 import { getLeafColumn } from '../../../../TableUtils';
 
 import type { TableInstance } from '../../../../useTableInstance';
@@ -32,7 +29,7 @@ type Props<T> = Required<
 const BodyRow = <T,>(props: Props<T>) => {
 	const { splitColumnsArr, rowIndex, dataItem, columnsKeyIndexMap } = props;
 	return (
-		<div data-row={rowIndex + 1} className={classNames(styles['body-row'])}>
+		<div data-row={rowIndex + 1} style={{ display: 'contents' }}>
 			{splitColumnsArr.map((splitColumns) => {
 				const leafColumn = getLeafColumn(splitColumns);
 				const { rowSpan = 1, colSpan = 1 } = leafColumn.onCellSpan ? leafColumn.onCellSpan(dataItem, rowIndex) : {};

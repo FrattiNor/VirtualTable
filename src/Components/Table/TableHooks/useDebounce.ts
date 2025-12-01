@@ -15,4 +15,3 @@ const useDebounce = <T extends () => void>() => {
 };
 
 export default useDebounce;
-

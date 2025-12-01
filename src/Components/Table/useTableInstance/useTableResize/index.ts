@@ -1,7 +1,7 @@
 import { useCallback, useEffect } from 'react';
 
-import useThrottle from '../../TableHooks/useThrottle';
 import useRefValue from '../../TableHooks/useRefValue';
+import useThrottle from '../../TableHooks/useThrottle';
 import { type ResizeFlag } from '../../TableTypes/type';
 import { FixedTwo, getLeafColumn } from '../../TableUtils';
 import { maxColWidth, minColWidth } from '../../TableUtils/configValues';
@@ -140,4 +140,3 @@ const useTableResize = <T>({ tableState, tableColumns, tableRequiredProps }: Pro
 };
 
 export default useTableResize;
-

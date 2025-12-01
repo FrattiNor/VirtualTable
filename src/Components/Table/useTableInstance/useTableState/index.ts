@@ -4,7 +4,7 @@ import { type TableColumnFixed, type ResizeFlag, type TableScrollbarState } from
 
 const useTableState = () => {
 	// body宽度
-	const [bodyWidth, setBodyWidth] = useState<number>(() => 0);
+	const [tableWidth, setTableWidth] = useState<number>(() => 0);
 	// 列宽是否被修改过
 	const [resized, setResized] = useState<boolean>(() => false);
 	// 拖拽修改列宽标记
@@ -23,8 +23,8 @@ const useTableState = () => {
 	const [pingedMap, setPingedMap] = useState<Map<string, { fixed: TableColumnFixed; index: number }>>(() => new Map());
 
 	return {
-		bodyWidth,
-		setBodyWidth,
+		tableWidth,
+		setTableWidth,
 		sizeCacheMap,
 		setSizeCacheMap,
 		v_scrollbar,

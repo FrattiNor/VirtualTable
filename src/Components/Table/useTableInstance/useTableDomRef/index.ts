@@ -1,4 +1,4 @@
-import { startTransition, useEffect, useLayoutEffect, useRef } from 'react';
+import { useEffect, useLayoutEffect, useRef } from 'react';
 
 import { useScrollBy } from './useScroll';
 import useThrottle from '../../TableHooks/useThrottle';
@@ -20,7 +20,7 @@ const useTableDomRef = ({ tableState }: Props) => {
 	const bodyInnerRef = useRef<HTMLDivElement>(null);
 	const vScrollbarRef = useRef<HTMLDivElement>(null);
 	const hScrollbarRef = useRef<HTMLDivElement>(null);
-	const { setV_scrollbar, setH_scrollbar, setBodyWidth } = tableState;
+	const { setV_scrollbar, setH_scrollbar, setTableWidth } = tableState;
 
 	useLayoutEffect(() => {
 		if (bodyRef.current && bodyInnerRef.current) {
@@ -39,6 +39,7 @@ const useTableDomRef = ({ tableState }: Props) => {
 						if (next.have !== old.have || next.width !== old.width || next.innerSize !== old.innerSize) {
 							return next;
 						}
+						setTableWidth(next.have ? body.clientWidth + next.width : body.clientWidth);
 						return old;
 					});
 					setH_scrollbar((old) => {
@@ -48,7 +49,6 @@ const useTableDomRef = ({ tableState }: Props) => {
 						}
 						return old;
 					});
-					setBodyWidth(body.clientWidth);
 					// 从DOM中移除临时元素
 					calcDom.parentNode?.removeChild(calcDom);
 				} else {
@@ -58,6 +58,7 @@ const useTableDomRef = ({ tableState }: Props) => {
 							if (next.have !== old.have || next.width !== old.width || next.innerSize !== old.innerSize) {
 								return next;
 							}
+							setTableWidth(next.have ? body.clientWidth + next.width : body.clientWidth);
 							return old;
 						});
 						setH_scrollbar((old) => {
@@ -67,7 +68,6 @@ const useTableDomRef = ({ tableState }: Props) => {
 							}
 							return old;
 						});
-						setBodyWidth(body.clientWidth);
 					});
 				}
 			};
@@ -136,4 +136,3 @@ const useTableDomRef = ({ tableState }: Props) => {
 };
 
 export default useTableDomRef;
-

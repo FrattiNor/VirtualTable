@@ -4,7 +4,7 @@ import classNames from 'classnames';
 
 import styles from './index.module.less';
 import ResizeHandle from './ResizeHandle';
-import { getCellTitle, getColKeys, isStrNum } from '../../../../TableUtils';
+import { getCellTitle, getColKeys, getResize, isStrNum } from '../../../../TableUtils';
 
 import type { TableColumn, TableColumnGroup } from '../../../../TableTypes/typeColumn';
 import type { TableInstance } from '../../../../useTableInstance';
@@ -16,8 +16,16 @@ type Props<T> = Required<
 	rowIndexEnd: number;
 	colIndexStart: number;
 	colIndexEnd: number;
-	column: TableColumn<T> | TableColumnGroup<T>;
-};
+} & (
+		| {
+				isLeaf: true;
+				column: TableColumn<T>;
+		  }
+		| {
+				isLeaf: false;
+				column: TableColumnGroup<T>;
+		  }
+	);
 
 const HeadCell = <T,>(props: Props<T>) => {
 	const {
@@ -33,10 +41,10 @@ const HeadCell = <T,>(props: Props<T>) => {
 		getHeadCellBg,
 	} = props;
 
+	const resize = useMemo(() => getResize(splitColumnsArr, colIndexStart, colIndexEnd), [splitColumnsArr, colIndexStart, colIndexEnd]);
 	const colKeys = useMemo(() => getColKeys(splitColumnsArr, colIndexStart, colIndexEnd), [splitColumnsArr, colIndexStart, colIndexEnd]);
 
 	const renderDom = column.title;
-	const resize = column.resize ?? true;
 	const title = getCellTitle(renderDom);
 	const canEllipsis = isStrNum(renderDom);
 	const backgroundColor = getHeadCellBg({ colKeys });
@@ -52,9 +60,9 @@ const HeadCell = <T,>(props: Props<T>) => {
 			style={{
 				...stickyStyle,
 				backgroundColor,
-				minHeight: (rowIndexEnd - rowIndexStart + 1) * rowHeight,
 				gridRow: `${rowIndexStart + 1}/${rowIndexEnd + 2}`,
 				gridColumn: `${colIndexStart + 1}/${colIndexEnd + 2}`,
+				minHeight: (rowIndexEnd - rowIndexStart + 1) * rowHeight,
 			}}
 		>
 			<div

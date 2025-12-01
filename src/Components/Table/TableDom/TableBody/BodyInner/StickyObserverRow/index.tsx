@@ -1,24 +1,19 @@
-import { memo, useRef, useState, useEffect, startTransition } from 'react';
+import { memo, useState, useEffect, startTransition } from 'react';
 
-import styles from './index.module.less';
 import StickyObserverItem from './StickyObserverItem';
-import useThrottle from '../../../TableHooks/useThrottle';
-import { type TableColumnFixed } from '../../../TableTypes/type';
-import { getLeafColumn } from '../../../TableUtils';
+import useThrottle from '../../../../TableHooks/useThrottle';
+import { type TableColumnFixed } from '../../../../TableTypes/type';
+import { getLeafColumn } from '../../../../TableUtils';
 
-import type { TableInstance } from '../../../useTableInstance';
+import type { TableInstance } from '../../../../useTableInstance';
 
 type Props<T> = Required<
-	Pick<
-		TableInstance<T>,
-		'fixedLeftMap' | 'fixedRightMap' | 'splitColumnsArr' | 'bodyRef' | 'setPingedMap' | 'gridTemplateColumns' | 'columnsKeyIndexMap'
-	>
+	Pick<TableInstance<T>, 'fixedLeftMap' | 'fixedRightMap' | 'splitColumnsArr' | 'bodyRef' | 'setPingedMap' | 'columnsKeyIndexMap'>
 >;
 
-const StickyObserver = <T,>(props: Props<T>) => {
+const StickyObserverRow = <T,>(props: Props<T>) => {
 	const { throttle } = useThrottle();
-	const ref = useRef<HTMLDivElement | null>(null);
-	const { splitColumnsArr, bodyRef, setPingedMap, gridTemplateColumns, columnsKeyIndexMap } = props;
+	const { splitColumnsArr, bodyRef, setPingedMap, columnsKeyIndexMap } = props;
 	const [intersectionObserver, setIntersectionObserver] = useState<IntersectionObserver | null>(null);
 
 	// IntersectionObserver
@@ -79,7 +74,7 @@ const StickyObserver = <T,>(props: Props<T>) => {
 	}, []);
 
 	return (
-		<div ref={ref} className={styles['sticky-observer']} style={{ gridTemplateColumns }}>
+		<div data-row="sticky-observer" style={{ display: 'contents' }}>
 			{splitColumnsArr.map((splitColumns) => {
 				const leafColumn = getLeafColumn(splitColumns);
 				const colIndex = columnsKeyIndexMap.get(leafColumn.key) ?? Infinity;
@@ -102,5 +97,4 @@ const StickyObserver = <T,>(props: Props<T>) => {
 	);
 };
 
-export default memo(StickyObserver) as typeof StickyObserver;
-
+export default memo(StickyObserverRow) as typeof StickyObserverRow;

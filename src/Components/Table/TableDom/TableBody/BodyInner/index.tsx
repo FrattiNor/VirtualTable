@@ -3,6 +3,7 @@ import { memo } from 'react';
 import BodyEmpty from './BodyEmpty';
 import BodyRow from './BodyRow';
 import styles from './index.module.less';
+import StickyObserverRow from './StickyObserverRow';
 import { getRowKey } from '../../../TableUtils';
 
 import type { TableInstance } from '../../../useTableInstance';
@@ -19,11 +20,15 @@ type Props<T> = Required<
 		| 'getBodyStickyStyle'
 		| 'getBodyCellBg'
 		| 'bodyInnerRef'
-		| 'bodyWidth'
+		| 'tableWidth'
 		| 'columnsKeyIndexMap'
 		| 'bodyRowClick'
 		| 'bodyRowMouseEnter'
 		| 'bodyRowMouseLeave'
+		| 'bodyRef'
+		| 'setPingedMap'
+		| 'fixedLeftMap'
+		| 'fixedRightMap'
 	>
 >;
 
@@ -33,7 +38,7 @@ const BodyInner = <T,>(props: Props<T>) => {
 
 	return (
 		<div ref={bodyInnerRef} className={styles['body-inner']} style={{ gridTemplateColumns: gridTemplateColumns + ` minmax(0px, 1fr)` }}>
-			{isEmpty && <BodyEmpty bodyWidth={props.bodyWidth} />}
+			{isEmpty && <BodyEmpty tableWidth={props.tableWidth} />}
 			{data?.map((dataItem, rowIndex) => (
 				<BodyRow
 					data={props.data}
@@ -52,6 +57,14 @@ const BodyInner = <T,>(props: Props<T>) => {
 					columnsKeyIndexMap={props.columnsKeyIndexMap}
 				/>
 			))}
+			<StickyObserverRow
+				bodyRef={props.bodyRef}
+				setPingedMap={props.setPingedMap}
+				fixedLeftMap={props.fixedLeftMap}
+				fixedRightMap={props.fixedRightMap}
+				splitColumnsArr={props.splitColumnsArr}
+				columnsKeyIndexMap={props.columnsKeyIndexMap}
+			/>
 		</div>
 	);
 };
