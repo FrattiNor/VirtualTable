@@ -23,6 +23,7 @@ type Props<T> = Required<
 		| 'resizeFlag'
 		| 'getHeadCellBg'
 		| 'columnsKeyIndexMap'
+		| 'getHeadCellShow'
 	>
 >;
 
@@ -45,6 +46,7 @@ const TableHead = <T,>(props: Props<T>) => {
 							resizeFlag={props.resizeFlag}
 							startResize={props.startResize}
 							getHeadCellBg={props.getHeadCellBg}
+							getHeadCellShow={props.getHeadCellShow}
 							splitColumnsArr={props.splitColumnsArr}
 							columnsKeyIndexMap={props.columnsKeyIndexMap}
 							getHeadStickyStyle={props.getHeadStickyStyle}

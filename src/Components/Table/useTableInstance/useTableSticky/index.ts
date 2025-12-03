@@ -47,20 +47,20 @@ const useTableSticky = <T>({ tableColumns, tableState }: Props<T>) => {
 			const fixedLeftValue = fixedLeftMap.get(startKey);
 			if (fixedLeftValue) {
 				const stickySize = fixedLeftValue.stickySize;
-				stickyStyle = { left: stickySize, position: 'sticky', zIndex: 6 };
+				stickyStyle = { transform: 'translate3d(0,0,0)', position: 'sticky', zIndex: 6, left: stickySize };
 				leftFirstPinged = colIndexStart === pingedLeftStart;
 				leftLastPinged = colIndexEnd === pingedLeftEnd;
 				const pinged = colIndexStart <= (pingedLeftEnd ?? -1);
-				if (pinged) stickyStyle.zIndex = 10;
+				if (pinged) stickyStyle.zIndex = 11;
 			}
 
 			const fixedRightValue = fixedRightMap.get(endKey);
 			if (fixedRightValue) {
 				const stickySize = fixedRightValue.stickySize;
-				stickyStyle = { position: 'sticky', zIndex: 5, right: stickySize };
+				stickyStyle = { transform: 'translate3d(0,0,0)', position: 'sticky', zIndex: 5, right: stickySize };
 				rightLastPinged = colIndexStart === pingedRightStart;
 				const pinged = colIndexEnd >= (pingedRightStart ?? Infinity);
-				if (pinged) stickyStyle.zIndex = 11;
+				if (pinged) stickyStyle.zIndex = 10;
 			}
 
 			return { stickyStyle, leftLastPinged, leftFirstPinged, rightLastPinged };
@@ -83,20 +83,25 @@ const useTableSticky = <T>({ tableColumns, tableState }: Props<T>) => {
 			const fixedLeftValue = fixedLeftMap.get(startKey);
 			if (fixedLeftValue) {
 				const stickySize = fixedLeftValue.stickySize;
-				stickyStyle = { left: stickySize, position: 'sticky', zIndex: 6 };
+				stickyStyle = { transform: 'translate3d(0,0,0)', position: 'sticky', zIndex: 6, left: stickySize };
 				leftFirstPinged = colIndexStart === pingedLeftStart;
 				leftLastPinged = colIndexEnd === pingedLeftEnd;
 				const pinged = colIndexStart <= (pingedLeftEnd ?? -1);
-				if (pinged) stickyStyle.zIndex = 10;
+				if (pinged) stickyStyle.zIndex = 11;
 			}
 
 			const fixedRightValue = fixedRightMap.get(endKey);
 			if (fixedRightValue) {
 				const stickySize = fixedRightValue.stickySize;
-				stickyStyle = { position: 'sticky', zIndex: 5, right: v_scrollbar.have ? stickySize + v_scrollbar.width : stickySize };
+				stickyStyle = {
+					transform: 'translate3d(0,0,0)',
+					position: 'sticky',
+					zIndex: 5,
+					right: v_scrollbar.have ? stickySize + v_scrollbar.width : stickySize,
+				};
 				rightLastPinged = colIndexStart === pingedRightStart;
 				const pinged = colIndexEnd >= (pingedRightStart ?? Infinity);
-				if (pinged) stickyStyle.zIndex = 11;
+				if (pinged) stickyStyle.zIndex = 10;
 			}
 
 			return { stickyStyle, leftLastPinged, leftFirstPinged, rightLastPinged };

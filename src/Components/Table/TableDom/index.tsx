@@ -5,7 +5,6 @@ import classNames from 'classnames';
 import useTableInstance from '../useTableInstance';
 import styles from './index.module.less';
 import ScrollbarH from './ScrollbarH';
-import DelayVisible from './ScrollbarH/DelayVisible';
 import ScrollbarV from './ScrollbarV';
 import TableBody from './TableBody';
 import TableHead from './TableHead';
@@ -35,6 +34,7 @@ const Table = <T,>(_props: TableProps<T>) => {
 				v_scrollbar={props.v_scrollbar}
 				startResize={props.startResize}
 				getHeadCellBg={props.getHeadCellBg}
+				getHeadCellShow={props.getHeadCellShow}
 				splitColumnsArr={props.splitColumnsArr}
 				columnsKeyIndexMap={props.columnsKeyIndexMap}
 				getHeadStickyStyle={props.getHeadStickyStyle}
@@ -47,9 +47,11 @@ const Table = <T,>(_props: TableProps<T>) => {
 					bodyRef={props.bodyRef}
 					resized={props.resized}
 					bordered={props.bordered}
-					tableWidth={props.tableWidth}
 					rowHeight={props.rowHeight}
+					tableWidth={props.tableWidth}
 					resizeFlag={props.resizeFlag}
+					v_totalSize={props.v_totalSize}
+					v_offsetTop={props.v_offsetTop}
 					bodyRowClick={props.bodyRowClick}
 					sizeCacheMap={props.sizeCacheMap}
 					bodyInnerRef={props.bodyInnerRef}
@@ -57,6 +59,7 @@ const Table = <T,>(_props: TableProps<T>) => {
 					fixedLeftMap={props.fixedLeftMap}
 					fixedRightMap={props.fixedRightMap}
 					getBodyCellBg={props.getBodyCellBg}
+					getBodyCellShow={props.getBodyCellShow}
 					setSizeCacheMap={props.setSizeCacheMap}
 					splitColumnsArr={props.splitColumnsArr}
 					bodyRowMouseEnter={props.bodyRowMouseEnter}
@@ -66,18 +69,23 @@ const Table = <T,>(_props: TableProps<T>) => {
 					splitColumnsArr_01={props.splitColumnsArr_01}
 					gridTemplateColumns={props.gridTemplateColumns}
 				/>
-				<ScrollbarV bodyRef={props.bodyRef} vScrollbarRef={props.vScrollbarRef} bordered={props.bordered} v_scrollbar={props.v_scrollbar} />
-			</div>
-			<DelayVisible visible={props.h_scrollbar.have} delayTime={25}>
-				<ScrollbarH
+				<ScrollbarV
 					bodyRef={props.bodyRef}
-					headRef={props.headRef}
 					bordered={props.bordered}
-					h_scrollbar={props.h_scrollbar}
 					v_scrollbar={props.v_scrollbar}
-					hScrollbarRef={props.hScrollbarRef}
+					vScrollbarRef={props.vScrollbarRef}
+					getV_virtualCore={props.getV_virtualCore}
 				/>
-			</DelayVisible>
+			</div>
+			<ScrollbarH
+				bodyRef={props.bodyRef}
+				headRef={props.headRef}
+				bordered={props.bordered}
+				h_scrollbar={props.h_scrollbar}
+				v_scrollbar={props.v_scrollbar}
+				hScrollbarRef={props.hScrollbarRef}
+				getH_virtualCore={props.getH_virtualCore}
+			/>
 		</TableLoading>
 	);
 };

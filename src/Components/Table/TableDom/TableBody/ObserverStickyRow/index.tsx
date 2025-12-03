@@ -1,19 +1,23 @@
 import { memo, useState, useEffect, startTransition } from 'react';
 
-import StickyObserverItem from './StickyObserverItem';
-import useThrottle from '../../../../TableHooks/useThrottle';
-import { type TableColumnFixed } from '../../../../TableTypes/type';
-import { getLeafColumn } from '../../../../TableUtils';
+import styles from './index.module.less';
+import ObserverItem from './ObserverItem';
+import useThrottle from '../../../TableHooks/useThrottle';
+import { type TableColumnFixed } from '../../../TableTypes/type';
+import { getLeafColumn } from '../../../TableUtils';
 
-import type { TableInstance } from '../../../../useTableInstance';
+import type { TableInstance } from '../../../useTableInstance';
 
 type Props<T> = Required<
-	Pick<TableInstance<T>, 'fixedLeftMap' | 'fixedRightMap' | 'splitColumnsArr' | 'bodyRef' | 'setPingedMap' | 'columnsKeyIndexMap'>
+	Pick<
+		TableInstance<T>,
+		'fixedLeftMap' | 'fixedRightMap' | 'splitColumnsArr' | 'bodyRef' | 'setPingedMap' | 'columnsKeyIndexMap' | 'gridTemplateColumns'
+	>
 >;
 
-const StickyObserverRow = <T,>(props: Props<T>) => {
+const ObserverStickyRow = <T,>(props: Props<T>) => {
 	const { throttle } = useThrottle();
-	const { splitColumnsArr, bodyRef, setPingedMap, columnsKeyIndexMap } = props;
+	const { splitColumnsArr, bodyRef, setPingedMap, columnsKeyIndexMap, gridTemplateColumns } = props;
 	const [intersectionObserver, setIntersectionObserver] = useState<IntersectionObserver | null>(null);
 
 	// IntersectionObserver
@@ -36,7 +40,7 @@ const StickyObserverRow = <T,>(props: Props<T>) => {
 										// 缩放可能导致无法达到1
 										// 确保left是左侧遮挡，right是右侧遮挡
 										if (
-											entry.intersectionRatio < 0.99 &&
+											entry.intersectionRatio < 0.975 &&
 											((fixed === 'left' && entry.boundingClientRect.left < (entry.rootBounds?.left ?? 0)) ||
 												(fixed === 'right' && entry.boundingClientRect.right > (entry.rootBounds?.right ?? 0)))
 										) {
@@ -60,7 +64,7 @@ const StickyObserverRow = <T,>(props: Props<T>) => {
 				},
 				{
 					// 缩放可能导致无法达到1
-					threshold: [0.99],
+					threshold: [0.975],
 					root: bodyRef.current,
 				},
 			);
@@ -74,13 +78,17 @@ const StickyObserverRow = <T,>(props: Props<T>) => {
 	}, []);
 
 	return (
-		<div data-row="sticky-observer" style={{ display: 'contents' }}>
+		<div
+			data-row="observer-sticky"
+			className={styles['observer-sticky']}
+			style={{ gridTemplateColumns: gridTemplateColumns + ` minmax(0px, 1fr)` }}
+		>
 			{splitColumnsArr.map((splitColumns) => {
 				const leafColumn = getLeafColumn(splitColumns);
 				const colIndex = columnsKeyIndexMap.get(leafColumn.key) ?? Infinity;
 				if (leafColumn.fixed) {
 					return (
-						<StickyObserverItem
+						<ObserverItem
 							colIndex={colIndex}
 							leafColumn={leafColumn}
 							bodyRef={props.bodyRef}
@@ -97,4 +105,4 @@ const StickyObserverRow = <T,>(props: Props<T>) => {
 	);
 };
 
-export default memo(StickyObserverRow) as typeof StickyObserverRow;
+export default memo(ObserverStickyRow) as typeof ObserverStickyRow;

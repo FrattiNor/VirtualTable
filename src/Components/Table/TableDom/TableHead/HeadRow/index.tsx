@@ -17,13 +17,14 @@ type Props<T> = Required<
 		| 'resizeFlag'
 		| 'getHeadCellBg'
 		| 'columnsKeyIndexMap'
+		| 'getHeadCellShow'
 	>
 > & {
 	rowIndex: number;
 };
 
 const HeadRow = <T,>(props: Props<T>) => {
-	const { rowIndex, splitColumnsArr, deepLevel, columnsKeyIndexMap } = props;
+	const { rowIndex, splitColumnsArr, deepLevel, columnsKeyIndexMap, getHeadCellShow } = props;
 
 	// 是否是叶子节点
 	const isLeaf = rowIndex === deepLevel;
@@ -43,6 +44,7 @@ const HeadRow = <T,>(props: Props<T>) => {
 				const rowIndexStart = splitColumns.length - 1;
 				const rowIndexEnd = rowIndex;
 
+				if (!getHeadCellShow({ colIndexStart, colIndexEnd })) return null;
 				return (
 					<HeadCell
 						isLeaf={true}
@@ -89,6 +91,7 @@ const HeadRow = <T,>(props: Props<T>) => {
 				colSameCount = 0;
 				colNoRenderKey = '';
 
+				if (!getHeadCellShow({ colIndexStart, colIndexEnd })) return null;
 				return (
 					<HeadCell
 						key={key}

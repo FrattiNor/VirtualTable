@@ -3,21 +3,19 @@ import { memo, useEffect } from 'react';
 import classNames from 'classnames';
 
 import styles from './index.module.less';
-import useThrottle from '../../TableHooks/useThrottle';
 import scrollbarStyles from '../../TableUtils/calcBorderWidth/index.module.less';
 import { type TableInstance } from '../../useTableInstance';
 
-type Props<T> = Required<Pick<TableInstance<T>, 'v_scrollbar' | 'bordered' | 'vScrollbarRef' | 'bodyRef'>>;
+type Props<T> = Required<Pick<TableInstance<T>, 'v_scrollbar' | 'bordered' | 'vScrollbarRef' | 'bodyRef' | 'getV_virtualCore'>>;
 
 const ScrollbarV = <T,>(props: Props<T>) => {
-	const { throttle } = useThrottle();
-	const { v_scrollbar, bordered, vScrollbarRef, bodyRef } = props;
+	// const isLockedRef = useRef(false);
+	const { v_scrollbar, bordered, vScrollbarRef, bodyRef, getV_virtualCore } = props;
 
 	useEffect(() => {
 		if (v_scrollbar.have && vScrollbarRef.current) {
 			const vScrollbar = vScrollbarRef.current;
 
-			// 同步一次scrollTop
 			(() => {
 				if (bodyRef.current && bodyRef.current.scrollTop !== vScrollbar.scrollTop) {
 					vScrollbar.scrollTop = bodyRef.current.scrollTop;
@@ -25,7 +23,14 @@ const ScrollbarV = <T,>(props: Props<T>) => {
 			})();
 
 			const handleScroll = () => {
-				throttle(() => {
+				// if (isLockedRef.current) {
+				// 	isLockedRef.current = false;
+				// 	return;
+				// }
+				// isLockedRef.current = true;
+
+				getV_virtualCore().updateScrollOffset(vScrollbar.scrollTop, { isScroll: true });
+				requestAnimationFrame(() => {
 					if (bodyRef.current && bodyRef.current.scrollTop !== vScrollbar.scrollTop) {
 						bodyRef.current.scrollTop = vScrollbar.scrollTop;
 					}
@@ -35,6 +40,7 @@ const ScrollbarV = <T,>(props: Props<T>) => {
 
 			return () => {
 				vScrollbar.removeEventListener('scroll', handleScroll);
+				getV_virtualCore().updateScrollOffset(0, { isScroll: true });
 			};
 		}
 	}, [v_scrollbar.have]);

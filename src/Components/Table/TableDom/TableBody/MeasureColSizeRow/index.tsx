@@ -1,7 +1,7 @@
 import { memo, useEffect, useLayoutEffect, useRef, useState } from 'react';
 
 import styles from './index.module.less';
-import MeasureColItem from './MeasureColItem';
+import MeasureItem from './MeasureItem';
 import { FixedTwo, getLeafColumn } from '../../../TableUtils';
 import { maxColWidth, minColWidth } from '../../../TableUtils/configValues';
 
@@ -9,7 +9,7 @@ import type { TableInstance } from '../../../useTableInstance';
 
 type Props<T> = Required<Pick<TableInstance<T>, 'splitColumnsArr_01' | 'setSizeCacheMap' | 'resizeFlag' | 'sizeCacheMap' | 'resized'>>;
 
-const MeasureCol = <T,>(props: Props<T>) => {
+const MeasureColSizeRow = <T,>(props: Props<T>) => {
 	const ref = useRef<HTMLDivElement | null>(null);
 	const { splitColumnsArr_01, setSizeCacheMap, resizeFlag } = props;
 	const [resizeObserver, setResizeObserver] = useState<ResizeObserver | null>(null);
@@ -66,11 +66,11 @@ const MeasureCol = <T,>(props: Props<T>) => {
 	}, [resizeFlag]);
 
 	return (
-		<div ref={ref} className={styles['measure-col']}>
+		<div ref={ref} data-row="measure-col-size" className={styles['measure-col-size']}>
 			{splitColumnsArr_01.map((splitColumns) => {
 				const leafColumn = getLeafColumn(splitColumns);
 				return (
-					<MeasureColItem
+					<MeasureItem
 						key={leafColumn.key}
 						leafColumn={leafColumn}
 						resized={props.resized}
@@ -83,4 +83,4 @@ const MeasureCol = <T,>(props: Props<T>) => {
 	);
 };
 
-export default memo(MeasureCol) as typeof MeasureCol;
+export default memo(MeasureColSizeRow) as typeof MeasureColSizeRow;

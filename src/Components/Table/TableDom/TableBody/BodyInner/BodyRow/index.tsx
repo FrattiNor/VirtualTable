@@ -20,6 +20,7 @@ type Props<T> = Required<
 		| 'bodyRowMouseLeave'
 		| 'rowKey'
 		| 'data'
+		| 'getBodyCellShow'
 	>
 > & {
 	rowIndex: number;
@@ -27,40 +28,53 @@ type Props<T> = Required<
 };
 
 const BodyRow = <T,>(props: Props<T>) => {
-	const { splitColumnsArr, rowIndex, dataItem, columnsKeyIndexMap } = props;
+	const { splitColumnsArr, rowIndex, dataItem, columnsKeyIndexMap, getBodyCellShow } = props;
+
+	let haveCell = false;
+
+	const rowCells = splitColumnsArr.map((splitColumns) => {
+		const leafColumn = getLeafColumn(splitColumns);
+		const { rowSpan = 1, colSpan = 1 } = leafColumn.onCellSpan ? leafColumn.onCellSpan(dataItem, rowIndex) : {};
+		if (rowSpan <= 0 || colSpan <= 0) return null;
+		const colIndex = columnsKeyIndexMap.get(leafColumn.key) ?? Infinity;
+		const rowIndexStart = rowIndex;
+		const rowIndexEnd = rowIndex + rowSpan - 1;
+		const colIndexStart = colIndex;
+		const colIndexEnd = colIndex + colSpan - 1;
+
+		if (!getBodyCellShow({ colIndexStart, colIndexEnd, rowIndexStart, rowIndexEnd })) return null;
+
+		haveCell = true;
+		return (
+			<BodyCell
+				data={props.data}
+				dataItem={dataItem}
+				key={leafColumn.key}
+				rowKey={props.rowKey}
+				leafColumn={leafColumn}
+				colIndexEnd={colIndexEnd}
+				rowIndexEnd={rowIndexEnd}
+				bordered={props.bordered}
+				rowHeight={props.rowHeight}
+				rowIndexStart={rowIndexStart}
+				colIndexStart={colIndexStart}
+				bodyRowClick={props.bodyRowClick}
+				splitColumnsArr={splitColumnsArr}
+				getBodyCellBg={props.getBodyCellBg}
+				bodyRowMouseEnter={props.bodyRowMouseEnter}
+				bodyRowMouseLeave={props.bodyRowMouseLeave}
+				getBodyStickyStyle={props.getBodyStickyStyle}
+			/>
+		);
+	});
+
+	if (haveCell === false) {
+		return null;
+	}
+
 	return (
 		<div data-row={rowIndex + 1} style={{ display: 'contents' }}>
-			{splitColumnsArr.map((splitColumns) => {
-				const leafColumn = getLeafColumn(splitColumns);
-				const { rowSpan = 1, colSpan = 1 } = leafColumn.onCellSpan ? leafColumn.onCellSpan(dataItem, rowIndex) : {};
-				if (rowSpan <= 0 || colSpan <= 0) return null;
-				const colIndex = columnsKeyIndexMap.get(leafColumn.key) ?? Infinity;
-				const rowIndexStart = rowIndex;
-				const rowIndexEnd = rowIndex + rowSpan - 1;
-				const colIndexStart = colIndex;
-				const colIndexEnd = colIndex + colSpan - 1;
-				return (
-					<BodyCell
-						data={props.data}
-						dataItem={dataItem}
-						key={leafColumn.key}
-						rowKey={props.rowKey}
-						leafColumn={leafColumn}
-						colIndexEnd={colIndexEnd}
-						rowIndexEnd={rowIndexEnd}
-						bordered={props.bordered}
-						rowHeight={props.rowHeight}
-						rowIndexStart={rowIndexStart}
-						colIndexStart={colIndexStart}
-						bodyRowClick={props.bodyRowClick}
-						splitColumnsArr={splitColumnsArr}
-						getBodyCellBg={props.getBodyCellBg}
-						bodyRowMouseEnter={props.bodyRowMouseEnter}
-						bodyRowMouseLeave={props.bodyRowMouseLeave}
-						getBodyStickyStyle={props.getBodyStickyStyle}
-					/>
-				);
-			})}
+			{rowCells}
 			<BodyCellPlaceholder
 				rowIndex={props.rowIndex}
 				bordered={props.bordered}

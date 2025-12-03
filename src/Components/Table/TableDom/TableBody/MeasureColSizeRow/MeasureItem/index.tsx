@@ -10,7 +10,7 @@ type Props<T> = Required<Pick<TableInstance<T>, 'sizeCacheMap' | 'resized'>> & {
 	resizeObserver: ResizeObserver | null;
 };
 
-const MeasureColItem = <T,>(props: Props<T>) => {
+const MeasureItem = <T,>(props: Props<T>) => {
 	const ref = useRef<HTMLDivElement | null>(null);
 	const { leafColumn, resizeObserver, resized, sizeCacheMap } = props;
 	const resizedAndHaveSizeCache = resized && typeof sizeCacheMap.get(leafColumn.key) === 'number';
@@ -41,4 +41,4 @@ const MeasureColItem = <T,>(props: Props<T>) => {
 	);
 };
 
-export default memo(MeasureColItem) as typeof MeasureColItem;
+export default memo(MeasureItem) as typeof MeasureItem;

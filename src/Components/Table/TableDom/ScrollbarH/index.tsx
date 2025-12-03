@@ -3,21 +3,21 @@ import { memo, useEffect } from 'react';
 import classNames from 'classnames';
 
 import styles from './index.module.less';
-import useThrottle from '../../TableHooks/useThrottle';
 import scrollbarStyles from '../../TableUtils/calcBorderWidth/index.module.less';
 import { type TableInstance } from '../../useTableInstance';
 
-type Props<T> = Required<Pick<TableInstance<T>, 'h_scrollbar' | 'v_scrollbar' | 'bordered' | 'hScrollbarRef' | 'bodyRef' | 'headRef'>>;
+type Props<T> = Required<
+	Pick<TableInstance<T>, 'h_scrollbar' | 'v_scrollbar' | 'bordered' | 'hScrollbarRef' | 'bodyRef' | 'headRef' | 'getH_virtualCore'>
+>;
 
 const ScrollbarH = <T,>(props: Props<T>) => {
-	const { throttle } = useThrottle();
-	const { h_scrollbar, v_scrollbar, bordered, hScrollbarRef, bodyRef, headRef } = props;
+	// const isLockedRef = useRef(false);
+	const { h_scrollbar, v_scrollbar, bordered, hScrollbarRef, bodyRef, headRef, getH_virtualCore } = props;
 
 	useEffect(() => {
 		if (h_scrollbar.have && hScrollbarRef.current) {
 			const hScrollbar = hScrollbarRef.current;
 
-			// 同步一次scrollLeft
 			(() => {
 				if (bodyRef.current && bodyRef.current.scrollLeft !== hScrollbar.scrollLeft) {
 					hScrollbar.scrollLeft = bodyRef.current.scrollLeft;
@@ -25,7 +25,14 @@ const ScrollbarH = <T,>(props: Props<T>) => {
 			})();
 
 			const handleScroll = () => {
-				throttle(() => {
+				// if (isLockedRef.current) {
+				// 	isLockedRef.current = false;
+				// 	return;
+				// }
+				// isLockedRef.current = true;
+
+				getH_virtualCore().updateScrollOffset(hScrollbar.scrollLeft, { isScroll: true });
+				requestAnimationFrame(() => {
 					if (headRef.current && headRef.current.scrollLeft !== hScrollbar.scrollLeft) {
 						headRef.current.scrollLeft = hScrollbar.scrollLeft;
 					}
@@ -38,6 +45,7 @@ const ScrollbarH = <T,>(props: Props<T>) => {
 
 			return () => {
 				hScrollbar.removeEventListener('scroll', handleScroll);
+				getH_virtualCore().updateScrollOffset(0, { isScroll: true });
 			};
 		}
 	}, [h_scrollbar.have]);

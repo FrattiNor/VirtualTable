@@ -21,9 +21,12 @@ export type TableColumn<T> = {
 	align?: TableColumnAlign;
 	// 左右固定【和colSpan有冲突】
 	fixed?: TableColumnFixed;
-	// TODO 无法影响父节点是否可以拖拽
 	// 是否可以拖拽修改列宽
 	resize?: boolean;
+	// 强制渲染列【fixed会默认forceRender】【用于处理不定高】
+	colBodyForceRender?: boolean;
+	// 强制渲染列【fixed会默认forceRender】【用于处理不定高】
+	colHeadForceRender?: boolean;
 } & {
 	// 兼容group
 	children?: undefined;
