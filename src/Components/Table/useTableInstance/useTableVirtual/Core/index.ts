@@ -1,10 +1,10 @@
-import { binarySearch, getSizeList } from './utils';
+import { binarySearch, getEmptyState, getSizeList } from './utils';
 
 import type { VirtualInnerProps, VirtualProps, VirtualState } from './type';
 
 class VirtualCore {
+	state: VirtualState = getEmptyState();
 	props: VirtualInnerProps = { enabled: true } as VirtualInnerProps;
-	state: VirtualState = { sizeList: null, rangeStart: null, rangeEnd: null, totalSize: null, scrollOffset: 0, containerSize: null };
 
 	// 初始化
 	constructor(virtual?: VirtualCore) {
@@ -112,18 +112,20 @@ class VirtualCore {
 			if (this.props.onRangeChange) {
 				this.props.onRangeChange({ start: this.state.rangeStart, end: this.state.rangeEnd, isScroll });
 			}
+			return true;
 		}
+		return false;
 	}
 
 	// 结束
 	private end() {
-		const nextState = { sizeList: null, rangeStart: null, rangeEnd: null, totalSize: null, scrollOffset: 0, containerSize: null };
+		const nextState = getEmptyState();
 		// 触发totalSizeChange回调
-		if (nextState.totalSize !== this.state.totalSize && this.props.onTotalSizeChange) {
+		if (this.props.onTotalSizeChange && nextState.totalSize !== this.state.totalSize) {
 			this.props.onTotalSizeChange(null);
 		}
 		// 触发rangeChange回调
-		if ((nextState.rangeStart !== this.state.rangeStart || nextState.rangeEnd !== this.state.rangeEnd) && this.props.onRangeChange) {
+		if (this.props.onRangeChange && (nextState.rangeStart !== this.state.rangeStart || nextState.rangeEnd !== this.state.rangeEnd)) {
 			this.props.onRangeChange({ start: null, end: null, isScroll: false });
 		}
 		// 清空state
@@ -142,7 +144,10 @@ class VirtualCore {
 	updateScrollOffset(offset: number, { isScroll }: { isScroll: boolean }) {
 		if (this.state.scrollOffset !== offset) {
 			this.state.scrollOffset = offset;
-			this.updateRange({ isScroll });
+			const changed = this.updateRange({ isScroll });
+			if (this.props.onScrollOffsetChange) {
+				this.props.onScrollOffsetChange(offset, changed);
+			}
 		}
 	}
 }

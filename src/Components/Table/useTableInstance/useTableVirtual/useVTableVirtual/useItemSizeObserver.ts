@@ -1,13 +1,20 @@
 import { useRef, useEffect, useCallback } from 'react';
 
 import useRefValue from '../../../TableHooks/useRefValue';
+import { type VirtualProps } from '../Core/type';
 
 import type useSizeCacheMap from './useSizeCacheMap';
 
-const useItemSizeObserver = (props: ReturnType<typeof useSizeCacheMap>) => {
-	const itemSizeObserverRef = useRef<ResizeObserver | null>(null);
+type Props = {
+	sizeCache: ReturnType<typeof useSizeCacheMap>;
+	props: Omit<VirtualProps, 'onRangeChange' | 'onTotalSizeChange'>;
+};
 
-	const [getUpdateItemSize] = useRefValue(props.updateItemSize);
+const useItemSizeObserver = ({ sizeCache, props }: Props) => {
+	const { getItemKey } = props;
+	const itemDomRef = useRef(new Map<string, HTMLElement>());
+	const itemSizeObserverRef = useRef<ResizeObserver | null>(null);
+	const [getUpdateItemSize] = useRefValue(sizeCache.updateItemSize);
 
 	const getItemSizeObserver = () => {
 		if (itemSizeObserverRef.current === null) {
@@ -34,13 +41,18 @@ const useItemSizeObserver = (props: ReturnType<typeof useSizeCacheMap>) => {
 	// 用于测量itemSize，在不定高情况使用
 	// warning 【StrictMode会影响此运行，导致动态监测高度失效】
 	const measureItemRef = useCallback((index: number, node: HTMLElement | null) => {
+		const key = getItemKey(index);
 		if (node) {
+			itemDomRef.current.set(key, node);
 			const size = node['clientHeight'];
 			getUpdateItemSize()({ index, size, from: 'ref' });
 			getItemSizeObserver().observe(node);
-			return () => {
-				getItemSizeObserver().unobserve(node);
-			};
+		} else {
+			const oldNode = itemDomRef.current.get(key);
+			if (oldNode) {
+				getItemSizeObserver().unobserve(oldNode);
+				itemDomRef.current.delete(key);
+			}
 		}
 	}, []);
 

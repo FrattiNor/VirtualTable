@@ -21,6 +21,7 @@ type Props<T> = Required<
 		| 'rowKey'
 		| 'data'
 		| 'getBodyCellShow'
+		| 'v_measureItemRef'
 	>
 > & {
 	rowIndex: number;
@@ -80,6 +81,7 @@ const BodyRow = <T,>(props: Props<T>) => {
 				bordered={props.bordered}
 				rowHeight={props.rowHeight}
 				colIndex={props.splitColumnsArr.length}
+				v_measureItemRef={props.v_measureItemRef}
 			/>
 		</div>
 	);

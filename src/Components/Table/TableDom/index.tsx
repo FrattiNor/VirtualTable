@@ -62,6 +62,7 @@ const Table = <T,>(_props: TableProps<T>) => {
 					getBodyCellShow={props.getBodyCellShow}
 					setSizeCacheMap={props.setSizeCacheMap}
 					splitColumnsArr={props.splitColumnsArr}
+					v_measureItemRef={props.v_measureItemRef}
 					bodyRowMouseEnter={props.bodyRowMouseEnter}
 					bodyRowMouseLeave={props.bodyRowMouseLeave}
 					columnsKeyIndexMap={props.columnsKeyIndexMap}

@@ -36,6 +36,7 @@ type Props<T> = Required<
 		| 'getBodyCellShow'
 		| 'v_totalSize'
 		| 'v_offsetTop'
+		| 'v_measureItemRef'
 	>
 >;
 
@@ -73,6 +74,7 @@ const TableBody = <T,>(props: Props<T>) => {
 				getBodyCellBg={props.getBodyCellBg}
 				getBodyCellShow={props.getBodyCellShow}
 				splitColumnsArr={props.splitColumnsArr}
+				v_measureItemRef={props.v_measureItemRef}
 				bodyRowMouseEnter={props.bodyRowMouseEnter}
 				bodyRowMouseLeave={props.bodyRowMouseLeave}
 				getBodyStickyStyle={props.getBodyStickyStyle}

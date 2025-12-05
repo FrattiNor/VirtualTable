@@ -27,6 +27,7 @@ type Props<T> = Required<
 		| 'getBodyCellShow'
 		| 'v_totalSize'
 		| 'v_offsetTop'
+		| 'v_measureItemRef'
 	>
 >;
 
@@ -54,6 +55,7 @@ const BodyInner = <T,>(props: Props<T>) => {
 						getBodyCellBg={props.getBodyCellBg}
 						splitColumnsArr={props.splitColumnsArr}
 						getBodyCellShow={props.getBodyCellShow}
+						v_measureItemRef={props.v_measureItemRef}
 						key={getRowKey(rowKey, dataItem, rowIndex)}
 						bodyRowMouseEnter={props.bodyRowMouseEnter}
 						bodyRowMouseLeave={props.bodyRowMouseLeave}

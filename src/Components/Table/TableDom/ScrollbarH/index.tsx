@@ -3,6 +3,7 @@ import { memo, useEffect } from 'react';
 import classNames from 'classnames';
 
 import styles from './index.module.less';
+import useThrottle from '../../TableHooks/useThrottle';
 import scrollbarStyles from '../../TableUtils/calcBorderWidth/index.module.less';
 import { type TableInstance } from '../../useTableInstance';
 
@@ -11,41 +12,24 @@ type Props<T> = Required<
 >;
 
 const ScrollbarH = <T,>(props: Props<T>) => {
-	// const isLockedRef = useRef(false);
-	const { h_scrollbar, v_scrollbar, bordered, hScrollbarRef, bodyRef, headRef, getH_virtualCore } = props;
+	const { throttle } = useThrottle({ multiple: 1 });
+	const { h_scrollbar, v_scrollbar, bordered, hScrollbarRef, getH_virtualCore } = props;
 
 	useEffect(() => {
 		if (h_scrollbar.have && hScrollbarRef.current) {
 			const hScrollbar = hScrollbarRef.current;
 
-			(() => {
-				if (bodyRef.current && bodyRef.current.scrollLeft !== hScrollbar.scrollLeft) {
-					hScrollbar.scrollLeft = bodyRef.current.scrollLeft;
-				}
-			})();
-
 			const handleScroll = () => {
-				// if (isLockedRef.current) {
-				// 	isLockedRef.current = false;
-				// 	return;
-				// }
-				// isLockedRef.current = true;
-
-				getH_virtualCore().updateScrollOffset(hScrollbar.scrollLeft, { isScroll: true });
-				requestAnimationFrame(() => {
-					if (headRef.current && headRef.current.scrollLeft !== hScrollbar.scrollLeft) {
-						headRef.current.scrollLeft = hScrollbar.scrollLeft;
-					}
-					if (bodyRef.current && bodyRef.current.scrollLeft !== hScrollbar.scrollLeft) {
-						bodyRef.current.scrollLeft = hScrollbar.scrollLeft;
-					}
+				throttle(() => {
+					getH_virtualCore().updateScrollOffset(hScrollbar.scrollLeft, { isScroll: true });
 				});
 			};
+
 			hScrollbar.addEventListener('scroll', handleScroll, { passive: true });
 
 			return () => {
-				hScrollbar.removeEventListener('scroll', handleScroll);
 				getH_virtualCore().updateScrollOffset(0, { isScroll: true });
+				hScrollbar.removeEventListener('scroll', handleScroll);
 			};
 		}
 	}, [h_scrollbar.have]);

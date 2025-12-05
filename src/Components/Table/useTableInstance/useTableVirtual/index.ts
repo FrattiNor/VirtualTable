@@ -6,16 +6,18 @@ import useRefValue from '../../TableHooks/useRefValue';
 import { getLeafColumn, getRowKey } from '../../TableUtils';
 
 import type useTableColumns from '../useTableColumns';
+import type useTableDomRef from '../useTableDomRef';
 import type useTableRequiredProps from '../useTableRequiredProps';
 import type useTableState from '../useTableState';
 
 type Props<T> = {
 	tableState: ReturnType<typeof useTableState>;
+	tableDomRef: ReturnType<typeof useTableDomRef>;
 	tableColumns: ReturnType<typeof useTableColumns<T>>;
 	tableRequiredProps: ReturnType<typeof useTableRequiredProps<T>>;
 };
 
-const useTableVirtual = <T>({ tableColumns, tableState, tableRequiredProps }: Props<T>) => {
+const useTableVirtual = <T>({ tableColumns, tableState, tableRequiredProps, tableDomRef }: Props<T>) => {
 	const { sizeCacheMap } = tableState;
 	const { data, rowKey, rowHeight } = tableRequiredProps;
 	const { splitColumnsArr, columnKeys, colBodyForceRenderObj, colHeadForceRenderObj } = tableColumns;
@@ -26,6 +28,8 @@ const useTableVirtual = <T>({ tableColumns, tableState, tableRequiredProps }: Pr
 		getItemKey: getH_ItemKey,
 		getItemSize: getH_ItemSize,
 		count: splitColumnsArr.length,
+		bodyRef: tableDomRef.bodyRef,
+		headRef: tableDomRef.headRef,
 	});
 
 	const h_rangeEnd = h_virtual.rangeEnd;
@@ -38,13 +42,13 @@ const useTableVirtual = <T>({ tableColumns, tableState, tableRequiredProps }: Pr
 		count: data?.length ?? 0,
 		getItemKey: getV_ItemKey,
 		getItemSize: getV_ItemSize,
+		bodyRef: tableDomRef.bodyRef,
 	});
 
 	const v_rangeEnd = v_virtual.rangeEnd;
 	const v_rangeStart = v_virtual.rangeStart;
 	const v_totalSize = v_virtual.totalSize;
 	const v_offsetTop = v_virtual.offsetTop;
-	// TODO
 	const v_measureItemRef = v_virtual.measureItemRef;
 	const [getV_virtualCore] = useRefValue(v_virtual.virtualCore);
 

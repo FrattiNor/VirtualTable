@@ -6,17 +6,18 @@ import styles from './index.module.less';
 
 import type { TableInstance } from '../../../../../useTableInstance';
 
-type Props<T> = Required<Pick<TableInstance<T>, 'bordered' | 'rowHeight'>> & {
+type Props<T> = Required<Pick<TableInstance<T>, 'bordered' | 'rowHeight' | 'v_measureItemRef'>> & {
 	rowIndex: number;
 	colIndex: number;
 };
 
 const BodyCellPlaceholder = <T,>(props: Props<T>) => {
-	const { bordered, rowIndex, colIndex, rowHeight } = props;
+	const { bordered, rowIndex, colIndex, rowHeight, v_measureItemRef } = props;
 
 	return (
 		<div
 			data-col={colIndex + 1}
+			ref={(node) => v_measureItemRef(rowIndex, node)}
 			style={{
 				minHeight: rowHeight,
 				gridRow: `${rowIndex + 1}/${rowIndex + 2}`,

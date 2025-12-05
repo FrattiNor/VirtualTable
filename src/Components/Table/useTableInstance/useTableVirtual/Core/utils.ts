@@ -1,4 +1,4 @@
-import type { VirtualProps, VirtualSizeListItem } from './type';
+import type { VirtualProps, VirtualSizeListItem, VirtualState } from './type';
 
 export const getSizeList = ({
 	gap,
@@ -60,3 +60,12 @@ export function binarySearch({ target, getSize, startIndex, endIndex }: BinarySe
 	// 没有找到
 	return left < right ? [left, right] : [right, left];
 }
+
+export const getEmptyState = (): VirtualState => ({
+	sizeList: null,
+	rangeStart: null,
+	rangeEnd: null,
+	totalSize: null,
+	containerSize: null,
+	scrollOffset: 0,
+});

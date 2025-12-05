@@ -16,6 +16,8 @@ export interface VirtualProps {
 	onRangeChange?: (p: { start: number | null; end: number | null; isScroll: boolean }) => void;
 	// totalSize变更
 	onTotalSizeChange?: (size: number | null) => void;
+	// scrollOffset变更
+	onScrollOffsetChange?: (offset: number, rangeChange: boolean) => void;
 }
 
 // 对内
