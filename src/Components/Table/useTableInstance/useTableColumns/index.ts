@@ -7,8 +7,8 @@ import type { TableProps } from '../../TableTypes/typeProps';
 import type useTableState from '../useTableState';
 
 type Props<T> = {
-	tableState: ReturnType<typeof useTableState>;
 	props: TableProps<T>;
+	tableState: ReturnType<typeof useTableState>;
 };
 
 const useTableColumns = <T>({ props, tableState }: Props<T>) => {

@@ -35,8 +35,8 @@ const ScrollbarH = <T,>(props: Props<T>) => {
 	}, [h_scrollbar.have]);
 
 	if (h_scrollbar.have && h_scrollbar.width > 0) {
-		const vScrollbarWidth = bordered ? `calc(${v_scrollbar.width}px + var(--table-cell-border-width))` : v_scrollbar.width;
-		const hScrollbarWidth = bordered ? `calc(${h_scrollbar.width}px + var(--table-cell-border-width))` : h_scrollbar.width;
+		const vScrollbarWidth = v_scrollbar.widthStr;
+		const hScrollbarWidth = h_scrollbar.widthStr;
 		return (
 			<div className={styles['h-scrollbar-wrapper']}>
 				<div

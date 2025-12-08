@@ -80,3 +80,8 @@ export const getNotLeafColumnByIndex = <T>(splitColumns: Array<TableColumnGroup<
 export const FixedTwo = (v: number) => {
 	return Number(v.toFixed(2));
 };
+
+// 将宽度数组转换为calc
+export const transformWidthArrToStr = (widthArr: Array<string>) => {
+	return `calc(${widthArr.join(' + ')})`;
+};

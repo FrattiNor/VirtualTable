@@ -1,5 +1,7 @@
 import { useCallback, useMemo, type CSSProperties } from 'react';
 
+import { transformWidthArrToStr } from '../../TableUtils';
+
 import type useTableColumns from '../useTableColumns';
 import type useTableState from '../useTableState';
 
@@ -97,7 +99,7 @@ const useTableSticky = <T>({ tableColumns, tableState }: Props<T>) => {
 					transform: 'translate3d(0,0,0)',
 					position: 'sticky',
 					zIndex: 5,
-					right: v_scrollbar.have ? stickySize + v_scrollbar.width : stickySize,
+					right: !v_scrollbar.have ? stickySize : transformWidthArrToStr([...v_scrollbar.widthArr, `${stickySize}px`]),
 				};
 				rightLastPinged = colIndexStart === pingedRightStart;
 				const pinged = colIndexEnd >= (pingedRightStart ?? Infinity);

@@ -33,7 +33,7 @@ const ScrollbarV = <T,>(props: Props<T>) => {
 	}, [v_scrollbar.have]);
 
 	if (v_scrollbar.have && v_scrollbar.width > 0) {
-		const vScrollbarWidth = bordered ? `calc(${v_scrollbar.width}px + var(--table-cell-border-width))` : v_scrollbar.width;
+		const vScrollbarWidth = v_scrollbar.widthStr;
 		return (
 			<div
 				ref={vScrollbarRef}
