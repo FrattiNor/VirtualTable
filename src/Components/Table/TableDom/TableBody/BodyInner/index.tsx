@@ -1,8 +1,8 @@
 import { memo } from 'react';
 
+import BodyCell from './BodyCell';
+import BodyCellPlaceholder from './BodyCellPlaceholder';
 import BodyEmpty from './BodyEmpty';
-import BodyCell from './BodyRow/BodyCell';
-import BodyCellPlaceholder from './BodyRow/BodyCellPlaceholder';
 import styles from './index.module.less';
 import { getLeafColumn, getRowKey } from '../../../TableUtils';
 

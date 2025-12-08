@@ -24,23 +24,11 @@ const useVTableVirtual = (props: Props) => {
 		core.updateProps({ gap, count, enabled, overscan, getItemKey, getItemSize });
 		return core;
 	});
-	const onChange = useCallback(() => {
-		throttle(() => {
-			setVirtualCore(new VirtualCore(virtualCore));
-		});
-	}, []);
+	const onChange = useCallback(() => throttle(() => setVirtualCore(new VirtualCore(virtualCore))), []);
 
 	useEffect(() => {
-		virtualCore.updateProps({
-			gap,
-			count,
-			enabled,
-			overscan,
-			onChange,
-			getItemKey,
-			getItemSize,
-		});
-	}, [enabled, count, overscan, gap, getItemKey, getItemSize]);
+		virtualCore.updateProps({ gap, count, enabled, overscan, onChange, getItemKey, getItemSize });
+	}, [enabled, count, overscan, gap, getItemKey, getItemSize, onChange]);
 
 	useLayoutEffect(() => {
 		const scrollOffset = virtualCore.state.scrollOffset;

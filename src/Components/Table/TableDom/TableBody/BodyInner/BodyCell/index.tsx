@@ -3,10 +3,10 @@ import { memo, useMemo } from 'react';
 import classNames from 'classnames';
 
 import styles from './index.module.less';
-import { getCellTitle, getColKeys, getRowKeys, isStrNum } from '../../../../../TableUtils';
+import { getCellTitle, getColKeys, getRowKeys, isStrNum } from '../../../../TableUtils';
 
-import type { TableColumn } from '../../../../../TableTypes/typeColumn';
-import type { TableInstance } from '../../../../../useTableInstance';
+import type { TableColumn } from '../../../../TableTypes/typeColumn';
+import type { TableInstance } from '../../../../useTableInstance';
 
 type Props<T> = Required<
 	Pick<

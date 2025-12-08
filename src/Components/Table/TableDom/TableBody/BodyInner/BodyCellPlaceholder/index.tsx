@@ -4,7 +4,7 @@ import classNames from 'classnames';
 
 import styles from './index.module.less';
 
-import type { TableInstance } from '../../../../../useTableInstance';
+import type { TableInstance } from '../../../../useTableInstance';
 
 type Props<T> = Required<Pick<TableInstance<T>, 'bordered' | 'rowHeight' | 'v_measureItemRef'>> & {
 	rowIndex: number;
