@@ -28,8 +28,10 @@ type Props<T> = Required<
 >;
 
 const TableHead = <T,>(props: Props<T>) => {
-	const { headRef, gridTemplateColumns, v_scrollbar, deepLevel } = props;
-	const headGridTemplateColumns = v_scrollbar.have ? gridTemplateColumns + ` minmax(${v_scrollbar.width}px, 1fr)` : gridTemplateColumns;
+	const { headRef, gridTemplateColumns, v_scrollbar, deepLevel, bordered } = props;
+	const vScrollbarWidth =
+		v_scrollbar.width !== 0 && bordered === true ? `calc(${v_scrollbar.width}px + var(--table-cell-border-width))` : `${v_scrollbar.width}px`;
+	const headGridTemplateColumns = v_scrollbar.have ? gridTemplateColumns + ` minmax(${vScrollbarWidth}, 1fr)` : gridTemplateColumns;
 
 	return (
 		<div ref={headRef} className={classNames(styles['head'])}>

@@ -81,9 +81,13 @@ const useTableObserver = <T>({ tableState, tableVirtual, tableDomRef }: Props<T>
 			const ob = new ResizeObserver(calcObserver);
 			ob.observe(body, { box: 'border-box' });
 			ob.observe(bodyInner, { box: 'border-box' });
+			// 如果没有浏览器滚动条样式，缩放会导致浏览器滚动条大小变更
+			const onResize = () => calcObserver();
+			window.addEventListener('resize', onResize);
 
 			return () => {
 				ob.disconnect();
+				window.removeEventListener('resize', onResize);
 			};
 		}
 	}, []);

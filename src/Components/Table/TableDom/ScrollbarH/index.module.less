@@ -12,6 +12,11 @@
 		position: relative;
 		overflow-x: scroll;
 		overflow-y: hidden;
+		box-sizing: border-box;
+
+		&.bordered {
+			border-top: var(--table-cell-border-width) solid var(--table-cell-border-color);
+		}
 
 		.h-scrollbar-inner {
 			position: relative;

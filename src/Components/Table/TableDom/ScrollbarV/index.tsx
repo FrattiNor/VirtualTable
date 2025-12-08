@@ -33,15 +33,19 @@ const ScrollbarV = <T,>(props: Props<T>) => {
 	}, [v_scrollbar.have]);
 
 	if (v_scrollbar.have && v_scrollbar.width > 0) {
+		const vScrollbarWidth = bordered ? `calc(${v_scrollbar.width}px + var(--table-cell-border-width))` : v_scrollbar.width;
 		return (
 			<div
 				ref={vScrollbarRef}
-				style={{ width: v_scrollbar.width, minWidth: v_scrollbar.width, maxWidth: v_scrollbar.width }}
-				className={classNames(styles['v-scrollbar'], scrollbarStyles['scrollbar'], { [scrollbarStyles['bordered']]: bordered })}
+				style={{ width: vScrollbarWidth, minWidth: vScrollbarWidth, maxWidth: vScrollbarWidth }}
+				className={classNames(styles['v-scrollbar'], scrollbarStyles['scrollbar'], {
+					[styles['bordered']]: bordered,
+					[scrollbarStyles['bordered']]: bordered,
+				})}
 			>
 				<div
 					className={styles['v-scrollbar-inner']}
-					style={{ height: v_scrollbar.innerSize, width: v_scrollbar.width, minWidth: v_scrollbar.width, maxWidth: v_scrollbar.width }}
+					style={{ height: v_scrollbar.innerSize, width: vScrollbarWidth, minWidth: vScrollbarWidth, maxWidth: vScrollbarWidth }}
 				/>
 			</div>
 		);

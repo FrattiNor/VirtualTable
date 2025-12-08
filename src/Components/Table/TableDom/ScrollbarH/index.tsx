@@ -35,19 +35,24 @@ const ScrollbarH = <T,>(props: Props<T>) => {
 	}, [h_scrollbar.have]);
 
 	if (h_scrollbar.have && h_scrollbar.width > 0) {
+		const vScrollbarWidth = bordered ? `calc(${v_scrollbar.width}px + var(--table-cell-border-width))` : v_scrollbar.width;
+		const hScrollbarWidth = bordered ? `calc(${h_scrollbar.width}px + var(--table-cell-border-width))` : h_scrollbar.width;
 		return (
 			<div className={styles['h-scrollbar-wrapper']}>
 				<div
 					ref={hScrollbarRef}
-					style={{ height: h_scrollbar.width, minHeight: h_scrollbar.width, maxHeight: h_scrollbar.width }}
-					className={classNames(styles['h-scrollbar'], scrollbarStyles['scrollbar'], { [scrollbarStyles['bordered']]: bordered })}
+					style={{ height: hScrollbarWidth, minHeight: hScrollbarWidth, maxHeight: hScrollbarWidth }}
+					className={classNames(styles['h-scrollbar'], scrollbarStyles['scrollbar'], {
+						[styles['bordered']]: bordered,
+						[scrollbarStyles['bordered']]: bordered,
+					})}
 				>
 					<div
 						className={styles['h-scrollbar-inner']}
 						style={{
-							height: h_scrollbar.width,
-							minHeight: h_scrollbar.width,
-							maxHeight: h_scrollbar.width,
+							height: hScrollbarWidth,
+							minHeight: hScrollbarWidth,
+							maxHeight: hScrollbarWidth,
 							width: h_scrollbar.innerSize,
 						}}
 					/>
@@ -57,12 +62,12 @@ const ScrollbarH = <T,>(props: Props<T>) => {
 					<div
 						className={classNames(styles['v-scrollbar-placeholder'], { [styles['bordered']]: bordered })}
 						style={{
-							width: v_scrollbar.width,
-							height: h_scrollbar.width,
-							minWidth: v_scrollbar.width,
-							maxWidth: v_scrollbar.width,
-							minHeight: h_scrollbar.width,
-							maxHeight: h_scrollbar.width,
+							width: vScrollbarWidth,
+							height: hScrollbarWidth,
+							minWidth: vScrollbarWidth,
+							maxWidth: vScrollbarWidth,
+							minHeight: hScrollbarWidth,
+							maxHeight: hScrollbarWidth,
 						}}
 					/>
 				)}

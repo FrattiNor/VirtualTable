@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useDeferredValue, useState } from 'react';
 
 import { type TableColumnFixed, type ResizeFlag, type TableScrollbarState } from '../../TableTypes/type';
 
@@ -20,7 +20,9 @@ const useTableState = () => {
 	// 横向滚动条
 	const [h_scrollbar, setH_scrollbar] = useState<TableScrollbarState>(() => ({ have: false, innerSize: 0, width: 0 }));
 	// 左右固定的index { [key]: { fixed: TableColumnFixed; index: number } }
-	const [pingedMap, setPingedMap] = useState<Map<string, { fixed: TableColumnFixed; index: number }>>(() => new Map());
+	const [_pingedMap, setPingedMap] = useState<Map<string, { fixed: TableColumnFixed; index: number }>>(() => new Map());
+	// 不重要的状态降低优先级
+	const pingedMap = useDeferredValue(_pingedMap);
 
 	return {
 		tableWidth,

@@ -5,7 +5,12 @@
 	position: relative;
 	overflow-x: hidden;
 	overflow-y: scroll;
+	box-sizing: border-box;
 	background-color: var(--table-bg);
+
+	&.bordered {
+		border-left: var(--table-cell-border-width) solid var(--table-cell-border-color);
+	}
 
 	.v-scrollbar-inner {
 		position: relative;
