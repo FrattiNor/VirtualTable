@@ -6,19 +6,42 @@ import styles from './index.module.less';
 
 import type { TableInstance } from '../../../../useTableInstance';
 
-type Props<T> = Required<Pick<TableInstance<T>, 'bordered' | 'rowHeight' | 'v_measureItemRef'>> & {
+type Props<T> = Required<
+	Pick<
+		TableInstance<T>,
+		'bordered' | 'rowHeight' | 'v_measureItemRef' | 'bodyRowClick' | 'bodyRowMouseEnter' | 'bodyRowMouseLeave' | 'getBodyCellBg'
+	>
+> & {
 	rowIndex: number;
 	colIndex: number;
+	dataRowKey: string;
 };
 
 const BodyCellPlaceholder = <T,>(props: Props<T>) => {
-	const { bordered, rowIndex, colIndex, rowHeight, v_measureItemRef } = props;
+	const {
+		dataRowKey,
+		bordered,
+		rowIndex,
+		colIndex,
+		rowHeight,
+		v_measureItemRef,
+		bodyRowClick,
+		bodyRowMouseEnter,
+		bodyRowMouseLeave,
+		getBodyCellBg,
+	} = props;
+
+	const backgroundColor = getBodyCellBg({ rowKeys: [dataRowKey], colKeys: undefined });
 
 	return (
 		<div
 			data-col={colIndex + 1}
+			onClick={bodyRowClick ? () => bodyRowClick({ rowKeys: [dataRowKey] }) : undefined}
+			onMouseEnter={bodyRowMouseEnter ? () => bodyRowMouseEnter({ rowKeys: [dataRowKey] }) : undefined}
+			onMouseLeave={bodyRowMouseLeave ? () => bodyRowMouseLeave({ rowKeys: [dataRowKey] }) : undefined}
 			ref={(node) => v_measureItemRef(rowIndex, node)}
 			style={{
+				backgroundColor,
 				minHeight: rowHeight,
 				gridRow: `${rowIndex + 1}/${rowIndex + 2}`,
 				gridColumn: `${colIndex + 1}/${colIndex + 2}`,

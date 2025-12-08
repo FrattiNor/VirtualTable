@@ -76,15 +76,21 @@ const BodyInner = <T,>(props: Props<T>) => {
 			});
 			if (haveCell === false) return null;
 			if (firstRowIndex === null) firstRowIndex = rowIndex;
+			const dataRowKey = getRowKey(rowKey, dataItem, rowIndex);
 			return (
-				<div key={getRowKey(rowKey, dataItem, rowIndex)} data-row={rowIndex + 1} style={{ display: 'contents' }}>
+				<div key={dataRowKey} data-row={rowIndex + 1} style={{ display: 'contents' }}>
 					{rowCells}
 					<BodyCellPlaceholder
 						rowIndex={rowIndex}
+						dataRowKey={dataRowKey}
 						bordered={props.bordered}
 						rowHeight={props.rowHeight}
+						bodyRowClick={props.bodyRowClick}
+						getBodyCellBg={props.getBodyCellBg}
 						colIndex={props.splitColumnsArr.length}
 						v_measureItemRef={props.v_measureItemRef}
+						bodyRowMouseEnter={props.bodyRowMouseEnter}
+						bodyRowMouseLeave={props.bodyRowMouseLeave}
 					/>
 				</div>
 			);

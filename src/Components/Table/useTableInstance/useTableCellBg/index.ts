@@ -84,9 +84,9 @@ const useTableCellBg = <T>({ tableState, tableRequiredProps }: Props<T>) => {
 	// 获取body cell 背景色
 	// 根据resize、hover、select、click决定，存在3档颜色
 	const getBodyCellBg = useCallback(
-		({ rowKeys, colKeys, defaultBgLevel }: { rowKeys: string[]; colKeys: string[]; defaultBgLevel?: number }) => {
+		({ rowKeys, colKeys, defaultBgLevel }: { rowKeys: string[]; colKeys: undefined | string[]; defaultBgLevel?: number }) => {
 			let bgColorLevel = defaultBgLevel ?? 0;
-			if (getColOnResized({ colKeys, every: false })) bgColorLevel += 2;
+			if (colKeys && getColOnResized({ colKeys, every: false })) bgColorLevel += 2;
 			if (rowClick === true && getRowClicked({ rowKeys })) bgColorLevel += 2;
 			if (rowHover === true && getRowHovered({ rowKeys }) === true) bgColorLevel += 1;
 			// if (rowSelect === true && getSelected({ rowKeys }) === true) bgColorLevel++;
