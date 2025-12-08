@@ -7,7 +7,7 @@ import type useSizeCacheMap from './useSizeCacheMap';
 
 type Props = {
 	sizeCache: ReturnType<typeof useSizeCacheMap>;
-	props: Omit<VirtualProps, 'onRangeChange' | 'onTotalSizeChange'>;
+	props: Omit<VirtualProps, 'onChange'>;
 };
 
 const useItemSizeObserver = ({ sizeCache, props }: Props) => {

@@ -1,7 +1,7 @@
 import { useEffect, useLayoutEffect } from 'react';
 
 import { useScrollBy } from './useScroll';
-import useDebounce from '../../TableHooks/useDebounce';
+import useAnimationDebounce from '../../TableHooks/useAnimationDebounce';
 import calcBorderWidth from '../../TableUtils/calcBorderWidth';
 
 import type useTableDomRef from '../useTableDomRef';
@@ -17,7 +17,7 @@ type Props<T> = {
 const useTableObserver = <T>({ tableState, tableVirtual, tableDomRef }: Props<T>) => {
 	const { headRef, bodyRef, bodyInnerRef, hScrollbarRef, vScrollbarRef } = tableDomRef;
 
-	const { debounce } = useDebounce();
+	const { debounce } = useAnimationDebounce();
 	const scrollByTop = useScrollBy('scrollTop');
 	const scrollByLeft = useScrollBy('scrollLeft');
 	const { getH_virtualCore, getV_virtualCore } = tableVirtual;
@@ -93,14 +93,14 @@ const useTableObserver = <T>({ tableState, tableVirtual, tableDomRef }: Props<T>
 			const body = bodyRef.current;
 			const handleWheel = (e: WheelEvent) => {
 				const scrollCoefficient = -(((e as any).wheelDeltaY as number) ?? -e.deltaY) > 0 ? 1 : -1;
-				const scrollDistance = scrollCoefficient * 150;
+				const scrollDistance = scrollCoefficient * 167;
 				if (e.shiftKey === true) {
 					if (hScrollbarRef.current) {
-						scrollByLeft({ el: hScrollbarRef.current, offset: scrollDistance, duration: 150 });
+						scrollByLeft({ el: hScrollbarRef.current, offset: scrollDistance, duration: 167 });
 					}
 				} else {
 					if (vScrollbarRef.current) {
-						scrollByTop({ el: vScrollbarRef.current, offset: scrollDistance, duration: 150 });
+						scrollByTop({ el: vScrollbarRef.current, offset: scrollDistance, duration: 167 });
 					}
 				}
 			};
@@ -117,14 +117,14 @@ const useTableObserver = <T>({ tableState, tableVirtual, tableDomRef }: Props<T>
 			const head = headRef.current;
 			const handleWheel = (e: WheelEvent) => {
 				const scrollCoefficient = -(((e as any).wheelDeltaY as number) ?? -e.deltaY) > 0 ? 1 : -1;
-				const scrollDistance = scrollCoefficient * 150;
+				const scrollDistance = scrollCoefficient * 167;
 				if (e.shiftKey === true) {
 					if (hScrollbarRef.current) {
-						scrollByLeft({ el: hScrollbarRef.current, offset: scrollDistance, duration: 150 });
+						scrollByLeft({ el: hScrollbarRef.current, offset: scrollDistance, duration: 167 });
 					}
 				} else {
 					if (vScrollbarRef.current) {
-						scrollByTop({ el: vScrollbarRef.current, offset: scrollDistance, duration: 150 });
+						scrollByTop({ el: vScrollbarRef.current, offset: scrollDistance, duration: 167 });
 					}
 				}
 			};

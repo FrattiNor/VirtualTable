@@ -1,4 +1,4 @@
-import { memo, startTransition, useEffect, useRef } from 'react';
+import { memo, useEffect, useRef } from 'react';
 
 import styles from './index.module.less';
 
@@ -34,15 +34,13 @@ const ObserverItem = <T,>(props: Props<T>) => {
 			intersectionObserver.observe(item);
 			return () => {
 				intersectionObserver.unobserve(item);
-				startTransition(() => {
-					setPingedMap((old) => {
-						const key = leafColumn.key;
-						if (old.has(key)) {
-							old.delete(key);
-							return new Map(old);
-						}
-						return old;
-					});
+				setPingedMap((old) => {
+					const key = leafColumn.key;
+					if (old.has(key)) {
+						old.delete(key);
+						return new Map(old);
+					}
+					return old;
 				});
 			};
 		}

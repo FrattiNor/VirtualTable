@@ -3,14 +3,14 @@ import { memo, useEffect } from 'react';
 import classNames from 'classnames';
 
 import styles from './index.module.less';
-import useThrottle from '../../TableHooks/useThrottle';
+import useAnimationThrottle from '../../TableHooks/useAnimationThrottle';
 import scrollbarStyles from '../../TableUtils/calcBorderWidth/index.module.less';
 import { type TableInstance } from '../../useTableInstance';
 
 type Props<T> = Required<Pick<TableInstance<T>, 'v_scrollbar' | 'bordered' | 'vScrollbarRef' | 'bodyRef' | 'getV_virtualCore'>>;
 
 const ScrollbarV = <T,>(props: Props<T>) => {
-	const { throttle } = useThrottle({ multiple: 1 });
+	const { throttle } = useAnimationThrottle();
 	const { v_scrollbar, bordered, vScrollbarRef, getV_virtualCore } = props;
 
 	useEffect(() => {
@@ -19,14 +19,14 @@ const ScrollbarV = <T,>(props: Props<T>) => {
 
 			const handleScroll = () => {
 				throttle(() => {
-					getV_virtualCore().updateScrollOffset(vScrollbar.scrollTop, { isScroll: true });
+					getV_virtualCore().updateScrollOffset(vScrollbar.scrollTop);
 				});
 			};
 
 			vScrollbar.addEventListener('scroll', handleScroll, { passive: true });
 
 			return () => {
-				getV_virtualCore().updateScrollOffset(0, { isScroll: true });
+				getV_virtualCore().updateScrollOffset(0);
 				vScrollbar.removeEventListener('scroll', handleScroll);
 			};
 		}

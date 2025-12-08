@@ -14,46 +14,6 @@ class VirtualCore {
 		}
 	}
 
-	// 更新props【外部使用】，用于更新props，并触发一系列修改
-	updateProps(props: VirtualProps) {
-		// 判断propsChanged
-		const enabledChanged = (props.enabled ?? true) !== (this.props.enabled ?? true);
-		const countChanged = props.count !== this.props.count;
-		const overscanChanged = props.overscan?.[0] !== this.props.overscan?.[0] || props.overscan?.[1] !== this.props.overscan?.[1];
-		const gapChanged =
-			props.gap?.itemGap !== this.props.gap?.itemGap ||
-			props.gap?.startGap !== this.props.gap?.startGap ||
-			props.gap?.endGap !== this.props.gap?.endGap;
-		const getItemKeyChanged = props.getItemKey !== this.props.getItemKey;
-		const getItemSizeChanged = props.getItemSize !== this.props.getItemSize;
-		// 更新props
-		this.props = {
-			...props,
-			enabled: props.enabled ?? true,
-		};
-		//
-		if (enabledChanged) {
-			if ((this.props.enabled ?? true) === true) {
-				this.updateSizeList();
-				this.updateRange({ isScroll: false });
-			} else {
-				this.end();
-			}
-			return;
-		}
-		if (this.props.enabled === true) {
-			if (countChanged || getItemKeyChanged || getItemSizeChanged || gapChanged) {
-				this.updateSizeList();
-				this.updateRange({ isScroll: false });
-				return;
-			}
-			if (overscanChanged) {
-				this.updateRange({ isScroll: false });
-				return;
-			}
-		}
-	}
-
 	// 更新sizeList，同时触发更新totalSize
 	private updateSizeList() {
 		// 更新sizeList
@@ -63,24 +23,19 @@ class VirtualCore {
 			getItemKey: this.props.getItemKey,
 			getItemSize: this.props.getItemSize,
 		});
-		// 更新totalSize
-		const nextTotalSize = (() => {
+		// 获取最新的totalSize
+		const totalSize = (() => {
 			if (Array.isArray(this.state.sizeList) && this.state.sizeList.length > 0)
 				return this.state.sizeList[this.state.sizeList.length - 1].nextStart;
 			return null;
 		})();
-		if (this.state.totalSize !== nextTotalSize) {
-			this.state.totalSize = nextTotalSize;
-			// 触发totalSizeChange回调
-			if (this.props.onTotalSizeChange) {
-				this.props.onTotalSizeChange(this.state.totalSize);
-			}
-		}
+		//
+		return { totalSize };
 	}
 
-	// 更新range
-	private updateRange({ isScroll }: { isScroll: boolean }) {
-		const { startIndex, endIndex } = (() => {
+	// 获得range
+	private getRange() {
+		return (() => {
 			if (
 				typeof this.state.scrollOffset === 'number' &&
 				typeof this.state.containerSize === 'number' &&
@@ -101,54 +56,143 @@ class VirtualCore {
 				})[1];
 				const startIndex = Math.max(0, _startIndex - (this.props.overscan?.[0] ?? 0));
 				const endIndex = Math.min(this.props.count - 1, _endIndex + (this.props.overscan?.[1] ?? 0));
-				return { startIndex, endIndex };
+				return { start: startIndex, end: endIndex };
 			}
-			return { startIndex: null, endIndex: null };
+			return { start: null, end: null };
 		})();
-		if (this.state.rangeStart !== startIndex || this.state.rangeEnd !== endIndex) {
-			this.state.rangeStart = startIndex;
-			this.state.rangeEnd = endIndex;
-			// 触发rangeChange回调
-			if (this.props.onRangeChange) {
-				this.props.onRangeChange({ start: this.state.rangeStart, end: this.state.rangeEnd, isScroll });
-			}
-			return true;
-		}
-		return false;
 	}
 
-	// 结束
-	private end() {
-		const nextState = getEmptyState();
-		// 触发totalSizeChange回调
-		if (this.props.onTotalSizeChange && nextState.totalSize !== this.state.totalSize) {
-			this.props.onTotalSizeChange(null);
+	// 触发更新
+	private maybeEnd() {
+		let changed = false;
+		const emptyState = getEmptyState();
+		const { totalSize, rangeStart, rangeEnd, scrollOffset, containerSize } = emptyState;
+		if (
+			this.state.totalSize !== totalSize ||
+			this.state.rangeStart !== rangeStart ||
+			this.state.rangeEnd !== rangeEnd ||
+			this.state.scrollOffset !== scrollOffset ||
+			this.state.containerSize !== containerSize
+		) {
+			changed = true;
 		}
-		// 触发rangeChange回调
-		if (this.props.onRangeChange && (nextState.rangeStart !== this.state.rangeStart || nextState.rangeEnd !== this.state.rangeEnd)) {
-			this.props.onRangeChange({ start: null, end: null, isScroll: false });
+		this.state = emptyState;
+		if (changed === true && typeof this.props.onChange === 'function') {
+			this.props.onChange({
+				range: { start: this.state.rangeStart, end: this.state.rangeEnd, isScroll: false },
+				containerSize: this.state.containerSize,
+				scrollOffset: this.state.scrollOffset,
+				totalSize: this.state.totalSize,
+			});
 		}
-		// 清空state
-		this.state = nextState;
+	}
+
+	// 触发更新
+	private maybeChange1(arg: { range?: { start: number | null; end: number | null; isScroll: boolean }; totalSize?: number | null }) {
+		let changed = false;
+		let isScroll = false;
+		const { range, totalSize } = arg;
+		if (totalSize !== undefined && this.state.totalSize !== totalSize) {
+			this.state.totalSize = totalSize;
+			changed = true;
+		}
+		if (range !== undefined && (this.state.rangeStart !== range.start || this.state.rangeEnd !== range.end)) {
+			this.state.rangeStart = range.start;
+			this.state.rangeEnd = range.end;
+			isScroll = range.isScroll;
+			changed = true;
+		}
+		if (changed === true && typeof this.props.onChange === 'function') {
+			this.props.onChange({
+				range: { start: this.state.rangeStart, end: this.state.rangeEnd, isScroll },
+				containerSize: this.state.containerSize,
+				scrollOffset: this.state.scrollOffset,
+				totalSize: this.state.totalSize,
+			});
+		}
+	}
+
+	// 触发更新
+	private maybeChange2(arg: { scrollOffset?: number; containerSize?: number | null }) {
+		let changed = false;
+		let isScroll = false;
+		const { scrollOffset, containerSize } = arg;
+		if (scrollOffset !== undefined && this.state.scrollOffset !== scrollOffset) {
+			this.state.scrollOffset = scrollOffset;
+			isScroll = true;
+			changed = true;
+		}
+		if (containerSize !== undefined && this.state.containerSize !== containerSize) {
+			this.state.containerSize = containerSize;
+			changed = true;
+		}
+		if (changed === true) {
+			const { start, end } = this.getRange();
+			this.state.rangeStart = start;
+			this.state.rangeEnd = end;
+			if (typeof this.props.onChange === 'function') {
+				this.props.onChange({
+					range: { start: this.state.rangeStart, end: this.state.rangeEnd, isScroll },
+					containerSize: this.state.containerSize,
+					scrollOffset: this.state.scrollOffset,
+					totalSize: this.state.totalSize,
+				});
+			}
+		}
+	}
+
+	// 更新props【外部使用】，用于更新props，并触发一系列修改
+	updateProps(props: VirtualProps) {
+		// 判断propsChanged
+		const enabledChanged = (props.enabled ?? true) !== (this.props.enabled ?? true);
+		const countChanged = props.count !== this.props.count;
+		const overscanChanged = props.overscan?.[0] !== this.props.overscan?.[0] || props.overscan?.[1] !== this.props.overscan?.[1];
+		const gapChanged =
+			props.gap?.itemGap !== this.props.gap?.itemGap ||
+			props.gap?.startGap !== this.props.gap?.startGap ||
+			props.gap?.endGap !== this.props.gap?.endGap;
+		const getItemKeyChanged = props.getItemKey !== this.props.getItemKey;
+		const getItemSizeChanged = props.getItemSize !== this.props.getItemSize;
+		// 更新props
+		this.props = {
+			...props,
+			enabled: props.enabled ?? true,
+		};
+		//
+		if (enabledChanged) {
+			if ((this.props.enabled ?? true) === true) {
+				const { totalSize } = this.updateSizeList();
+				const { start, end } = this.getRange();
+				this.maybeChange1({ range: { start, end, isScroll: false }, totalSize });
+			} else {
+				// end
+				this.maybeEnd();
+			}
+			return;
+		}
+		if (this.props.enabled === true) {
+			if (countChanged || getItemKeyChanged || getItemSizeChanged || gapChanged) {
+				const { totalSize } = this.updateSizeList();
+				const { start, end } = this.getRange();
+				this.maybeChange1({ range: { start, end, isScroll: false }, totalSize });
+				return;
+			}
+			if (overscanChanged) {
+				const { start, end } = this.getRange();
+				this.maybeChange1({ range: { start, end, isScroll: false } });
+				return;
+			}
+		}
 	}
 
 	// 更新容器size【外部使用】
 	updateContainerSize(size: number | null) {
-		if (this.state.containerSize !== size) {
-			this.state.containerSize = size;
-			this.updateRange({ isScroll: false });
-		}
+		this.maybeChange2({ containerSize: size });
 	}
 
 	// 更新滚动offset【外部使用】
-	updateScrollOffset(offset: number, { isScroll }: { isScroll: boolean }) {
-		if (this.state.scrollOffset !== offset) {
-			this.state.scrollOffset = offset;
-			const changed = this.updateRange({ isScroll });
-			if (this.props.onScrollOffsetChange) {
-				this.props.onScrollOffsetChange(offset, changed);
-			}
-		}
+	updateScrollOffset(offset: number) {
+		this.maybeChange2({ scrollOffset: offset });
 	}
 }
 

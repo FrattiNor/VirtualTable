@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 
 import { type VirtualProps } from '../Core/type';
 
-type Props = Omit<VirtualProps, 'onRangeChange' | 'onTotalSizeChange'>;
+type Props = Omit<VirtualProps, 'onChange'>;
 
 const useSizeCacheMap = ({ getItemKey, getItemSize, count }: Props) => {
 	// itemSize缓存

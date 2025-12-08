@@ -3,7 +3,7 @@ import { memo, useEffect } from 'react';
 import classNames from 'classnames';
 
 import styles from './index.module.less';
-import useThrottle from '../../TableHooks/useThrottle';
+import useAnimationThrottle from '../../TableHooks/useAnimationThrottle';
 import scrollbarStyles from '../../TableUtils/calcBorderWidth/index.module.less';
 import { type TableInstance } from '../../useTableInstance';
 
@@ -12,7 +12,7 @@ type Props<T> = Required<
 >;
 
 const ScrollbarH = <T,>(props: Props<T>) => {
-	const { throttle } = useThrottle({ multiple: 1 });
+	const { throttle } = useAnimationThrottle();
 	const { h_scrollbar, v_scrollbar, bordered, hScrollbarRef, getH_virtualCore } = props;
 
 	useEffect(() => {
@@ -21,14 +21,14 @@ const ScrollbarH = <T,>(props: Props<T>) => {
 
 			const handleScroll = () => {
 				throttle(() => {
-					getH_virtualCore().updateScrollOffset(hScrollbar.scrollLeft, { isScroll: true });
+					getH_virtualCore().updateScrollOffset(hScrollbar.scrollLeft);
 				});
 			};
 
 			hScrollbar.addEventListener('scroll', handleScroll, { passive: true });
 
 			return () => {
-				getH_virtualCore().updateScrollOffset(0, { isScroll: true });
+				getH_virtualCore().updateScrollOffset(0);
 				hScrollbar.removeEventListener('scroll', handleScroll);
 			};
 		}

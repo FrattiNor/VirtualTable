@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo } from 'react';
 
-import useThrottle from '../../TableHooks/useThrottle';
+import useAnimationThrottle from '../../TableHooks/useAnimationThrottle';
 
 import type useTableRequiredProps from '../useTableRequiredProps';
 import type useTableState from '../useTableState';
@@ -13,9 +13,8 @@ type Props<T> = {
 // 表格 单元格 背景色
 // 根据点击、hover、resize决定
 const useTableCellBg = <T>({ tableState, tableRequiredProps }: Props<T>) => {
-	const { throttle: throttle1 } = useThrottle();
-	const { throttle: throttle2 } = useThrottle();
-	const { throttle: throttle3 } = useThrottle();
+	const { throttle: throttle1 } = useAnimationThrottle();
+	const { throttle: throttle2 } = useAnimationThrottle();
 	const { rowClick, rowHover } = tableRequiredProps.rowBgHighlight;
 	const { resizeFlag, rowClickedMap, rowHoveredMap, setRowClickedMap, setRowHoveredMap } = tableState;
 
@@ -133,7 +132,7 @@ const useTableCellBg = <T>({ tableState, tableRequiredProps }: Props<T>) => {
 	const bodyRowMouseLeave = useMemo(() => {
 		if (rowHover) {
 			return ({ rowKeys }: { rowKeys: string[] }) => {
-				throttle2(() => {
+				throttle1(() => {
 					setRowHoveredMap((old) => {
 						let changed = false;
 						for (let i = 0; i < rowKeys.length; i++) {
@@ -154,7 +153,7 @@ const useTableCellBg = <T>({ tableState, tableRequiredProps }: Props<T>) => {
 	const bodyRowClick = useMemo(() => {
 		if (rowClick) {
 			return ({ rowKeys }: { rowKeys: string[] }) => {
-				throttle3(() => {
+				throttle2(() => {
 					setRowClickedMap((old) => {
 						let isSame = true;
 						const next = new Map<string, true>();

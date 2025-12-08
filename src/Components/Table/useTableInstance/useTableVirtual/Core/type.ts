@@ -12,12 +12,13 @@ export interface VirtualProps {
 	getItemKey: (index: number) => string;
 	// 【注意Memo】
 	getItemSize: (index: number) => number;
-	// range变更【isScroll判断是否需要flushSync】
-	onRangeChange?: (p: { start: number | null; end: number | null; isScroll: boolean }) => void;
-	// totalSize变更
-	onTotalSizeChange?: (size: number | null) => void;
-	// scrollOffset变更
-	onScrollOffsetChange?: (offset: number, rangeChange: boolean) => void;
+	// range变更、totalSize变更、scrollOffset变更 触发
+	onChange?: (arg: {
+		range: { start: number | null; end: number | null; isScroll: boolean };
+		containerSize: number | null;
+		totalSize: number | null;
+		scrollOffset: number;
+	}) => void;
 }
 
 // 对内

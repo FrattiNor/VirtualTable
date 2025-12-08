@@ -1,8 +1,8 @@
-import { memo, useState, useEffect, startTransition } from 'react';
+import { memo, useState, useEffect } from 'react';
 
 import styles from './index.module.less';
 import ObserverItem from './ObserverItem';
-import useThrottle from '../../../TableHooks/useThrottle';
+import useAnimationThrottle from '../../../TableHooks/useAnimationThrottle';
 import { type TableColumnFixed } from '../../../TableTypes/type';
 import { getLeafColumn } from '../../../TableUtils';
 
@@ -16,7 +16,7 @@ type Props<T> = Required<
 >;
 
 const ObserverStickyRow = <T,>(props: Props<T>) => {
-	const { throttle } = useThrottle();
+	const { throttle } = useAnimationThrottle();
 	const { splitColumnsArr, bodyRef, setPingedMap, columnsKeyIndexMap, gridTemplateColumns } = props;
 	const [intersectionObserver, setIntersectionObserver] = useState<IntersectionObserver | null>(null);
 
@@ -26,39 +26,37 @@ const ObserverStickyRow = <T,>(props: Props<T>) => {
 			const _observer = new IntersectionObserver(
 				(entries) => {
 					throttle(() => {
-						startTransition(() => {
-							setPingedMap((old) => {
-								let changed = false;
-								entries.forEach((entry) => {
-									const key = entry.target.getAttribute('data-key');
-									const _fixed = entry.target.getAttribute('data-fixed');
-									const _index = entry.target.getAttribute('data-index');
-									if (key !== null && _index !== null && _fixed !== null) {
-										const index = parseInt(_index);
-										const fixed = _fixed as TableColumnFixed;
-										// 触发pinged
-										// 缩放可能导致无法达到1
-										// 确保left是左侧遮挡，right是右侧遮挡
-										if (
-											entry.intersectionRatio < 0.975 &&
-											((fixed === 'left' && entry.boundingClientRect.left < (entry.rootBounds?.left ?? 0)) ||
-												(fixed === 'right' && entry.boundingClientRect.right > (entry.rootBounds?.right ?? 0)))
-										) {
-											if (!old.has(key) || old.get(key)?.fixed !== fixed || old.get(key)?.index !== index) {
-												old.set(key, { fixed, index });
-												changed = true;
-											}
-										}
-										// 未触发pinged
-										else if (old.has(key)) {
-											old.delete(key);
+						setPingedMap((old) => {
+							let changed = false;
+							entries.forEach((entry) => {
+								const key = entry.target.getAttribute('data-key');
+								const _fixed = entry.target.getAttribute('data-fixed');
+								const _index = entry.target.getAttribute('data-index');
+								if (key !== null && _index !== null && _fixed !== null) {
+									const index = parseInt(_index);
+									const fixed = _fixed as TableColumnFixed;
+									// 触发pinged
+									// 缩放可能导致无法达到1
+									// 确保left是左侧遮挡，right是右侧遮挡
+									if (
+										entry.intersectionRatio < 0.975 &&
+										((fixed === 'left' && entry.boundingClientRect.left < (entry.rootBounds?.left ?? 0)) ||
+											(fixed === 'right' && entry.boundingClientRect.right > (entry.rootBounds?.right ?? 0)))
+									) {
+										if (!old.has(key) || old.get(key)?.fixed !== fixed || old.get(key)?.index !== index) {
+											old.set(key, { fixed, index });
 											changed = true;
 										}
 									}
-								});
-								if (changed) return new Map(old);
-								return old;
+									// 未触发pinged
+									else if (old.has(key)) {
+										old.delete(key);
+										changed = true;
+									}
+								}
 							});
+							if (changed) return new Map(old);
+							return old;
 						});
 					});
 				},
