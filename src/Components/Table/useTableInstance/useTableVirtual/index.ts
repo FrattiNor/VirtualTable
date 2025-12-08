@@ -45,12 +45,13 @@ const useTableVirtual = <T>({ tableColumns, tableState, tableRequiredProps, tabl
 		bodyRef: tableDomRef.bodyRef,
 	});
 
+	const v_sizeList = v_virtual.sizeList;
 	const v_rangeEnd = v_virtual.rangeEnd;
 	const v_rangeStart = v_virtual.rangeStart;
 	const v_totalSize = v_virtual.totalSize;
-	const v_offsetTop = v_virtual.offsetTop;
 	const v_measureItemRef = v_virtual.measureItemRef;
 	const [getV_virtualCore] = useRefValue(v_virtual.virtualCore);
+	const getV_OffsetTop = useCallback((rowIndex: number) => v_sizeList?.[rowIndex]?.start ?? 0, [v_sizeList]);
 
 	const getHeadCellShow = useCallback(
 		({ colIndexStart, colIndexEnd }: { colIndexStart: number; colIndexEnd: number }) => {
@@ -102,7 +103,7 @@ const useTableVirtual = <T>({ tableColumns, tableState, tableRequiredProps, tabl
 		[h_rangeStart, h_rangeEnd, v_rangeStart, v_rangeEnd, splitColumnsArr, colBodyForceRenderObj],
 	);
 
-	return { v_totalSize, v_offsetTop, getH_virtualCore, getV_virtualCore, v_measureItemRef, getHeadCellShow, getBodyCellShow };
+	return { v_totalSize, getV_OffsetTop, getH_virtualCore, getV_virtualCore, v_measureItemRef, getHeadCellShow, getBodyCellShow };
 };
 
 export default useTableVirtual;

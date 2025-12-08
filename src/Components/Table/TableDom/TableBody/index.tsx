@@ -35,7 +35,7 @@ type Props<T> = Required<
 		| 'bodyRowMouseLeave'
 		| 'getBodyCellShow'
 		| 'v_totalSize'
-		| 'v_offsetTop'
+		| 'getV_OffsetTop'
 		| 'v_measureItemRef'
 	>
 >;
@@ -68,10 +68,10 @@ const TableBody = <T,>(props: Props<T>) => {
 				rowHeight={props.rowHeight}
 				tableWidth={props.tableWidth}
 				v_totalSize={props.v_totalSize}
-				v_offsetTop={props.v_offsetTop}
 				bodyRowClick={props.bodyRowClick}
 				bodyInnerRef={props.bodyInnerRef}
 				getBodyCellBg={props.getBodyCellBg}
+				getV_OffsetTop={props.getV_OffsetTop}
 				getBodyCellShow={props.getBodyCellShow}
 				splitColumnsArr={props.splitColumnsArr}
 				v_measureItemRef={props.v_measureItemRef}

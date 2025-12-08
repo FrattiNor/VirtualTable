@@ -1,9 +1,10 @@
 import { memo } from 'react';
 
 import BodyEmpty from './BodyEmpty';
-import BodyRow from './BodyRow';
+import BodyCell from './BodyRow/BodyCell';
+import BodyCellPlaceholder from './BodyRow/BodyCellPlaceholder';
 import styles from './index.module.less';
-import { getRowKey } from '../../../TableUtils';
+import { getLeafColumn, getRowKey } from '../../../TableUtils';
 
 import type { TableInstance } from '../../../useTableInstance';
 
@@ -26,43 +27,79 @@ type Props<T> = Required<
 		| 'bodyRowMouseLeave'
 		| 'getBodyCellShow'
 		| 'v_totalSize'
-		| 'v_offsetTop'
+		| 'getV_OffsetTop'
 		| 'v_measureItemRef'
 	>
 >;
 
 const BodyInner = <T,>(props: Props<T>) => {
-	const { data, rowKey, gridTemplateColumns, bodyInnerRef, v_offsetTop, v_totalSize } = props;
-	const isEmpty = (data ?? []).length === 0;
+	const isEmpty = (props.data ?? []).length === 0;
+	const { rowKey, data, gridTemplateColumns, bodyInnerRef, getV_OffsetTop, v_totalSize, splitColumnsArr, columnsKeyIndexMap, getBodyCellShow } =
+		props;
+
+	let firstRowIndex: number | null = null;
+	const bodyDom = (() => {
+		return data?.map((dataItem: T, rowIndex: number) => {
+			let haveCell = false;
+			const rowCells = splitColumnsArr.map((splitColumns) => {
+				const leafColumn = getLeafColumn(splitColumns);
+				const { rowSpan = 1, colSpan = 1 } = leafColumn.onCellSpan ? leafColumn.onCellSpan(dataItem, rowIndex) : {};
+				if (rowSpan <= 0 || colSpan <= 0) return null;
+				const colIndex = columnsKeyIndexMap.get(leafColumn.key) ?? Infinity;
+				const rowIndexStart = rowIndex;
+				const rowIndexEnd = rowIndex + rowSpan - 1;
+				const colIndexStart = colIndex;
+				const colIndexEnd = colIndex + colSpan - 1;
+				if (!getBodyCellShow({ colIndexStart, colIndexEnd, rowIndexStart, rowIndexEnd })) return null;
+				haveCell = true;
+				return (
+					<BodyCell
+						data={props.data}
+						dataItem={dataItem}
+						key={leafColumn.key}
+						rowKey={props.rowKey}
+						leafColumn={leafColumn}
+						colIndexEnd={colIndexEnd}
+						rowIndexEnd={rowIndexEnd}
+						bordered={props.bordered}
+						rowHeight={props.rowHeight}
+						rowIndexStart={rowIndexStart}
+						colIndexStart={colIndexStart}
+						bodyRowClick={props.bodyRowClick}
+						splitColumnsArr={splitColumnsArr}
+						getBodyCellBg={props.getBodyCellBg}
+						bodyRowMouseEnter={props.bodyRowMouseEnter}
+						bodyRowMouseLeave={props.bodyRowMouseLeave}
+						getBodyStickyStyle={props.getBodyStickyStyle}
+					/>
+				);
+			});
+			if (haveCell === false) return null;
+			if (firstRowIndex === null) firstRowIndex = rowIndex;
+			return (
+				<div key={getRowKey(rowKey, dataItem, rowIndex)} data-row={rowIndex + 1} style={{ display: 'contents' }}>
+					{rowCells}
+					<BodyCellPlaceholder
+						rowIndex={rowIndex}
+						bordered={props.bordered}
+						rowHeight={props.rowHeight}
+						colIndex={props.splitColumnsArr.length}
+						v_measureItemRef={props.v_measureItemRef}
+					/>
+				</div>
+			);
+		});
+	})();
+	const offsetTop = getV_OffsetTop(firstRowIndex ?? 0);
 
 	return (
 		<div ref={bodyInnerRef} className={styles['body-inner']} style={{ minHeight: v_totalSize }}>
 			{isEmpty && <BodyEmpty tableWidth={props.tableWidth} />}
-
 			<div
 				className={styles['body-content']}
-				style={{ gridTemplateColumns: gridTemplateColumns + ` minmax(0px, 1fr)`, transform: `translate3d(0,${v_offsetTop}px,0)` }}
+				style={{ gridTemplateColumns: gridTemplateColumns + ` minmax(0px, 1fr)`, transform: `translate3d(0,${offsetTop}px,0)` }}
 			>
-				{data?.map((dataItem, rowIndex) => (
-					<BodyRow
-						data={props.data}
-						dataItem={dataItem}
-						rowIndex={rowIndex}
-						rowKey={props.rowKey}
-						bordered={props.bordered}
-						rowHeight={props.rowHeight}
-						bodyRowClick={props.bodyRowClick}
-						getBodyCellBg={props.getBodyCellBg}
-						splitColumnsArr={props.splitColumnsArr}
-						getBodyCellShow={props.getBodyCellShow}
-						v_measureItemRef={props.v_measureItemRef}
-						key={getRowKey(rowKey, dataItem, rowIndex)}
-						bodyRowMouseEnter={props.bodyRowMouseEnter}
-						bodyRowMouseLeave={props.bodyRowMouseLeave}
-						getBodyStickyStyle={props.getBodyStickyStyle}
-						columnsKeyIndexMap={props.columnsKeyIndexMap}
-					/>
-				))}
+				{bodyDom}
 			</div>
 		</div>
 	);

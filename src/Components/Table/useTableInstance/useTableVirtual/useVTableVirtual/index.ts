@@ -50,9 +50,9 @@ const useVTableVirtual = (props: Props) => {
 	const rangeStart = virtualCore.state.rangeStart;
 	const rangeEnd = virtualCore.state.rangeEnd;
 	const totalSize = virtualCore.state.totalSize ?? 0;
-	const offsetTop = virtualCore.state.sizeList?.[rangeStart ?? 0]?.start ?? 0;
+	const sizeList = virtualCore.state.sizeList;
 
-	return { virtualCore, measureItemRef, rangeStart, rangeEnd, totalSize, offsetTop };
+	return { virtualCore, measureItemRef, rangeStart, rangeEnd, totalSize, sizeList };
 };
 
 export default useVTableVirtual;

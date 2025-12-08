@@ -51,7 +51,6 @@ const Table = <T,>(_props: TableProps<T>) => {
 					tableWidth={props.tableWidth}
 					resizeFlag={props.resizeFlag}
 					v_totalSize={props.v_totalSize}
-					v_offsetTop={props.v_offsetTop}
 					bodyRowClick={props.bodyRowClick}
 					sizeCacheMap={props.sizeCacheMap}
 					bodyInnerRef={props.bodyInnerRef}
@@ -59,6 +58,7 @@ const Table = <T,>(_props: TableProps<T>) => {
 					fixedLeftMap={props.fixedLeftMap}
 					fixedRightMap={props.fixedRightMap}
 					getBodyCellBg={props.getBodyCellBg}
+					getV_OffsetTop={props.getV_OffsetTop}
 					getBodyCellShow={props.getBodyCellShow}
 					setSizeCacheMap={props.setSizeCacheMap}
 					splitColumnsArr={props.splitColumnsArr}
