@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo } from 'react';
 
-import useAnimationThrottle from '../../TableHooks/useAnimationThrottle';
+import useFrameThrottle from '../../TableHooks/useFrameThrottle';
 
 import type useTableRequiredProps from '../useTableRequiredProps';
 import type useTableState from '../useTableState';
@@ -13,8 +13,8 @@ type Props<T> = {
 // 表格 单元格 背景色
 // 根据点击、hover、resize决定
 const useTableCellBg = <T>({ tableState, tableRequiredProps }: Props<T>) => {
-	const { throttle: throttle1 } = useAnimationThrottle();
-	const { throttle: throttle2 } = useAnimationThrottle();
+	const { throttle: throttle1 } = useFrameThrottle();
+	const { throttle: throttle2 } = useFrameThrottle();
 	const { rowClick, rowHover } = tableRequiredProps.rowBgHighlight;
 	const { resizeFlag, rowClickedMap, rowHoveredMap, setRowClickedMap, setRowHoveredMap } = tableState;
 

@@ -3,14 +3,14 @@ import { memo, useEffect } from 'react';
 import classNames from 'classnames';
 
 import styles from './index.module.less';
-import useAnimationThrottle from '../../TableHooks/useAnimationThrottle';
+import useThrottle from '../../TableHooks/useThrottle';
 import scrollbarStyles from '../../TableUtils/calcBorderWidth/index.module.less';
 import { type TableInstance } from '../../useTableInstance';
 
 type Props<T> = Required<Pick<TableInstance<T>, 'v_scrollbar' | 'bordered' | 'vScrollbarRef' | 'bodyRef' | 'getV_virtualCore'>>;
 
 const ScrollbarV = <T,>(props: Props<T>) => {
-	const { throttle } = useAnimationThrottle();
+	const { throttle } = useThrottle({ frameInterval: 1 });
 	const { v_scrollbar, bordered, vScrollbarRef, getV_virtualCore } = props;
 
 	useEffect(() => {

@@ -3,7 +3,7 @@ import { useCallback, useEffect, useLayoutEffect, useState } from 'react';
 import VirtualCore from '../Core';
 import useItemSizeObserver from './useItemSizeObserver';
 import useSizeCacheMap from './useSizeCacheMap';
-import useAnimationThrottle from '../../../TableHooks/useAnimationThrottle';
+import useFrameThrottle from '../../../TableHooks/useFrameThrottle';
 import { type VirtualProps } from '../Core/type';
 
 import type useTableDomRef from '../../useTableDomRef';
@@ -16,7 +16,7 @@ const useVTableVirtual = (props: Props) => {
 	const { enabled, count, overscan, gap, getItemKey, bodyRef } = props;
 
 	const sizeCache = useSizeCacheMap(props);
-	const { throttle } = useAnimationThrottle();
+	const { throttle } = useFrameThrottle();
 	const getItemSize = sizeCache.getItemSizeCover;
 	const { measureItemRef } = useItemSizeObserver({ sizeCache, props });
 	const [virtualCore, setVirtualCore] = useState(() => {

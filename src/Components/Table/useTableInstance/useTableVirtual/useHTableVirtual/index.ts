@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useLayoutEffect, useState } from 'react';
 
-import useAnimationThrottle from '../../../TableHooks/useAnimationThrottle';
+import useFrameThrottle from '../../../TableHooks/useFrameThrottle';
 import VirtualCore from '../Core';
 import { type VirtualProps } from '../Core/type';
 
@@ -14,7 +14,7 @@ type Props = Omit<VirtualProps, 'onChange'> & {
 const useHTableVirtual = (props: Props) => {
 	const { enabled, count, overscan, gap, getItemKey, getItemSize, bodyRef, headRef } = props;
 
-	const { throttle } = useAnimationThrottle();
+	const { throttle } = useFrameThrottle();
 	const [virtualCore, setVirtualCore] = useState(() => {
 		const core = new VirtualCore();
 		core.updateProps({ gap, count, enabled, overscan, getItemKey, getItemSize });

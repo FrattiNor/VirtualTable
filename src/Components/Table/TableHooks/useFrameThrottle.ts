@@ -1,7 +1,7 @@
 import { useRef } from 'react';
 
 // 节流
-const useAnimationThrottle = <T extends () => void>() => {
+const useFrameThrottle = <T extends () => void>() => {
 	// 被防抖阻挡的最后一次fn
 	const lastFnRef = useRef<T | null>(null);
 	// 当前一帧执行完，再执行一帧来执行最后一次的fn
@@ -25,4 +25,4 @@ const useAnimationThrottle = <T extends () => void>() => {
 	return { throttle };
 };
 
-export default useAnimationThrottle;
+export default useFrameThrottle;

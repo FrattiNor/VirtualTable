@@ -2,7 +2,7 @@ import { memo, useState, useEffect } from 'react';
 
 import styles from './index.module.less';
 import ObserverItem from './ObserverItem';
-import useAnimationThrottle from '../../../TableHooks/useAnimationThrottle';
+import useFrameThrottle from '../../../TableHooks/useFrameThrottle';
 import { type TableColumnFixed } from '../../../TableTypes/type';
 import { getLeafColumn } from '../../../TableUtils';
 
@@ -16,7 +16,7 @@ type Props<T> = Required<
 >;
 
 const ObserverStickyRow = <T,>(props: Props<T>) => {
-	const { throttle } = useAnimationThrottle();
+	const { throttle } = useFrameThrottle();
 	const { splitColumnsArr, bodyRef, setPingedMap, columnsKeyIndexMap, gridTemplateColumns } = props;
 	const [intersectionObserver, setIntersectionObserver] = useState<IntersectionObserver | null>(null);
 

@@ -1,7 +1,7 @@
 import { useEffect, useLayoutEffect } from 'react';
 
 import { useScrollBy } from './useScroll';
-import useAnimationDebounce from '../../TableHooks/useAnimationDebounce';
+import useFrameDebounce from '../../TableHooks/useFrameDebounce';
 import calcBorderWidth from '../../TableUtils/calcBorderWidth';
 
 import type useTableDomRef from '../useTableDomRef';
@@ -17,7 +17,7 @@ type Props<T> = {
 const useTableObserver = <T>({ tableState, tableVirtual, tableDomRef }: Props<T>) => {
 	const { headRef, bodyRef, bodyInnerRef, hScrollbarRef, vScrollbarRef } = tableDomRef;
 
-	const { debounce } = useAnimationDebounce();
+	const { debounce } = useFrameDebounce();
 	const scrollByTop = useScrollBy('scrollTop');
 	const scrollByLeft = useScrollBy('scrollLeft');
 	const { getH_virtualCore, getV_virtualCore } = tableVirtual;

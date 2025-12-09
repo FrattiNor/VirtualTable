@@ -1,6 +1,6 @@
 import { useCallback, useEffect } from 'react';
 
-import useAnimationThrottle from '../../TableHooks/useAnimationThrottle';
+import useFrameThrottle from '../../TableHooks/useFrameThrottle';
 import useRefValue from '../../TableHooks/useRefValue';
 import { type ResizeFlag } from '../../TableTypes/type';
 import { FixedTwo, getLeafColumn } from '../../TableUtils';
@@ -27,7 +27,7 @@ type Props<T> = {
 
 // 表格resize宽度
 const useTableResize = <T>({ tableState, tableColumns, tableRequiredProps }: Props<T>) => {
-	const { throttle } = useAnimationThrottle();
+	const { throttle } = useFrameThrottle();
 	const { splitColumnsArr } = tableColumns;
 	const [getResizeEndCallback] = useRefValue(tableRequiredProps.onResizeEnd);
 	const { resizeFlag, setResized, setResizeFlag, setSizeCacheMap, sizeCacheMap } = tableState;

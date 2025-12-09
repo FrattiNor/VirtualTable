@@ -3,7 +3,7 @@ import { memo, useEffect } from 'react';
 import classNames from 'classnames';
 
 import styles from './index.module.less';
-import useAnimationThrottle from '../../TableHooks/useAnimationThrottle';
+import useThrottle from '../../TableHooks/useThrottle';
 import scrollbarStyles from '../../TableUtils/calcBorderWidth/index.module.less';
 import { type TableInstance } from '../../useTableInstance';
 
@@ -12,7 +12,7 @@ type Props<T> = Required<
 >;
 
 const ScrollbarH = <T,>(props: Props<T>) => {
-	const { throttle } = useAnimationThrottle();
+	const { throttle } = useThrottle({ frameInterval: 1 });
 	const { h_scrollbar, v_scrollbar, bordered, hScrollbarRef, getH_virtualCore } = props;
 
 	useEffect(() => {
