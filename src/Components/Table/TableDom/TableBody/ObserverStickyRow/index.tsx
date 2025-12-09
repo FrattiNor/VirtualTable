@@ -8,16 +8,11 @@ import { getLeafColumn } from '../../../TableUtils';
 
 import type { TableInstance } from '../../../useTableInstance';
 
-type Props<T> = Required<
-	Pick<
-		TableInstance<T>,
-		'fixedLeftMap' | 'fixedRightMap' | 'splitColumnsArr' | 'bodyRef' | 'setPingedMap' | 'columnsKeyIndexMap' | 'gridTemplateColumns'
-	>
->;
+type Props<T> = Pick<TableInstance<T>, 'fixedLeftMap' | 'fixedRightMap' | 'splitColumnsArr' | 'bodyRef' | 'setPingedMap' | 'gridTemplateColumns'>;
 
 const ObserverStickyRow = <T,>(props: Props<T>) => {
 	const { throttle } = useFrameThrottle();
-	const { splitColumnsArr, bodyRef, setPingedMap, columnsKeyIndexMap, gridTemplateColumns } = props;
+	const { splitColumnsArr, bodyRef, setPingedMap, gridTemplateColumns } = props;
 	const [intersectionObserver, setIntersectionObserver] = useState<IntersectionObserver | null>(null);
 
 	// IntersectionObserver
@@ -31,9 +26,7 @@ const ObserverStickyRow = <T,>(props: Props<T>) => {
 							entries.forEach((entry) => {
 								const key = entry.target.getAttribute('data-key');
 								const _fixed = entry.target.getAttribute('data-fixed');
-								const _index = entry.target.getAttribute('data-index');
-								if (key !== null && _index !== null && _fixed !== null) {
-									const index = parseInt(_index);
+								if (key !== null && _fixed !== null) {
 									const fixed = _fixed as TableColumnFixed;
 									// 触发pinged
 									// 缩放可能导致无法达到1
@@ -43,8 +36,8 @@ const ObserverStickyRow = <T,>(props: Props<T>) => {
 										((fixed === 'left' && entry.boundingClientRect.left < (entry.rootBounds?.left ?? 0)) ||
 											(fixed === 'right' && entry.boundingClientRect.right > (entry.rootBounds?.right ?? 0)))
 									) {
-										if (!old.has(key) || old.get(key)?.fixed !== fixed || old.get(key)?.index !== index) {
-											old.set(key, { fixed, index });
+										if (!old.has(key) || old.get(key)?.fixed !== fixed) {
+											old.set(key, { key, fixed });
 											changed = true;
 										}
 									}
@@ -81,19 +74,18 @@ const ObserverStickyRow = <T,>(props: Props<T>) => {
 			className={styles['observer-sticky']}
 			style={{ gridTemplateColumns: gridTemplateColumns + ` minmax(0px, 1fr)` }}
 		>
-			{splitColumnsArr.map((splitColumns) => {
+			{splitColumnsArr.map((splitColumns, colIndex) => {
 				const leafColumn = getLeafColumn(splitColumns);
-				const colIndex = columnsKeyIndexMap.get(leafColumn.key) ?? Infinity;
 				if (leafColumn.fixed) {
 					return (
 						<ObserverItem
 							colIndex={colIndex}
+							key={leafColumn.key}
 							leafColumn={leafColumn}
 							bodyRef={props.bodyRef}
 							setPingedMap={props.setPingedMap}
 							fixedLeftMap={props.fixedLeftMap}
 							fixedRightMap={props.fixedRightMap}
-							key={`${leafColumn.key}-${colIndex}`}
 							intersectionObserver={intersectionObserver}
 						/>
 					);

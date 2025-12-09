@@ -7,19 +7,19 @@ import { getLeafColumn, getRowKey } from '../../TableUtils';
 
 import type useTableColumns from '../useTableColumns';
 import type useTableDomRef from '../useTableDomRef';
-import type useTableRequiredProps from '../useTableRequiredProps';
+import type useTableInnerProps from '../useTableInnerProps';
 import type useTableState from '../useTableState';
 
 type Props<T> = {
 	tableState: ReturnType<typeof useTableState>;
 	tableDomRef: ReturnType<typeof useTableDomRef>;
 	tableColumns: ReturnType<typeof useTableColumns<T>>;
-	tableRequiredProps: ReturnType<typeof useTableRequiredProps<T>>;
+	tableInnerProps: ReturnType<typeof useTableInnerProps<T>>;
 };
 
-const useTableVirtual = <T>({ tableColumns, tableState, tableRequiredProps, tableDomRef }: Props<T>) => {
+const useTableVirtual = <T>({ tableColumns, tableState, tableInnerProps, tableDomRef }: Props<T>) => {
 	const { sizeCacheMap } = tableState;
-	const { data, rowKey, rowHeight } = tableRequiredProps;
+	const { data, rowKey, rowHeight } = tableInnerProps;
 	const { splitColumnsArr, columnKeys, colBodyForceRenderObj, colHeadForceRenderObj } = tableColumns;
 	const getH_ItemKey = useCallback((index: number) => getLeafColumn(splitColumnsArr[index]).key, [columnKeys]);
 	const getH_ItemSize = useCallback((index: number) => sizeCacheMap.get(getH_ItemKey(index)) ?? 150, [sizeCacheMap, getH_ItemKey]);
@@ -46,10 +46,10 @@ const useTableVirtual = <T>({ tableColumns, tableState, tableRequiredProps, tabl
 	});
 
 	const v_sizeList = v_virtual.sizeList;
-	const v_rangeEnd = v_virtual.rangeEnd;
 	const v_rangeStart = v_virtual.rangeStart;
+	const v_rangeEnd = v_virtual.rangeEnd;
 	const v_totalSize = v_virtual.totalSize;
-	const v_measureItemRef = v_virtual.measureItemRef;
+	const v_measureItemSize = v_virtual.measureItemSize;
 	const [getV_virtualCore] = useRefValue(v_virtual.virtualCore);
 	const getV_OffsetTop = useCallback((rowIndex: number) => v_sizeList?.[rowIndex]?.start ?? 0, [v_sizeList]);
 
@@ -103,7 +103,7 @@ const useTableVirtual = <T>({ tableColumns, tableState, tableRequiredProps, tabl
 		[h_rangeStart, h_rangeEnd, v_rangeStart, v_rangeEnd, splitColumnsArr, colBodyForceRenderObj],
 	);
 
-	return { v_totalSize, getV_OffsetTop, getH_virtualCore, getV_virtualCore, v_measureItemRef, getHeadCellShow, getBodyCellShow };
+	return { v_totalSize, getV_OffsetTop, getH_virtualCore, getV_virtualCore, v_measureItemSize, getHeadCellShow, getBodyCellShow };
 };
 
 export default useTableVirtual;

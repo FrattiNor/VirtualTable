@@ -19,10 +19,10 @@ const useTableColumns = <T>({ props, tableState }: Props<T>) => {
 	// ======================================== part1 ========================================
 	const { splitColumnsArr_01, deepLevel } = useMemo(() => {
 		// 检测重复的columnKey
-		const colKeysObj: Record<string, number> = {};
-		const judgeSameKey = (key: string) => {
-			if (colKeysObj[key] === 1) console.error(`same column key: ${key}`);
-			colKeysObj[key] = (colKeysObj[key] ?? 0) + 1;
+		const colKeysMap = new Map<string, number>();
+		const checkSameKey = (key: string) => {
+			if (colKeysMap.get(key) === 1) console.error(`same column key: ${key}`);
+			colKeysMap.set(key, (colKeysMap.get(key) ?? 0) + 1);
 		};
 
 		//
@@ -37,12 +37,14 @@ const useTableColumns = <T>({ props, tableState }: Props<T>) => {
 			const splitColumnsArrInner: Array<Array<TableColumnGroup<T> | TableColumn<T>>> = [];
 			if (parents.length > deepLevel) deepLevel = parents.length;
 			c.forEach((column) => {
-				judgeSameKey(column.key);
+				checkSameKey(column.key);
 				// isGroup
 				if (Array.isArray(column.children)) {
-					const current: TableColumnGroup<T> = { ...(column as TableColumnGroup<T>) };
-					delete (current as any)['children'];
-					splitColumnsArrInner.push(...getSplitColumnsArr(column.children, { parents: [current, ...parents] }));
+					if (column.children.length > 0) {
+						const current: TableColumnGroup<T> = { ...(column as TableColumnGroup<T>) };
+						delete (current as any)['children'];
+						splitColumnsArrInner.push(...getSplitColumnsArr(column.children, { parents: [current, ...parents] }));
+					}
 				}
 				// isColumn
 				// 判断visible & 覆盖width
@@ -91,7 +93,8 @@ const useTableColumns = <T>({ props, tableState }: Props<T>) => {
 		//
 		const colBodyForceRenderObj: Record<string, true> = {};
 		//
-		const columnsKeyIndexMap = new Map<string, number>();
+		const colKey2Index = new Map<string, number>();
+		const colIndex2Key = new Map<number, string>();
 		//
 		const splitColumnsArr: Array<Array<TableColumnGroup<T> | TableColumn<T>>> = [];
 		// index，当前column所在index
@@ -151,7 +154,8 @@ const useTableColumns = <T>({ props, tableState }: Props<T>) => {
 					});
 				}
 
-				columnsKeyIndexMap.set(leafColumn.key, index);
+				colKey2Index.set(leafColumn.key, index);
+				colIndex2Key.set(index, leafColumn.key);
 				index++;
 			}
 		});
@@ -167,12 +171,14 @@ const useTableColumns = <T>({ props, tableState }: Props<T>) => {
 		});
 
 		return {
+			colKey2Index, // columns对应的key-index
+			colIndex2Key, // columns对应的index-key
 			columnKeys, // 渲染的columns的key组合string，用于判断某些地方的Memo
-			splitColumnsArr, // 渲染的columns
-			gridTemplateColumns, // columns的grid的宽度css
+
 			fixedLeftMap, // 左固定的map
 			fixedRightMap, // 右固定的map
-			columnsKeyIndexMap, // columns对应的key-index
+			splitColumnsArr, // 渲染的columns
+			gridTemplateColumns, // columns的grid的宽度css
 			colBodyForceRenderObj, // colBody强制渲染
 			colHeadForceRenderObj, // colHead强制渲染
 		};

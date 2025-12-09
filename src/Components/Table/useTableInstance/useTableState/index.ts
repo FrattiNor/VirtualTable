@@ -3,14 +3,14 @@ import { useDeferredValue, useMemo, useState } from 'react';
 import { type TableColumnFixed, type ResizeFlag, type TableScrollbarState } from '../../TableTypes/type';
 import { transformWidthArrToStr } from '../../TableUtils';
 
-import type useTableRequiredProps from '../useTableRequiredProps';
+import type useTableInnerProps from '../useTableInnerProps';
 
 type Props<T> = {
-	tableRequiredProps: ReturnType<typeof useTableRequiredProps<T>>;
+	tableInnerProps: ReturnType<typeof useTableInnerProps<T>>;
 };
 
-const useTableState = <T>({ tableRequiredProps }: Props<T>) => {
-	const { bordered } = tableRequiredProps;
+const useTableState = <T>({ tableInnerProps }: Props<T>) => {
+	const { bordered } = tableInnerProps;
 
 	// body宽度
 	const [tableWidth, setTableWidth] = useState<number>(() => 0);
@@ -28,8 +28,8 @@ const useTableState = <T>({ tableRequiredProps }: Props<T>) => {
 	const [_v_scrollbar, setV_scrollbar] = useState<TableScrollbarState>(() => ({ have: false, innerSize: 0, width: 0 }));
 	// 横向滚动条
 	const [_h_scrollbar, setH_scrollbar] = useState<TableScrollbarState>(() => ({ have: false, innerSize: 0, width: 0 }));
-	// 左右固定的index { [key]: { fixed: TableColumnFixed; index: number } }
-	const [_pingedMap, setPingedMap] = useState<Map<string, { fixed: TableColumnFixed; index: number }>>(() => new Map());
+	// 左右固定的index { [key]: {  key: string; fixed: TableColumnFixed; } }
+	const [_pingedMap, setPingedMap] = useState<Map<string, { key: string; fixed: TableColumnFixed }>>(() => new Map());
 
 	// 不重要的状态降低优先级
 	const pingedMap = useDeferredValue(_pingedMap);

@@ -5,7 +5,7 @@ import { minColWidth, maxColWidth } from '../../../../TableUtils/configValues';
 import type { TableColumn } from '../../../../TableTypes/typeColumn';
 import type { TableInstance } from '../../../../useTableInstance';
 
-type Props<T> = Required<Pick<TableInstance<T>, 'sizeCacheMap' | 'resized'>> & {
+type Props<T> = Pick<TableInstance<T>, 'sizeCacheMap' | 'resized'> & {
 	leafColumn: TableColumn<T>;
 	resizeObserver: ResizeObserver | null;
 };

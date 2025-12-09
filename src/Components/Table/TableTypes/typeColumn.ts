@@ -10,7 +10,7 @@ export type TableColumn<T> = {
 	// 列标题
 	title: ReactNode;
 	// 列单元格渲染
-	render: TableColumnRender<T>;
+	render?: TableColumnRender<T>;
 	// 列宽
 	width?: TableColumnWidth;
 	// 未resize的情况下，自动填充【默认1】
@@ -27,6 +27,10 @@ export type TableColumn<T> = {
 	colBodyForceRender?: boolean;
 	// 强制渲染列【fixed会默认forceRender】【用于处理不定高】
 	colHeadForceRender?: boolean;
+	// 列搜索【外部提供搜索】
+	filter?: ReactNode;
+	// 高亮关键字
+	highlightKeyword?: string;
 } & {
 	// 兼容group
 	children?: undefined;

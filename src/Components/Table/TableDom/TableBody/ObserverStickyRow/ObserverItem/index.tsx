@@ -5,7 +5,7 @@ import styles from './index.module.less';
 import type { TableColumn } from '../../../../TableTypes/typeColumn';
 import type { TableInstance } from '../../../../useTableInstance';
 
-type Props<T> = Required<Pick<TableInstance<T>, 'setPingedMap' | 'fixedLeftMap' | 'fixedRightMap' | 'bodyRef'>> & {
+type Props<T> = Pick<TableInstance<T>, 'setPingedMap' | 'fixedLeftMap' | 'fixedRightMap' | 'bodyRef'> & {
 	colIndex: number;
 	leafColumn: TableColumn<T>;
 	intersectionObserver: IntersectionObserver | null;
@@ -49,7 +49,6 @@ const ObserverItem = <T,>(props: Props<T>) => {
 	return (
 		<div
 			ref={ref}
-			data-index={colIndex}
 			data-key={leafColumn.key}
 			data-fixed={leafColumn.fixed}
 			className={styles['sticky-observer']}

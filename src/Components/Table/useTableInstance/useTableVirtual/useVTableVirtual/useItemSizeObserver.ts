@@ -1,35 +1,34 @@
 import { useRef, useEffect, useCallback } from 'react';
 
 import useRefValue from '../../../TableHooks/useRefValue';
-import { type VirtualProps } from '../Core/type';
+import { getDisplayNone } from '../../../TableUtils/index';
 
 import type useSizeCacheMap from './useSizeCacheMap';
 
 type Props = {
 	sizeCache: ReturnType<typeof useSizeCacheMap>;
-	props: Omit<VirtualProps, 'onChange'>;
 };
 
-const useItemSizeObserver = ({ sizeCache, props }: Props) => {
-	const { getItemKey } = props;
-	const itemDomRef = useRef(new Map<string, HTMLElement>());
+const useItemSizeObserver = ({ sizeCache }: Props) => {
 	const itemSizeObserverRef = useRef<ResizeObserver | null>(null);
 	const [getUpdateItemSize] = useRefValue(sizeCache.updateItemSize);
 
-	const getItemSizeObserver = () => {
+	const getItemSizeObserver = useCallback(() => {
 		if (itemSizeObserverRef.current === null) {
 			itemSizeObserverRef.current = new ResizeObserver((entries) => {
-				entries.forEach((item) => {
-					const index = parseInt(item.target.getAttribute('data-index') ?? '');
+				// display none的情况直接跳过执行
+				if (getDisplayNone(entries[0].contentRect)) return;
+				entries.forEach((entry) => {
+					const index = parseInt(entry.target.getAttribute('data-index') ?? '');
 					if (!isNaN(index)) {
-						const size = item.contentRect['height'];
+						const size = entry.contentRect['height'];
 						getUpdateItemSize()({ index, size, from: 'resize' });
 					}
 				});
 			});
 		}
 		return itemSizeObserverRef.current;
-	};
+	}, []);
 
 	// 清除itemSize Observer
 	useEffect(() => {
@@ -39,24 +38,15 @@ const useItemSizeObserver = ({ sizeCache, props }: Props) => {
 	}, []);
 
 	// 用于测量itemSize，在不定高情况使用
-	// warning 【StrictMode会影响此运行，导致动态监测高度失效】
-	const measureItemRef = useCallback((index: number, node: HTMLElement | null) => {
-		const key = getItemKey(index);
-		if (node) {
-			itemDomRef.current.set(key, node);
-			const size = node['clientHeight'];
-			getUpdateItemSize()({ index, size, from: 'ref' });
-			getItemSizeObserver().observe(node);
-		} else {
-			const oldNode = itemDomRef.current.get(key);
-			if (oldNode) {
-				getItemSizeObserver().unobserve(oldNode);
-				itemDomRef.current.delete(key);
-			}
-		}
+	const measureItemSize = useCallback((index: number, node: HTMLElement) => {
+		getUpdateItemSize()({ size: node['clientHeight'], index, from: 'ref' });
+		getItemSizeObserver().observe(node);
+		return () => {
+			getItemSizeObserver().unobserve(node);
+		};
 	}, []);
 
-	return { measureItemRef };
+	return { measureItemSize };
 };
 
 export default useItemSizeObserver;

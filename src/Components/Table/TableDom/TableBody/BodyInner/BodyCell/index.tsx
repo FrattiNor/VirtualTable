@@ -8,20 +8,18 @@ import { getCellTitle, getColKeys, getRowKeys, isStrNum } from '../../../../Tabl
 import type { TableColumn } from '../../../../TableTypes/typeColumn';
 import type { TableInstance } from '../../../../useTableInstance';
 
-type Props<T> = Required<
-	Pick<
-		TableInstance<T>,
-		| 'splitColumnsArr'
-		| 'bordered'
-		| 'rowHeight'
-		| 'getBodyStickyStyle'
-		| 'getBodyCellBg'
-		| 'rowKey'
-		| 'data'
-		| 'bodyRowClick'
-		| 'bodyRowMouseEnter'
-		| 'bodyRowMouseLeave'
-	>
+type Props<T> = Pick<
+	TableInstance<T>,
+	| 'splitColumnsArr'
+	| 'bordered'
+	| 'rowHeight'
+	| 'getBodyStickyStyle'
+	| 'getBodyCellBg'
+	| 'rowKey'
+	| 'data'
+	| 'bodyRowClick'
+	| 'bodyRowMouseEnter'
+	| 'bodyRowMouseLeave'
 > & {
 	dataItem: T;
 	colIndexStart: number;
@@ -54,7 +52,7 @@ const BodyCell = <T,>(props: Props<T>) => {
 	const rowKeys = useMemo(() => getRowKeys(rowKey, data, rowIndexStart, rowIndexEnd), [rowKey, data, rowIndexStart, rowIndexEnd]);
 	const colKeys = useMemo(() => getColKeys(splitColumnsArr, colIndexStart, colIndexEnd), [splitColumnsArr, colIndexStart, colIndexEnd]);
 
-	const renderDom = leafColumn.render(dataItem, { index: rowIndexStart });
+	const renderDom = leafColumn.render ? leafColumn.render(dataItem, { index: rowIndexStart }) : String(dataItem[leafColumn.key as keyof T]);
 	const title = getCellTitle(renderDom);
 	const canEllipsis = isStrNum(renderDom);
 	const backgroundColor = getBodyCellBg({ rowKeys, colKeys });
@@ -67,8 +65,13 @@ const BodyCell = <T,>(props: Props<T>) => {
 			onMouseEnter={bodyRowMouseEnter ? () => bodyRowMouseEnter({ rowKeys }) : undefined}
 			onMouseLeave={bodyRowMouseLeave ? () => bodyRowMouseLeave({ rowKeys }) : undefined}
 			className={classNames(styles['body-cell'], {
+				[styles['bordered']]: bordered,
+				[styles['first-col']]: colIndexStart === 0,
+				[styles['first-row']]: rowIndexStart === 0,
 				[styles['left-last-pinged']]: leftLastPinged,
 				[styles['right-last-pinged']]: rightLastPinged,
+				[styles['not-first-col-and-left-first-pinged']]: colIndexStart !== 0 && leftFirstPinged,
+				[styles['not-first-col-and-right-last-pinged']]: colIndexStart !== 0 && rightLastPinged,
 			})}
 			style={{
 				...stickyStyle,
@@ -76,20 +79,10 @@ const BodyCell = <T,>(props: Props<T>) => {
 				minHeight: rowHeight,
 				gridRow: `${rowIndexStart + 1}/${rowIndexEnd + 2}`,
 				gridColumn: `${colIndexStart + 1}/${colIndexEnd + 2}`,
+				justifyContent: leafColumn.align === 'center' ? 'center' : leafColumn.align === 'right' ? 'flex-end' : 'flex-start',
 			}}
 		>
-			<div
-				style={{ justifyContent: leafColumn.align === 'center' ? 'center' : leafColumn.align === 'right' ? 'flex-end' : 'flex-start' }}
-				className={classNames(styles['body-cell-inner'], {
-					[styles['bordered']]: bordered,
-					[styles['first-col']]: colIndexStart === 0,
-					[styles['first-row']]: rowIndexStart === 0,
-					[styles['not-first-col-and-left-first-pinged']]: colIndexStart !== 0 && leftFirstPinged,
-					[styles['not-first-col-and-right-last-pinged']]: colIndexStart !== 0 && rightLastPinged,
-				})}
-			>
-				{!canEllipsis ? renderDom : <div className={styles['ellipsis-wrapper']}>{renderDom}</div>}
-			</div>
+			{!canEllipsis ? renderDom : <div className={styles['ellipsis-wrapper']}>{renderDom}</div>}
 		</div>
 	);
 };

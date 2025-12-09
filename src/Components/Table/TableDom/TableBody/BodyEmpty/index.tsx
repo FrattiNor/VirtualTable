@@ -2,10 +2,11 @@ import { memo } from 'react';
 
 import emptyLight from './emptyLight.png';
 
-import type { TableInstance } from '../../../../useTableInstance';
+import type { TableInstance } from '../../../useTableInstance';
 
-type Props<T> = Required<Pick<TableInstance<T>, 'tableWidth'>>;
+type Props<T> = Pick<TableInstance<T>, 'tableWidth'>;
 
+// TODO BUG 默认empty时宽度获取为0
 const BodyEmpty = <T,>({ tableWidth }: Props<T>) => {
 	return (
 		<div
@@ -14,8 +15,7 @@ const BodyEmpty = <T,>({ tableWidth }: Props<T>) => {
 				padding: '50px 0',
 				position: 'sticky',
 				width: tableWidth,
-				maxWidth: tableWidth,
-				minWidth: tableWidth,
+				minWidth: '100%',
 				display: 'flex',
 				alignItems: 'center',
 				justifyContent: 'center',

@@ -7,17 +7,20 @@ import useThrottle from '../../TableHooks/useThrottle';
 import scrollbarStyles from '../../TableUtils/calcBorderWidth/index.module.less';
 import { type TableInstance } from '../../useTableInstance';
 
-type Props<T> = Required<
-	Pick<TableInstance<T>, 'h_scrollbar' | 'v_scrollbar' | 'bordered' | 'hScrollbarRef' | 'bodyRef' | 'headRef' | 'getH_virtualCore'>
->;
+type Props<T> = Pick<TableInstance<T>, 'h_scrollbar' | 'v_scrollbar' | 'bordered' | 'hScrollbarRef' | 'bodyRef' | 'getH_virtualCore'>;
 
 const ScrollbarH = <T,>(props: Props<T>) => {
 	const { throttle } = useThrottle({ frameInterval: 1 });
-	const { h_scrollbar, v_scrollbar, bordered, hScrollbarRef, getH_virtualCore } = props;
+	const { h_scrollbar, v_scrollbar, bordered, hScrollbarRef, getH_virtualCore, bodyRef } = props;
 
 	useEffect(() => {
 		if (h_scrollbar.have && hScrollbarRef.current) {
 			const hScrollbar = hScrollbarRef.current;
+
+			// 同步一次滚动距离
+			if (bodyRef.current && hScrollbar.scrollLeft !== bodyRef.current.scrollLeft) {
+				hScrollbar.scrollLeft = bodyRef.current.scrollLeft;
+			}
 
 			const handleScroll = () => {
 				throttle(() => {

@@ -2,20 +2,20 @@ import { useCallback, useEffect, useMemo } from 'react';
 
 import useFrameThrottle from '../../TableHooks/useFrameThrottle';
 
-import type useTableRequiredProps from '../useTableRequiredProps';
+import type useTableInnerProps from '../useTableInnerProps';
 import type useTableState from '../useTableState';
 
 type Props<T> = {
 	tableState: ReturnType<typeof useTableState>;
-	tableRequiredProps: ReturnType<typeof useTableRequiredProps<T>>;
+	tableInnerProps: ReturnType<typeof useTableInnerProps<T>>;
 };
 
 // 表格 单元格 背景色
 // 根据点击、hover、resize决定
-const useTableCellBg = <T>({ tableState, tableRequiredProps }: Props<T>) => {
+const useTableCellBg = <T>({ tableState, tableInnerProps }: Props<T>) => {
 	const { throttle: throttle1 } = useFrameThrottle();
 	const { throttle: throttle2 } = useFrameThrottle();
-	const { rowClick, rowHover } = tableRequiredProps.rowBgHighlight;
+	const { rowClick, rowHover } = tableInnerProps.rowBgHighlight;
 	const { resizeFlag, rowClickedMap, rowHoveredMap, setRowClickedMap, setRowHoveredMap } = tableState;
 
 	// 配置变更时触发清除原本数据

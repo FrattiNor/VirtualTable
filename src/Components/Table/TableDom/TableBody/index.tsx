@@ -1,5 +1,6 @@
 import { memo } from 'react';
 
+import BodyEmpty from './BodyEmpty';
 import BodyInner from './BodyInner';
 import styles from './index.module.less';
 import MeasureColSizeRow from './MeasureColSizeRow';
@@ -7,41 +8,39 @@ import ObserverStickyRow from './ObserverStickyRow';
 
 import type { TableInstance } from '../../useTableInstance';
 
-type Props<T> = Required<
-	Pick<
-		TableInstance<T>,
-		| 'splitColumnsArr'
-		| 'splitColumnsArr_01'
-		| 'bordered'
-		| 'data'
-		| 'rowKey'
-		| 'gridTemplateColumns'
-		| 'bodyRef'
-		| 'bodyInnerRef'
-		| 'rowHeight'
-		| 'getBodyStickyStyle'
-		| 'setSizeCacheMap'
-		| 'setPingedMap'
-		| 'fixedLeftMap'
-		| 'fixedRightMap'
-		| 'getBodyCellBg'
-		| 'sizeCacheMap'
-		| 'resized'
-		| 'resizeFlag'
-		| 'tableWidth'
-		| 'columnsKeyIndexMap'
-		| 'bodyRowClick'
-		| 'bodyRowMouseEnter'
-		| 'bodyRowMouseLeave'
-		| 'getBodyCellShow'
-		| 'v_totalSize'
-		| 'getV_OffsetTop'
-		| 'v_measureItemRef'
-	>
+type Props<T> = Pick<
+	TableInstance<T>,
+	| 'splitColumnsArr'
+	| 'splitColumnsArr_01'
+	| 'bordered'
+	| 'data'
+	| 'rowKey'
+	| 'gridTemplateColumns'
+	| 'bodyRef'
+	| 'bodyInnerRef'
+	| 'rowHeight'
+	| 'getBodyStickyStyle'
+	| 'setSizeCacheMap'
+	| 'setPingedMap'
+	| 'fixedLeftMap'
+	| 'fixedRightMap'
+	| 'getBodyCellBg'
+	| 'sizeCacheMap'
+	| 'resized'
+	| 'resizeFlag'
+	| 'tableWidth'
+	| 'bodyRowClick'
+	| 'bodyRowMouseEnter'
+	| 'bodyRowMouseLeave'
+	| 'getBodyCellShow'
+	| 'v_totalSize'
+	| 'getV_OffsetTop'
+	| 'v_measureItemSize'
 >;
 
 const TableBody = <T,>(props: Props<T>) => {
 	const { bodyRef } = props;
+	const isEmpty = (props.data ?? []).length === 0;
 
 	return (
 		<div ref={bodyRef} className={styles['body']}>
@@ -58,7 +57,6 @@ const TableBody = <T,>(props: Props<T>) => {
 				fixedLeftMap={props.fixedLeftMap}
 				fixedRightMap={props.fixedRightMap}
 				splitColumnsArr={props.splitColumnsArr}
-				columnsKeyIndexMap={props.columnsKeyIndexMap}
 				gridTemplateColumns={props.gridTemplateColumns}
 			/>
 			<BodyInner
@@ -66,7 +64,6 @@ const TableBody = <T,>(props: Props<T>) => {
 				rowKey={props.rowKey}
 				bordered={props.bordered}
 				rowHeight={props.rowHeight}
-				tableWidth={props.tableWidth}
 				v_totalSize={props.v_totalSize}
 				bodyRowClick={props.bodyRowClick}
 				bodyInnerRef={props.bodyInnerRef}
@@ -74,13 +71,13 @@ const TableBody = <T,>(props: Props<T>) => {
 				getV_OffsetTop={props.getV_OffsetTop}
 				getBodyCellShow={props.getBodyCellShow}
 				splitColumnsArr={props.splitColumnsArr}
-				v_measureItemRef={props.v_measureItemRef}
+				v_measureItemSize={props.v_measureItemSize}
 				bodyRowMouseEnter={props.bodyRowMouseEnter}
 				bodyRowMouseLeave={props.bodyRowMouseLeave}
 				getBodyStickyStyle={props.getBodyStickyStyle}
-				columnsKeyIndexMap={props.columnsKeyIndexMap}
 				gridTemplateColumns={props.gridTemplateColumns}
 			/>
+			{isEmpty && <BodyEmpty tableWidth={props.tableWidth} />}
 		</div>
 	);
 };

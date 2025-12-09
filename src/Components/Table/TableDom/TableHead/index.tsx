@@ -8,23 +8,20 @@ import styles from './index.module.less';
 
 import type { TableInstance } from '../../useTableInstance';
 
-type Props<T> = Required<
-	Pick<
-		TableInstance<T>,
-		| 'deepLevel'
-		| 'splitColumnsArr'
-		| 'bordered'
-		| 'headRef'
-		| 'gridTemplateColumns'
-		| 'v_scrollbar'
-		| 'rowHeight'
-		| 'getHeadStickyStyle'
-		| 'startResize'
-		| 'resizeFlag'
-		| 'getHeadCellBg'
-		| 'columnsKeyIndexMap'
-		| 'getHeadCellShow'
-	>
+type Props<T> = Pick<
+	TableInstance<T>,
+	| 'deepLevel'
+	| 'splitColumnsArr'
+	| 'bordered'
+	| 'headRef'
+	| 'gridTemplateColumns'
+	| 'v_scrollbar'
+	| 'rowHeight'
+	| 'getHeadStickyStyle'
+	| 'startResize'
+	| 'resizeFlag'
+	| 'getHeadCellBg'
+	| 'getHeadCellShow'
 >;
 
 const TableHead = <T,>(props: Props<T>) => {
@@ -48,7 +45,6 @@ const TableHead = <T,>(props: Props<T>) => {
 							getHeadCellBg={props.getHeadCellBg}
 							getHeadCellShow={props.getHeadCellShow}
 							splitColumnsArr={props.splitColumnsArr}
-							columnsKeyIndexMap={props.columnsKeyIndexMap}
 							getHeadStickyStyle={props.getHeadStickyStyle}
 						/>
 					))}

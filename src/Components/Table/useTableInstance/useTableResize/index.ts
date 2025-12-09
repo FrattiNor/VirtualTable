@@ -3,11 +3,11 @@ import { useCallback, useEffect } from 'react';
 import useFrameThrottle from '../../TableHooks/useFrameThrottle';
 import useRefValue from '../../TableHooks/useRefValue';
 import { type ResizeFlag } from '../../TableTypes/type';
-import { FixedTwo, getLeafColumn } from '../../TableUtils';
+import { FixedTwo } from '../../TableUtils';
 import { maxColWidth, minColWidth } from '../../TableUtils/configValues';
 
 import type useTableColumns from '../useTableColumns';
-import type useTableRequiredProps from '../useTableRequiredProps';
+import type useTableInnerProps from '../useTableInnerProps';
 import type useTableState from '../useTableState';
 
 // 避免触发一些事件导致mouse无法触发
@@ -22,14 +22,14 @@ function pauseEvent(e: Event) {
 type Props<T> = {
 	tableState: ReturnType<typeof useTableState>;
 	tableColumns: ReturnType<typeof useTableColumns<T>>;
-	tableRequiredProps: ReturnType<typeof useTableRequiredProps<T>>;
+	tableInnerProps: ReturnType<typeof useTableInnerProps<T>>;
 };
 
 // 表格resize宽度
-const useTableResize = <T>({ tableState, tableColumns, tableRequiredProps }: Props<T>) => {
+const useTableResize = <T>({ tableState, tableColumns, tableInnerProps }: Props<T>) => {
 	const { throttle } = useFrameThrottle();
-	const { splitColumnsArr } = tableColumns;
-	const [getResizeEndCallback] = useRefValue(tableRequiredProps.onResizeEnd);
+	const { colIndex2Key } = tableColumns;
+	const [getResizeEndCallback] = useRefValue(tableInnerProps.onResizeEnd);
 	const { resizeFlag, setResized, setResizeFlag, setSizeCacheMap, sizeCacheMap } = tableState;
 
 	useEffect(() => {
@@ -120,9 +120,11 @@ const useTableResize = <T>({ tableState, tableColumns, tableRequiredProps }: Pro
 			const nextChildren: ResizeFlag['children'] = new Map();
 
 			for (let i = colIndexStart; i <= colIndexEnd; i++) {
-				const leafColumn = getLeafColumn(splitColumnsArr[i]);
-				const clientWidth = sizeCacheMap.get(leafColumn.key) ?? 0;
-				nextChildren.set(leafColumn.key, { key: leafColumn.key, clientWidth, index: i });
+				const key = colIndex2Key.get(i);
+				if (key) {
+					const clientWidth = sizeCacheMap.get(key) ?? 0;
+					nextChildren.set(key, { key, clientWidth });
+				}
 			}
 
 			setResizeFlag({
@@ -133,7 +135,7 @@ const useTableResize = <T>({ tableState, tableColumns, tableRequiredProps }: Pro
 
 			pauseEvent(e as unknown as Event);
 		},
-		[splitColumnsArr, sizeCacheMap],
+		[colIndex2Key, sizeCacheMap],
 	);
 
 	return { startResize };

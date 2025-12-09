@@ -22,22 +22,18 @@ export type TableColumnOnCellSpan<T> = (
 	colSpan?: number;
 };
 
+//
 export type TableScrollbarState = { have: boolean; innerSize: number; width: number };
 
 // Table Resize标记
 export type ResizeFlag = {
 	pageX: number;
 	activeKey: string;
-	children: Map<
-		string,
-		{
-			key: string;
-			index: number;
-			clientWidth: number;
-		}
-	>;
+	children: Map<string, { key: string; clientWidth: number }>;
 };
 
+//
 export type TableColumnFixed = 'left' | 'right';
 
+//
 export type TableColumnAlign = 'left' | 'right' | 'center';

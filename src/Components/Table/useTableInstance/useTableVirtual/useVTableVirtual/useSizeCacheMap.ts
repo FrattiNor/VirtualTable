@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { startTransition, useCallback, useEffect, useMemo, useState } from 'react';
 
 import { type VirtualProps } from '../Core/type';
 
@@ -38,19 +38,30 @@ const useSizeCacheMap = ({ getItemKey, getItemSize, count }: Props) => {
 		[getItemKey, getItemSize],
 	);
 
+	// 数据源keyMap
+	const datasourceKeyMap = useMemo(() => {
+		const keyMap = new Map<string, true>();
+		for (let i = 0; i < count; i++) {
+			keyMap.set(getItemKey(i), true);
+		}
+		return keyMap;
+	}, [count, getItemKey]);
+
 	// 当数据源变更时，清除不存在的keyCache
 	useEffect(() => {
-		const keyObj: Record<string, true> = {};
-		for (let i = 0; i < count; i++) {
-			const key = getItemKey(i);
-			keyObj[key] = true;
-		}
+		let changed = false;
 		Array.from(sizeCacheMap).forEach(([key]) => {
-			if (keyObj[key] !== true) {
+			if (datasourceKeyMap.get(key) !== true) {
 				sizeCacheMap.delete(key);
+				changed = true;
 			}
 		});
-	}, [count, getItemKey]);
+		if (changed) {
+			startTransition(() => {
+				setSizeCacheMap(new Map(sizeCacheMap));
+			});
+		}
+	}, [datasourceKeyMap, sizeCacheMap]);
 
 	return { getItemSizeCover, updateItemSize };
 };

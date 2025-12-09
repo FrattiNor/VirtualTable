@@ -18,9 +18,10 @@ const Table = <T,>(_props: TableProps<T>) => {
 
 	return (
 		<TableLoading
+			style={props.style}
 			loadingMaxHeight={400}
 			loading={props.loading}
-			className={classNames(styles['table'], {
+			className={classNames(styles['table'], props.className, {
 				[styles['bordered']]: props.bordered,
 				[styles['no-bordered-and-no-h-scrollbar']]: !props.bordered && !(props.h_scrollbar.width > 0),
 			})}
@@ -36,7 +37,6 @@ const Table = <T,>(_props: TableProps<T>) => {
 				getHeadCellBg={props.getHeadCellBg}
 				getHeadCellShow={props.getHeadCellShow}
 				splitColumnsArr={props.splitColumnsArr}
-				columnsKeyIndexMap={props.columnsKeyIndexMap}
 				getHeadStickyStyle={props.getHeadStickyStyle}
 				gridTemplateColumns={props.gridTemplateColumns}
 			/>
@@ -62,10 +62,9 @@ const Table = <T,>(_props: TableProps<T>) => {
 					getBodyCellShow={props.getBodyCellShow}
 					setSizeCacheMap={props.setSizeCacheMap}
 					splitColumnsArr={props.splitColumnsArr}
-					v_measureItemRef={props.v_measureItemRef}
+					v_measureItemSize={props.v_measureItemSize}
 					bodyRowMouseEnter={props.bodyRowMouseEnter}
 					bodyRowMouseLeave={props.bodyRowMouseLeave}
-					columnsKeyIndexMap={props.columnsKeyIndexMap}
 					getBodyStickyStyle={props.getBodyStickyStyle}
 					splitColumnsArr_01={props.splitColumnsArr_01}
 					gridTemplateColumns={props.gridTemplateColumns}
@@ -80,7 +79,6 @@ const Table = <T,>(_props: TableProps<T>) => {
 			</div>
 			<ScrollbarH
 				bodyRef={props.bodyRef}
-				headRef={props.headRef}
 				bordered={props.bordered}
 				h_scrollbar={props.h_scrollbar}
 				v_scrollbar={props.v_scrollbar}

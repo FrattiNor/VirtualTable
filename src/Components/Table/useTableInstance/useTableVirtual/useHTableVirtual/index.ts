@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useLayoutEffect, useState } from 'react';
+import { useLayoutEffect, useMemo, useState } from 'react';
 
 import useFrameThrottle from '../../../TableHooks/useFrameThrottle';
 import VirtualCore from '../Core';
@@ -15,22 +15,26 @@ const useHTableVirtual = (props: Props) => {
 	const { enabled, count, overscan, gap, getItemKey, getItemSize, bodyRef, headRef } = props;
 
 	const { throttle } = useFrameThrottle();
-	const [virtualCore, setVirtualCore] = useState(() => {
-		const core = new VirtualCore();
-		core.updateProps({ gap, count, enabled, overscan, getItemKey, getItemSize });
-		return core;
-	});
-	const onChange = useCallback(() => throttle(() => setVirtualCore(new VirtualCore(virtualCore))), []);
-
-	useEffect(() => {
-		virtualCore.updateProps({ gap, count, enabled, overscan, onChange, getItemKey, getItemSize });
-	}, [enabled, count, overscan, gap, getItemKey, getItemSize, onChange]);
+	const [virtualCore, setVirtualCore] = useState<VirtualCore>(() => new VirtualCore());
 
 	useLayoutEffect(() => {
 		const scrollOffset = virtualCore.state.scrollOffset;
 		if (bodyRef.current && bodyRef.current.scrollLeft !== scrollOffset) bodyRef.current.scrollLeft = scrollOffset;
 		if (headRef.current && headRef.current.scrollLeft !== scrollOffset) headRef.current.scrollLeft = scrollOffset;
 	}, [virtualCore.state.scrollOffset]);
+
+	useMemo(() => {
+		virtualCore.updateProps({
+			gap,
+			count,
+			enabled,
+			overscan,
+			getItemKey,
+			getItemSize,
+			onChange: () => throttle(() => setVirtualCore(new VirtualCore(virtualCore))),
+		});
+		return null;
+	}, [enabled, count, overscan, gap, getItemKey, getItemSize]);
 
 	const rangeStart = virtualCore.state.rangeStart;
 	const rangeEnd = virtualCore.state.rangeEnd;

@@ -2,12 +2,12 @@ import { memo, useEffect, useLayoutEffect, useRef, useState } from 'react';
 
 import styles from './index.module.less';
 import MeasureItem from './MeasureItem';
-import { FixedTwo, getLeafColumn } from '../../../TableUtils';
+import { FixedTwo, getDisplayNone, getLeafColumn } from '../../../TableUtils';
 import { maxColWidth, minColWidth } from '../../../TableUtils/configValues';
 
 import type { TableInstance } from '../../../useTableInstance';
 
-type Props<T> = Required<Pick<TableInstance<T>, 'splitColumnsArr_01' | 'setSizeCacheMap' | 'resizeFlag' | 'sizeCacheMap' | 'resized'>>;
+type Props<T> = Pick<TableInstance<T>, 'splitColumnsArr_01' | 'setSizeCacheMap' | 'resizeFlag' | 'sizeCacheMap' | 'resized'>;
 
 const MeasureColSizeRow = <T,>(props: Props<T>) => {
 	const ref = useRef<HTMLDivElement | null>(null);
@@ -49,6 +49,8 @@ const MeasureColSizeRow = <T,>(props: Props<T>) => {
 	useEffect(() => {
 		if (!resizeFlag && ref.current) {
 			const _observer = new ResizeObserver((entries) => {
+				// display none的情况直接跳过执行
+				if (getDisplayNone(entries[0].contentRect)) return;
 				sizeCacheChangeBatch(
 					entries,
 					(entry) => entry.target.getAttribute('data-key'),

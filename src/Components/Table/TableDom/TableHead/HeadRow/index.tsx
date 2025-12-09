@@ -5,26 +5,23 @@ import { getNotLeafColumnByIndex, getLeafColumn } from '../../../TableUtils';
 
 import type { TableInstance } from '../../../useTableInstance';
 
-type Props<T> = Required<
-	Pick<
-		TableInstance<T>,
-		| 'splitColumnsArr'
-		| 'deepLevel'
-		| 'bordered'
-		| 'rowHeight'
-		| 'getHeadStickyStyle'
-		| 'startResize'
-		| 'resizeFlag'
-		| 'getHeadCellBg'
-		| 'columnsKeyIndexMap'
-		| 'getHeadCellShow'
-	>
+type Props<T> = Pick<
+	TableInstance<T>,
+	| 'splitColumnsArr'
+	| 'deepLevel'
+	| 'bordered'
+	| 'rowHeight'
+	| 'getHeadStickyStyle'
+	| 'startResize'
+	| 'resizeFlag'
+	| 'getHeadCellBg'
+	| 'getHeadCellShow'
 > & {
 	rowIndex: number;
 };
 
 const HeadRow = <T,>(props: Props<T>) => {
-	const { rowIndex, splitColumnsArr, deepLevel, columnsKeyIndexMap, getHeadCellShow } = props;
+	const { rowIndex, splitColumnsArr, deepLevel, getHeadCellShow } = props;
 
 	// 是否是叶子节点
 	const isLeaf = rowIndex === deepLevel;
@@ -32,9 +29,8 @@ const HeadRow = <T,>(props: Props<T>) => {
 	const renderRow = () => {
 		let colSameCount = 0;
 		let colNoRenderKey = '';
-		return splitColumnsArr.map((splitColumns) => {
+		return splitColumnsArr.map((splitColumns, colIndex) => {
 			const leafColumn = getLeafColumn(splitColumns);
-			const colIndex = columnsKeyIndexMap.get(leafColumn.key) ?? Infinity;
 			if (isLeaf) {
 				// 不存在column
 				if (!leafColumn) return null;

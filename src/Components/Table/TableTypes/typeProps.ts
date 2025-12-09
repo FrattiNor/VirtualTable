@@ -1,3 +1,5 @@
+import { type CSSProperties } from 'react';
+
 import type { TableColumnWidth } from './type';
 import type { TableColumns } from './typeColumn';
 import type { ValueTypeKeys } from './typeUtil';
@@ -5,6 +7,10 @@ import type { ValueTypeKeys } from './typeUtil';
 type TableRowKey<T> = ValueTypeKeys<T, string> | ((item: T, index: number) => string);
 
 export type TableProps<T> = {
+	// 样式
+	className?: string;
+	// 样式
+	style?: CSSProperties;
 	// 数据源
 	data: Array<T> | undefined;
 	// 列配置

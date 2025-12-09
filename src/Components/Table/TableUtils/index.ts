@@ -41,8 +41,8 @@ export const getRowKeys = <T>(rowKey: TableProps<T>['rowKey'], datasource: T[] |
 		for (let i = rowIndexStart; i <= rowIndexEnd; i++) {
 			const dataItem = datasource[i];
 			if (dataItem) {
-				const key = getRowKey(rowKey, dataItem, i);
-				rowKeys.push(key);
+				const dataRowKey = getRowKey(rowKey, dataItem, i);
+				rowKeys.push(dataRowKey);
 			}
 		}
 	}
@@ -84,4 +84,10 @@ export const FixedTwo = (v: number) => {
 // 将宽度数组转换为calc
 export const transformWidthArrToStr = (widthArr: Array<string>) => {
 	return `calc(${widthArr.join(' + ')})`;
+};
+
+// 获取resizeObserver的entry是否遇到了display none
+export const getDisplayNone = (contentRect: ResizeObserverEntry['contentRect']) => {
+	const { bottom, height, left, right, top, width, x, y } = contentRect;
+	return bottom === 0 && height === 0 && left === 0 && right === 0 && top === 0 && width === 0 && x === 0 && y === 0;
 };

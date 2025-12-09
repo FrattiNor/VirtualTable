@@ -6,7 +6,7 @@ import styles from './index.module.less';
 
 import type { TableInstance } from '../../../../../useTableInstance';
 
-type Props<T> = Required<Pick<TableInstance<T>, 'startResize' | 'resizeFlag'>> & {
+type Props<T> = Pick<TableInstance<T>, 'startResize' | 'resizeFlag'> & {
 	colIndexStart: number;
 	colIndexEnd: number;
 	columnKey: string;

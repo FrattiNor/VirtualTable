@@ -6,7 +6,7 @@ import styles from './index.module.less';
 
 import type { TableInstance } from '../../../useTableInstance';
 
-type Props<T> = Required<Pick<TableInstance<T>, 'bordered' | 'rowHeight' | 'splitColumnsArr'>> & {
+type Props<T> = Pick<TableInstance<T>, 'bordered' | 'rowHeight' | 'splitColumnsArr'> & {
 	rowIndexStart: number;
 	rowIndexEnd: number;
 };

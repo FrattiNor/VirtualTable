@@ -1,0 +1,25 @@
+.filter-icon {
+	flex-shrink: 0;
+	cursor: pointer;
+	color: var(--table-filter-color);
+	width: var(--table-filter-width);
+	height: var(--table-filter-height);
+	font-size: var(--table-filter-size);
+	border-radius: var(--table-border-radius);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	transition:
+		background-color 0.2s,
+		color 0.2s;
+
+	&:hover,
+	&.visible {
+		color: var(--table-filter-hover-color);
+		background-color: var(--table-filter-hover-bg);
+	}
+
+	&.filtered {
+		color: var(--table-primary-color);
+	}
+}

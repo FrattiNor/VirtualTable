@@ -5,7 +5,7 @@ import styles from './index.module.less';
 import useColumns from './useColumns';
 import useData from './useData';
 import BoxResize from '../../Components/BoxResize';
-import Table from '../../Components/Table';
+import { Table } from '../../Components/Table';
 
 const TableDemo = () => {
 	const { data, changeData } = useData();

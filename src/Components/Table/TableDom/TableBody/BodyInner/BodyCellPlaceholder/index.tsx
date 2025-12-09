@@ -1,4 +1,4 @@
-import { memo } from 'react';
+import { memo, useLayoutEffect, useRef } from 'react';
 
 import classNames from 'classnames';
 
@@ -6,11 +6,9 @@ import styles from './index.module.less';
 
 import type { TableInstance } from '../../../../useTableInstance';
 
-type Props<T> = Required<
-	Pick<
-		TableInstance<T>,
-		'bordered' | 'rowHeight' | 'v_measureItemRef' | 'bodyRowClick' | 'bodyRowMouseEnter' | 'bodyRowMouseLeave' | 'getBodyCellBg'
-	>
+type Props<T> = Pick<
+	TableInstance<T>,
+	'bordered' | 'rowHeight' | 'v_measureItemSize' | 'bodyRowClick' | 'bodyRowMouseEnter' | 'bodyRowMouseLeave' | 'getBodyCellBg'
 > & {
 	rowIndex: number;
 	colIndex: number;
@@ -24,22 +22,30 @@ const BodyCellPlaceholder = <T,>(props: Props<T>) => {
 		rowIndex,
 		colIndex,
 		rowHeight,
-		v_measureItemRef,
 		bodyRowClick,
+		getBodyCellBg,
 		bodyRowMouseEnter,
 		bodyRowMouseLeave,
-		getBodyCellBg,
+		v_measureItemSize,
 	} = props;
 
+	const ref = useRef<HTMLDivElement | null>(null);
 	const backgroundColor = getBodyCellBg({ rowKeys: [dataRowKey], colKeys: undefined });
+
+	// 动态监测行高
+	useLayoutEffect(() => {
+		if (ref.current) {
+			return v_measureItemSize(rowIndex, ref.current);
+		}
+	}, [dataRowKey]);
 
 	return (
 		<div
-			data-col={colIndex + 1}
+			ref={ref}
+			data-index={rowIndex}
 			onClick={bodyRowClick ? () => bodyRowClick({ rowKeys: [dataRowKey] }) : undefined}
 			onMouseEnter={bodyRowMouseEnter ? () => bodyRowMouseEnter({ rowKeys: [dataRowKey] }) : undefined}
 			onMouseLeave={bodyRowMouseLeave ? () => bodyRowMouseLeave({ rowKeys: [dataRowKey] }) : undefined}
-			ref={(node) => v_measureItemRef(rowIndex, node)}
 			style={{
 				backgroundColor,
 				minHeight: rowHeight,

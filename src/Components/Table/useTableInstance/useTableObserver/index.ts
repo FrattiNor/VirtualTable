@@ -2,6 +2,7 @@ import { useEffect, useLayoutEffect } from 'react';
 
 import { useScrollBy } from './useScroll';
 import useFrameDebounce from '../../TableHooks/useFrameDebounce';
+import { getDisplayNone } from '../../TableUtils';
 import calcBorderWidth from '../../TableUtils/calcBorderWidth';
 
 import type useTableDomRef from '../useTableDomRef';
@@ -30,6 +31,11 @@ const useTableObserver = <T>({ tableState, tableVirtual, tableDomRef }: Props<T>
 
 			// === ob body content resize ===
 			const calcObserver = (entries?: ResizeObserverEntry[]) => {
+				// display none的情况直接跳过执行
+				if (entries && getDisplayNone(entries[0].contentRect)) return;
+				// TODO BUG 如果display none时缩放导致的resize将导致无法更新scrollbar宽度，对于原生滚动条将会产生影响
+				if (!entries && getDisplayNone(body.getBoundingClientRect())) return;
+
 				getH_virtualCore().updateContainerSize(body.clientWidth);
 				getV_virtualCore().updateContainerSize(body.clientHeight);
 
