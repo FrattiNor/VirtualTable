@@ -3,7 +3,7 @@ import { memo, useState, useEffect } from 'react';
 import styles from './index.module.less';
 import ObserverItem from './ObserverItem';
 import useFrameThrottle from '../../../TableHooks/useFrameThrottle';
-import { type TableColumnFixed } from '../../../TableTypes/type';
+import { type Table2ColumnFixed } from '../../../TableTypes/type';
 import { getLeafColumn } from '../../../TableUtils';
 
 import type { TableInstance } from '../../../useTableInstance';
@@ -27,7 +27,7 @@ const ObserverStickyRow = <T,>(props: Props<T>) => {
 								const key = entry.target.getAttribute('data-key');
 								const _fixed = entry.target.getAttribute('data-fixed');
 								if (key !== null && _fixed !== null) {
-									const fixed = _fixed as TableColumnFixed;
+									const fixed = _fixed as Table2ColumnFixed;
 									// 触发pinged
 									// 缩放可能导致无法达到1
 									// 确保left是左侧遮挡，right是右侧遮挡

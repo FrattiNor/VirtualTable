@@ -2,12 +2,12 @@ import { memo, useEffect, useRef } from 'react';
 
 import styles from './index.module.less';
 
-import type { TableColumn } from '../../../../TableTypes/typeColumn';
+import type { Table2Column } from '../../../../TableTypes/typeColumn';
 import type { TableInstance } from '../../../../useTableInstance';
 
 type Props<T> = Pick<TableInstance<T>, 'setPingedMap' | 'fixedLeftMap' | 'fixedRightMap' | 'bodyRef'> & {
 	colIndex: number;
-	leafColumn: TableColumn<T>;
+	leafColumn: Table2Column<T>;
 	intersectionObserver: IntersectionObserver | null;
 };
 

@@ -1,8 +1,8 @@
 import { defaultRowHeight } from '../../TableUtils/configValues';
 
-import type { TableProps } from '../../TableTypes/typeProps';
+import type { Table2Props } from '../../TableTypes/typeProps';
 
-const useTableInnerProps = <T>(props: TableProps<T>) => {
+const useTableInnerProps = <T>(props: Table2Props<T>) => {
 	const requiredProps = {
 		data: props.data,
 		rowKey: props.rowKey,

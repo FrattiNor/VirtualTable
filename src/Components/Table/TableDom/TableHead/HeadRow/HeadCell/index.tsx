@@ -6,7 +6,7 @@ import styles from './index.module.less';
 import ResizeHandle from './ResizeHandle';
 import { getCellTitle, getColKeys, getResize, isStrNum } from '../../../../TableUtils';
 
-import type { TableColumn, TableColumnGroup } from '../../../../TableTypes/typeColumn';
+import type { Table2Column, Table2ColumnGroup } from '../../../../TableTypes/typeColumn';
 import type { TableInstance } from '../../../../useTableInstance';
 
 type Props<T> = Pick<
@@ -20,11 +20,11 @@ type Props<T> = Pick<
 } & (
 		| {
 				isLeaf: true;
-				column: TableColumn<T>;
+				column: Table2Column<T>;
 		  }
 		| {
 				isLeaf: false;
-				column: TableColumnGroup<T>;
+				column: Table2ColumnGroup<T>;
 		  }
 	);
 

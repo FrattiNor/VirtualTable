@@ -10,10 +10,10 @@ import TableBody from './TableBody';
 import TableHead from './TableHead';
 import TableLoading from './TableLoading';
 
-import type { TableComponent } from '../TableTypes/type';
-import type { TableProps } from '../TableTypes/typeProps';
+import type { Table2Component } from '../TableTypes/type';
+import type { Table2Props } from '../TableTypes/typeProps';
 
-const Table = <T,>(_props: TableProps<T>) => {
+const Table = <T,>(_props: Table2Props<T>) => {
 	const props = useTableInstance(_props);
 
 	return (
@@ -89,4 +89,4 @@ const Table = <T,>(_props: TableProps<T>) => {
 	);
 };
 
-export default memo(Table) as TableComponent;
+export default memo(Table) as Table2Component;

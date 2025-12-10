@@ -2,7 +2,7 @@ import { useCallback, useEffect } from 'react';
 
 import useFrameThrottle from '../../TableHooks/useFrameThrottle';
 import useRefValue from '../../TableHooks/useRefValue';
-import { type ResizeFlag } from '../../TableTypes/type';
+import { type Table2ResizeFlag } from '../../TableTypes/type';
 import { FixedTwo } from '../../TableUtils';
 import { maxColWidth, minColWidth } from '../../TableUtils/configValues';
 
@@ -117,7 +117,7 @@ const useTableResize = <T>({ tableState, tableColumns, tableInnerProps }: Props<
 
 	const startResize = useCallback(
 		({ e, columnKey, colIndexStart, colIndexEnd }: StartResizeProps) => {
-			const nextChildren: ResizeFlag['children'] = new Map();
+			const nextChildren: Table2ResizeFlag['children'] = new Map();
 
 			for (let i = colIndexStart; i <= colIndexEnd; i++) {
 				const key = colIndex2Key.get(i);

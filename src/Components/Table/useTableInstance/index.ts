@@ -8,9 +8,9 @@ import useTableState from './useTableState';
 import useTableSticky from './useTableSticky';
 import useTableVirtual from './useTableVirtual';
 
-import type { TableProps } from '../TableTypes/typeProps';
+import type { Table2Props } from '../TableTypes/typeProps';
 
-const useTableInstance = <T>(props: TableProps<T>) => {
+const useTableInstance = <T>(props: Table2Props<T>) => {
 	const tableDomRef = useTableDomRef();
 	const tableInnerProps = useTableInnerProps(props);
 	const tableState = useTableState({ tableInnerProps });

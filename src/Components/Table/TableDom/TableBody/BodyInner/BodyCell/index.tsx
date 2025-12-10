@@ -5,7 +5,7 @@ import classNames from 'classnames';
 import styles from './index.module.less';
 import { getCellTitle, getColKeys, getRowKeys, isStrNum } from '../../../../TableUtils';
 
-import type { TableColumn } from '../../../../TableTypes/typeColumn';
+import type { Table2Column } from '../../../../TableTypes/typeColumn';
 import type { TableInstance } from '../../../../useTableInstance';
 
 type Props<T> = Pick<
@@ -26,7 +26,7 @@ type Props<T> = Pick<
 	colIndexEnd: number;
 	rowIndexStart: number;
 	rowIndexEnd: number;
-	leafColumn: TableColumn<T>;
+	leafColumn: Table2Column<T>;
 };
 
 const BodyCell = <T,>(props: Props<T>) => {

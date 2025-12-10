@@ -1,12 +1,14 @@
 import { type CSSProperties } from 'react';
 
-import type { TableColumnWidth } from './type';
-import type { TableColumns } from './typeColumn';
+import type { Table2ColumnWidth } from './type';
+import type { Table2Columns } from './typeColumn';
 import type { ValueTypeKeys } from './typeUtil';
 
 type TableRowKey<T> = ValueTypeKeys<T, string> | ((item: T, index: number) => string);
 
-export type TableProps<T> = {
+export type Table2Props<T> = {
+	// TODO 主题
+	theme?: 'light' | 'dark';
 	// 样式
 	className?: string;
 	// 样式
@@ -14,7 +16,7 @@ export type TableProps<T> = {
 	// 数据源
 	data: Array<T> | undefined;
 	// 列配置
-	columns: TableColumns<T>;
+	columns: Table2Columns<T>;
 	// 行key
 	rowKey: TableRowKey<T>;
 	// 边框样式
@@ -29,7 +31,7 @@ export type TableProps<T> = {
 	columnConf?: {
 		sortConf?: Record<string, number>; // 排序
 		visibleConf?: Record<string, boolean>; // 可见
-		widthConf?: Record<string, TableColumnWidth>; // 宽度
+		widthConf?: Record<string, Table2ColumnWidth>; // 宽度
 	};
 	// 行高亮配置
 	rowBgHighlight?: {

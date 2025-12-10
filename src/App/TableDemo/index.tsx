@@ -5,7 +5,7 @@ import styles from './index.module.less';
 import useColumns from './useColumns';
 import useData from './useData';
 import BoxResize from '../../Components/BoxResize';
-import { Table } from '../../Components/Table';
+import { Table2 } from '../../Components/Table';
 
 const TableDemo = () => {
 	const { data, changeData } = useData();
@@ -35,7 +35,7 @@ const TableDemo = () => {
 				</div>
 				<BoxResize width={1500} height={500} logRender>
 					<div className={styles['container']}>
-						<Table
+						<Table2
 							data={data}
 							columns={columns}
 							rowKey={'userId'}

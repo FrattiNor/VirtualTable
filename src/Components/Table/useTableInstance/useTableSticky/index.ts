@@ -1,6 +1,6 @@
 import { useCallback, useMemo, type CSSProperties } from 'react';
 
-import { type TableColumnFixed } from '../../TableTypes/type';
+import { type Table2ColumnFixed } from '../../TableTypes/type';
 import { transformWidthArrToStr } from '../../TableUtils';
 
 import type useTableColumns from '../useTableColumns';
@@ -18,7 +18,7 @@ const useTableSticky = <T>({ tableColumns, tableState }: Props<T>) => {
 
 	// 根据pingedMap计算相关数据
 	const { getPinged, pingedLeftStart, pingedLeftEnd, pingedRightStart } = useMemo(() => {
-		const getPinged = (fixed: TableColumnFixed, key: string) => {
+		const getPinged = (fixed: Table2ColumnFixed, key: string) => {
 			return pingedMap.get(key)?.fixed === fixed;
 		};
 

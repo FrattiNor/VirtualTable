@@ -2,12 +2,12 @@ import { useMemo } from 'react';
 
 import { getLeafColumn } from '../../TableUtils';
 
-import type { TableColumn, TableColumnGroup } from '../../TableTypes/typeColumn';
-import type { TableProps } from '../../TableTypes/typeProps';
+import type { Table2Column, Table2ColumnGroup } from '../../TableTypes/typeColumn';
+import type { Table2Props } from '../../TableTypes/typeProps';
 import type useTableState from '../useTableState';
 
 type Props<T> = {
-	props: TableProps<T>;
+	props: Table2Props<T>;
 	tableState: ReturnType<typeof useTableState>;
 };
 
@@ -32,16 +32,16 @@ const useTableColumns = <T>({ props, tableState }: Props<T>) => {
 		//
 		const keyIndexMap = new Map<string, number>();
 		// 遍历columns
-		const getSplitColumnsArr = (c: TableProps<T>['columns'], opt?: { parents: Array<TableColumnGroup<T>> }) => {
+		const getSplitColumnsArr = (c: Table2Props<T>['columns'], opt?: { parents: Array<Table2ColumnGroup<T>> }) => {
 			const parents = opt?.parents ?? [];
-			const splitColumnsArrInner: Array<Array<TableColumnGroup<T> | TableColumn<T>>> = [];
+			const splitColumnsArrInner: Array<Array<Table2ColumnGroup<T> | Table2Column<T>>> = [];
 			if (parents.length > deepLevel) deepLevel = parents.length;
 			c.forEach((column) => {
 				checkSameKey(column.key);
 				// isGroup
 				if (Array.isArray(column.children)) {
 					if (column.children.length > 0) {
-						const current: TableColumnGroup<T> = { ...(column as TableColumnGroup<T>) };
+						const current: Table2ColumnGroup<T> = { ...(column as Table2ColumnGroup<T>) };
 						delete (current as any)['children'];
 						splitColumnsArrInner.push(...getSplitColumnsArr(column.children, { parents: [current, ...parents] }));
 					}
@@ -49,8 +49,8 @@ const useTableColumns = <T>({ props, tableState }: Props<T>) => {
 				// isColumn
 				// 判断visible & 覆盖width
 				else if (visibleConf?.[column.key] === undefined || visibleConf?.[column.key] === true) {
-					const current: TableColumn<T> = {
-						...(column as TableColumn<T>),
+					const current: Table2Column<T> = {
+						...(column as Table2Column<T>),
 						width: widthConf?.[column.key] ?? column.width ?? 150,
 					};
 					splitColumnsArrInner.push([current, ...parents]);
@@ -96,7 +96,7 @@ const useTableColumns = <T>({ props, tableState }: Props<T>) => {
 		const colKey2Index = new Map<string, number>();
 		const colIndex2Key = new Map<number, string>();
 		//
-		const splitColumnsArr: Array<Array<TableColumnGroup<T> | TableColumn<T>>> = [];
+		const splitColumnsArr: Array<Array<Table2ColumnGroup<T> | Table2Column<T>>> = [];
 		// index，当前column所在index
 		// size，当前column的宽度
 		// stickySize，sticky时left，right的数值
