@@ -1,12 +1,12 @@
 import { useMemo, useState, type ReactNode } from 'react';
 
-import type { TableColumns } from '../../../Components/Table/TableTypes/typeColumn';
+import type { Table2Columns } from '../../../Components/Table';
 import type { DataItem } from '../useData/data';
 
 const useColumns = () => {
 	const [longColumn, setLongColumn] = useState(true);
 
-	const columns: TableColumns<DataItem> = useMemo(() => {
+	const columns: Table2Columns<DataItem> = useMemo(() => {
 		if (longColumn === true) {
 			return [
 				{
@@ -205,7 +205,7 @@ const useColumns = () => {
 
 	const leafColumns = useMemo(() => {
 		const _columns: Array<{ key: string; title: ReactNode }> = [];
-		const loop = (c: TableColumns<DataItem>) => {
+		const loop = (c: Table2Columns<DataItem>) => {
 			c.forEach((item) => {
 				if (Array.isArray(item.children)) {
 					loop(item.children);
