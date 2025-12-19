@@ -1,4 +1,4 @@
-import { memo } from 'react';
+import { memo, type ReactNode } from 'react';
 
 import BodyCell from './BodyCell';
 import BodyCellPlaceholder from './BodyCellPlaceholder';
@@ -34,50 +34,41 @@ const BodyInner = <T,>(props: Props<T>) => {
 		props;
 
 	let firstRowIndex: number | null = null;
-	const bodyDom = (() => {
-		let lastRowIndex: number | null = null;
-		let notRenderRowIndexs: number[] = [];
-		const needRenderRowIndexs: number[] = [];
+	let lastRowIndex: number | null = null;
 
-		// 检测重复的rowKey
-		const rowKeysMap = new Map<string, number>();
-		const checkSameKey = (key: string) => {
-			if (rowKeysMap.get(key) === 1) console.error(`same row key: ${key}`);
-			rowKeysMap.set(key, (rowKeysMap.get(key) ?? 0) + 1);
-		};
+	// 检测重复的rowKey
+	const rowKeysMap = new Map<string, number>();
+	const checkSameKey = (key: string) => {
+		if (rowKeysMap.get(key) === 1) console.error(`same row key: ${key}`);
+		rowKeysMap.set(key, (rowKeysMap.get(key) ?? 0) + 1);
+	};
 
-		data?.forEach((dataItem, rowIndex) => {
-			const dataRowKey = getRowKey(rowKey, dataItem, rowIndex);
-			checkSameKey(dataRowKey);
+	data?.forEach((dataItem, rowIndex) => {
+		const dataRowKey = getRowKey(rowKey, dataItem, rowIndex);
+		checkSameKey(dataRowKey);
 
-			const showRow = splitColumnsArr.some((splitColumns, colIndex) => {
-				const leafColumn = getLeafColumn(splitColumns);
-				const { rowSpan = 1, colSpan = 1 } = leafColumn.onCellSpan ? leafColumn.onCellSpan(dataItem, rowIndex) : {};
-				if (rowSpan <= 0 || colSpan <= 0) return false;
-				const rowIndexStart = rowIndex;
-				const rowIndexEnd = rowIndex + rowSpan - 1;
-				const colIndexStart = colIndex;
-				const colIndexEnd = colIndex + colSpan - 1;
-				if (!getBodyCellRowShow({ rowIndexStart, rowIndexEnd })) return false;
-				if (!getBodyCellColShow({ colIndexStart, colIndexEnd })) return false;
-				return true;
-			});
-
-			if (showRow === true) {
-				if (firstRowIndex === null) firstRowIndex = rowIndex;
-				if (lastRowIndex === null || rowIndex > lastRowIndex) lastRowIndex = rowIndex;
-				if (notRenderRowIndexs.length > 0) needRenderRowIndexs.push(...notRenderRowIndexs);
-				needRenderRowIndexs.push(rowIndex);
-				notRenderRowIndexs = [];
-			} else {
-				if (typeof firstRowIndex === 'number') notRenderRowIndexs.push(rowIndex);
-			}
+		splitColumnsArr.forEach((splitColumns, colIndex) => {
+			const leafColumn = getLeafColumn(splitColumns);
+			const { rowSpan = 1, colSpan = 1 } = leafColumn.onCellSpan ? leafColumn.onCellSpan(dataItem, rowIndex) : {};
+			if (rowSpan <= 0 || colSpan <= 0) return false;
+			const rowIndexStart = rowIndex;
+			const rowIndexEnd = rowIndex + rowSpan - 1;
+			const colIndexStart = colIndex;
+			const colIndexEnd = colIndex + colSpan - 1;
+			if (!getBodyCellRowShow({ rowIndexStart, rowIndexEnd })) return false;
+			if (!getBodyCellColShow({ colIndexStart, colIndexEnd })) return false;
+			if (firstRowIndex === null) firstRowIndex = rowIndexStart;
+			if (lastRowIndex === null || rowIndexEnd > lastRowIndex) lastRowIndex = rowIndexEnd;
+			return true;
 		});
+	});
 
-		return needRenderRowIndexs.map((rowIndex) => {
+	const bodyDom: ReactNode[] = [];
+	if (typeof firstRowIndex === 'number' && typeof lastRowIndex === 'number') {
+		for (let rowIndex = firstRowIndex; rowIndex <= lastRowIndex; rowIndex++) {
 			const dataItem = data[rowIndex];
 			const dataRowKey = getRowKey(rowKey, dataItem, rowIndex);
-			return (
+			bodyDom.push(
 				<div key={dataRowKey} data-row={rowIndex + 1} style={{ display: 'contents' }}>
 					{splitColumnsArr.map((splitColumns, colIndex) => {
 						const leafColumn = getLeafColumn(splitColumns);
@@ -122,10 +113,10 @@ const BodyInner = <T,>(props: Props<T>) => {
 						bodyRowMouseEnter={props.bodyRowMouseEnter}
 						bodyRowMouseLeave={props.bodyRowMouseLeave}
 					/>
-				</div>
+				</div>,
 			);
-		});
-	})();
+		}
+	}
 
 	const offsetTop = getV_OffsetTop(firstRowIndex ?? 0);
 
