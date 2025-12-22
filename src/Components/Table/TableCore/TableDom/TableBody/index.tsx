@@ -32,13 +32,12 @@ type Props<T> = Pick<
 	| 'bodyRowClick'
 	| 'bodyRowMouseEnter'
 	| 'bodyRowMouseLeave'
-	| 'getBodyCellColShow'
-	| 'getBodyCellRowShow'
 	| 'v_totalSize'
-	| 'getV_OffsetTop'
+	| 'v_offsetTop'
 	| 'v_measureItemSize'
 	| 'theme'
 	| 'highlightKeywords'
+	| 'renderBodyDom'
 >;
 
 const TableBody = <T,>(props: Props<T>) => {
@@ -67,11 +66,12 @@ const TableBody = <T,>(props: Props<T>) => {
 				rowKey={props.rowKey}
 				bordered={props.bordered}
 				rowHeight={props.rowHeight}
+				v_offsetTop={props.v_offsetTop}
 				v_totalSize={props.v_totalSize}
-				bodyRowClick={props.bodyRowClick}
 				bodyInnerRef={props.bodyInnerRef}
+				bodyRowClick={props.bodyRowClick}
 				getBodyCellBg={props.getBodyCellBg}
-				getV_OffsetTop={props.getV_OffsetTop}
+				renderBodyDom={props.renderBodyDom}
 				splitColumnsArr={props.splitColumnsArr}
 				highlightKeywords={props.highlightKeywords}
 				v_measureItemSize={props.v_measureItemSize}
@@ -79,8 +79,6 @@ const TableBody = <T,>(props: Props<T>) => {
 				bodyRowMouseLeave={props.bodyRowMouseLeave}
 				getBodyStickyStyle={props.getBodyStickyStyle}
 				gridTemplateColumns={props.gridTemplateColumns}
-				getBodyCellColShow={props.getBodyCellColShow}
-				getBodyCellRowShow={props.getBodyCellRowShow}
 			/>
 			{isEmpty && <BodyEmpty tableWidth={props.tableWidth} theme={props.theme} />}
 		</div>

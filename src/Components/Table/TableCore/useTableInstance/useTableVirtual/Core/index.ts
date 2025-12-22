@@ -20,6 +20,7 @@ class VirtualCore {
 		this.state.sizeList = getSizeList({
 			gap: this.props.gap,
 			count: this.props.count,
+			keyName: this.props.keyName,
 			getItemKey: this.props.getItemKey,
 			getItemSize: this.props.getItemSize,
 		});

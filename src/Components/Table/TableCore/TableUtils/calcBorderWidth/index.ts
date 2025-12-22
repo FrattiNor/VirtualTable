@@ -1,6 +1,7 @@
 import styles from './index.module.less';
 
 const calcBorderWidth = (container: HTMLElement) => {
+	// 创建容器
 	const calcDom = document.createElement('div');
 	calcDom.style.width = '100px';
 	calcDom.style.height = '100px';
@@ -18,11 +19,16 @@ const calcBorderWidth = (container: HTMLElement) => {
 	calcDomInner.style.width = '1000px';
 	calcDomInner.style.height = '1000px';
 	calcDom.appendChild(calcDomInner);
+	// 滚动到极限位置
+	calcDom.scrollTop = 1000;
+	calcDom.scrollLeft = 1000;
+	// 计算scrollbar宽度
+	const vScrollbarWidth1 = calcDom.offsetWidth - calcDom.clientWidth;
+	const hScrollbarWidth1 = calcDom.offsetHeight - calcDom.clientHeight;
+	const vScrollbarWidth2 = calcDom.offsetWidth - Math.floor(calcDomInner.offsetWidth - calcDom.scrollLeft);
+	const hScrollbarWidth2 = calcDom.offsetHeight - Math.floor(calcDomInner.offsetHeight - calcDom.scrollTop);
 
-	const vScrollbarWidth = calcDom.offsetWidth - calcDom.clientWidth;
-	const hScrollbarWidth = calcDom.offsetHeight - calcDom.clientHeight;
-
-	return { calcDom, vScrollbarWidth, hScrollbarWidth };
+	return { calcDom, vScrollbarWidth: Math.max(vScrollbarWidth1, vScrollbarWidth2), hScrollbarWidth: Math.max(hScrollbarWidth1, hScrollbarWidth2) };
 };
 
 export default calcBorderWidth;

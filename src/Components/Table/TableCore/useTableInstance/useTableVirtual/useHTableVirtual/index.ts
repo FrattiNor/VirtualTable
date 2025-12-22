@@ -1,46 +1,89 @@
-import { useLayoutEffect, useMemo, useState } from 'react';
+import { useCallback } from 'react';
 
-import useFrameThrottle from '../../../TableHooks/useFrameThrottle';
-import VirtualCore from '../Core';
-import { type VirtualProps } from '../Core/type';
+import useHVirtualCore from './useHVirtualCore';
+import useRefValue from '../../../TableHooks/useRefValue';
+import { getLeafColumn } from '../../../TableUtils';
+import { defaultColWidth } from '../../../TableUtils/configValues';
 
+import type useTableColumns from '../../useTableColumns';
 import type useTableDomRef from '../../useTableDomRef';
+import type useTableState from '../../useTableState';
 
-type Props = Omit<VirtualProps, 'onChange'> & {
-	bodyRef: ReturnType<typeof useTableDomRef>['bodyRef'];
-	headRef: ReturnType<typeof useTableDomRef>['headRef'];
+type Props<T> = {
+	tableState: ReturnType<typeof useTableState>;
+	tableDomRef: ReturnType<typeof useTableDomRef>;
+	tableColumns: ReturnType<typeof useTableColumns<T>>;
 };
 
-const useHTableVirtual = (props: Props) => {
-	const { enabled, count, overscan, gap, getItemKey, getItemSize, bodyRef, headRef } = props;
+const useHTableVirtual = <T>({ tableColumns, tableState, tableDomRef }: Props<T>) => {
+	const { sizeCacheMap } = tableState;
+	const { splitColumnsArr, columnKeys, colBodyForceRenderMap, colHeadForceRenderMap, fixedLeftMap, fixedRightMap } = tableColumns;
+	const getH_ItemKey = useCallback((index: number) => getLeafColumn(splitColumnsArr[index]).key, [columnKeys]);
 
-	const { throttle } = useFrameThrottle();
-	const [virtualCore, setVirtualCore] = useState<VirtualCore>(() => new VirtualCore());
+	const h_virtual = useHVirtualCore({
+		bodyRef: tableDomRef.bodyRef,
+		headRef: tableDomRef.headRef,
+		count: splitColumnsArr.length,
+		getItemKey: getH_ItemKey,
+		getItemSize: useCallback((index: number) => sizeCacheMap.get(getH_ItemKey(index)) ?? defaultColWidth, [sizeCacheMap, getH_ItemKey]),
+	});
 
-	useMemo(() => {
-		virtualCore.updateProps({
-			gap,
-			count,
-			enabled,
-			overscan,
-			getItemKey,
-			getItemSize,
-			onChange: () => throttle(() => setVirtualCore(new VirtualCore(virtualCore))),
-		});
-		return null;
-	}, [enabled, count, overscan, gap, getItemKey, getItemSize]);
+	const h_rangeEnd = h_virtual.rangeEnd;
+	const h_rangeStart = h_virtual.rangeStart;
+	const h_totalSize = h_virtual.totalSize;
+	const [getH_virtualCore] = useRefValue(h_virtual.virtualCore);
 
-	const rangeEnd = virtualCore.state.rangeEnd;
-	const totalSize = virtualCore.state.totalSize ?? 0;
-	const rangeStart = virtualCore.state.rangeStart;
-	const scrollOffset = virtualCore.state.scrollOffset;
+	// 获取head的col显示情况
+	const getHeadCellColShow = useCallback(
+		({ colIndexStart, colIndexEnd }: { colIndexStart: number; colIndexEnd: number }) => {
+			if (typeof h_rangeEnd === 'number' && typeof h_rangeStart === 'number') {
+				for (let i = colIndexStart; i <= colIndexEnd; i++) {
+					const key = getLeafColumn(splitColumnsArr[i]).key;
+					if (colHeadForceRenderMap.get(key) === true) return true;
+					if (fixedLeftMap.get(key) !== undefined || fixedRightMap.get(key) !== undefined) return true;
+					if (i <= h_rangeEnd && i >= h_rangeStart) return true;
+				}
+			}
+			return false;
+		},
+		[h_rangeStart, h_rangeEnd, splitColumnsArr, colHeadForceRenderMap, fixedLeftMap, fixedRightMap],
+	);
 
-	useLayoutEffect(() => {
-		if (bodyRef.current && bodyRef.current.scrollLeft !== scrollOffset) bodyRef.current.scrollLeft = scrollOffset;
-		if (headRef.current && headRef.current.scrollLeft !== scrollOffset) headRef.current.scrollLeft = scrollOffset;
-	}, [scrollOffset]);
+	// 获取body的col的显示情况
+	const getBodyCellColShow = useCallback(
+		({ colIndexStart, colIndexEnd }: { colIndexStart: number; colIndexEnd: number }) => {
+			if (typeof h_rangeEnd === 'number' && typeof h_rangeStart === 'number') {
+				for (let i = colIndexStart; i <= colIndexEnd; i++) {
+					const key = getLeafColumn(splitColumnsArr[i]).key;
+					if (colBodyForceRenderMap.get(key) === true) return true;
+					if (fixedLeftMap.get(key) !== undefined || fixedRightMap.get(key) !== undefined) return true;
+					if (i <= h_rangeEnd && i >= h_rangeStart) return true;
+				}
+			}
+			return false;
+		},
+		[h_rangeStart, h_rangeEnd, splitColumnsArr, colBodyForceRenderMap, fixedLeftMap, fixedRightMap],
+	);
 
-	return { virtualCore, rangeStart, rangeEnd, totalSize };
+	// 获取body的col的强制显示情况
+	const getBodyCellColForceShow = useCallback(
+		({ colIndexStart, colIndexEnd }: { colIndexStart: number; colIndexEnd: number }) => {
+			for (let i = colIndexStart; i <= colIndexEnd; i++) {
+				const key = getLeafColumn(splitColumnsArr[i]).key;
+				if (colBodyForceRenderMap.get(key) === true) return true;
+			}
+			return false;
+		},
+		[splitColumnsArr, colBodyForceRenderMap],
+	);
+
+	return {
+		h_totalSize,
+		getH_virtualCore,
+		getHeadCellColShow,
+		getBodyCellColShow,
+		getBodyCellColForceShow,
+	};
 };
 
 export default useHTableVirtual;

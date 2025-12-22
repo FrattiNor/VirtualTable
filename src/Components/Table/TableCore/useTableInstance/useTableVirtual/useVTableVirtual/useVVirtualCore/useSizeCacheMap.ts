@@ -1,6 +1,6 @@
 import { startTransition, useCallback, useEffect, useMemo, useState } from 'react';
 
-import { type VirtualProps } from '../Core/type';
+import { type VirtualProps } from '../../Core/type';
 
 type Props = Omit<VirtualProps, 'onChange'>;
 

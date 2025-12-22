@@ -17,13 +17,6 @@ const useTableColumns = <T>({ props, tableState }: Props<T>) => {
 	const { visibleConf, sortConf, widthConf, fixedConf, flexGrowConf } = props.columnConf ?? {};
 
 	const columnsCore = useMemo(() => {
-		// 检测重复的columnKey
-		const colKeysMap = new Map<string, number>();
-		const checkSameKey = (key: string) => {
-			if (colKeysMap.get(key) === 1) console.error(`same column key: ${key}`);
-			colKeysMap.set(key, (colKeysMap.get(key) ?? 0) + 1);
-		};
-
 		let index = 0;
 		const keyIndexMap = new Map<string, number>();
 
@@ -31,7 +24,6 @@ const useTableColumns = <T>({ props, tableState }: Props<T>) => {
 			const parents = opt?.parents ?? [];
 			const splitColumnsArrInner: Array<Array<TableCoreColumn<T> | TableCoreColumnGroup<T>>> = [];
 			c.forEach((column) => {
-				checkSameKey(column.key);
 				// isGroup
 				if (Array.isArray(column.children)) {
 					if (column.children.length > 0) {
@@ -78,18 +70,20 @@ const useTableColumns = <T>({ props, tableState }: Props<T>) => {
 
 	// ======================================== part2 ========================================
 	const colHandleRes = useMemo(() => {
-		//
+		// 存在onCellSpan
+		let existOnCellSpan = false;
+		// col的key的合集，用于判断一些Memo
 		let columnKeys = '';
 		// gridTemplateColumns
 		let gridTemplateColumns = '';
-		//
-		const colHeadForceRenderObj: Record<string, true> = {};
-		//
-		const colBodyForceRenderObj: Record<string, true> = {};
-		//
+		// headForceRender
+		const colHeadForceRenderMap = new Map<string, true>();
+		// bodyForceRender
+		const colBodyForceRenderMap = new Map<string, true>();
+		// col的key转index和index转key
 		const colKey2Index = new Map<string, number>();
 		const colIndex2Key = new Map<number, string>();
-		//
+		// 最终columns
 		const splitColumnsArr: Array<Array<TableCoreColumnGroup<T> | TableCoreColumn<T>>> = [];
 		// index，当前column所在index
 		// size，当前column的宽度
@@ -101,36 +95,43 @@ const useTableColumns = <T>({ props, tableState }: Props<T>) => {
 		const fixedRightArr: FixedRightItem[] = [];
 		const fixedLeftMap = new Map<string, FixedLeftItem>();
 		const fixedRightMap = new Map<string, FixedRightItem>();
-		//
 		let totalSize = 0;
 		let leftCalcSize = 0;
 		let leftPingedSize = leftCalcSize;
-		//
 		let index = 0;
 		let deepLevel = 0;
+
 		columnsCore.forEach((splitColumns) => {
 			const leafColumn = getLeafColumn(splitColumns);
 			const sizeCache = sizeCacheMap.get(leafColumn.key);
+			// col存在测量的size
 			if (typeof sizeCache === 'number') {
 				splitColumnsArr.push(splitColumns);
+				// haveOnCellSpan
+				if (typeof leafColumn.onCellSpan === 'function') existOnCellSpan = true;
+				// 计算deepLevel【col的group层数】
 				const colLevel = splitColumns.length - 1;
 				if (colLevel > deepLevel) deepLevel = colLevel;
-
+				// 计算totalSize
 				totalSize += sizeCache;
+				// 计算columnKeys
 				columnKeys += `_${leafColumn.key}_`;
+				// 计算gridTemplateColumns
 				gridTemplateColumns += gridTemplateColumns === '' ? `${sizeCache}px` : ` ${sizeCache}px`;
-				if (leafColumn.colHeadForceRender === true || leafColumn.fixed === 'left' || leafColumn.fixed === 'right') {
-					colHeadForceRenderObj[leafColumn.key] = true;
+				// 计算colHeadForceRenderObj
+				if (leafColumn.colHeadForceRender === true) {
+					colHeadForceRenderMap.set(leafColumn.key, true);
 				}
-				if (leafColumn.colBodyForceRender === true || leafColumn.fixed === 'left' || leafColumn.fixed === 'right') {
-					colBodyForceRenderObj[leafColumn.key] = true;
+				// 计算colBodyForceRenderObj
+				if (leafColumn.colBodyForceRender === true) {
+					colBodyForceRenderMap.set(leafColumn.key, true);
 				}
-
+				// 计算fixedLeftMap
 				if (leafColumn.fixed === 'left') {
 					fixedLeftMap.set(leafColumn.key, {
 						index,
-						key: leafColumn.key,
 						size: sizeCache,
+						key: leafColumn.key,
 						stickySize: leftCalcSize,
 						pingedSize: leftPingedSize,
 					});
@@ -138,7 +139,7 @@ const useTableColumns = <T>({ props, tableState }: Props<T>) => {
 				} else {
 					leftPingedSize += sizeCache;
 				}
-
+				// 计算fixedRightArr
 				if (leafColumn.fixed === 'right') {
 					// stickySize, pingedSize 占位，避免ts报错
 					fixedRightArr.unshift({
@@ -150,13 +151,14 @@ const useTableColumns = <T>({ props, tableState }: Props<T>) => {
 						leftTotalSize: totalSize,
 					});
 				}
-
+				// 计算colKey2Index和colIndex2Key
 				colKey2Index.set(leafColumn.key, index);
 				colIndex2Key.set(index, leafColumn.key);
+				// 计算index变化
 				index++;
 			}
 		});
-
+		// 计算fixedRightMap
 		let rightCalcSize = 0;
 		fixedRightArr.forEach(({ key, size, leftTotalSize }, i) => {
 			const stickySize = rightCalcSize;
@@ -169,6 +171,7 @@ const useTableColumns = <T>({ props, tableState }: Props<T>) => {
 
 		return {
 			deepLevel,
+			existOnCellSpan,
 			colKey2Index, // columns对应的key-index
 			colIndex2Key, // columns对应的index-key
 			columnKeys, // 渲染的columns的key组合string，用于判断某些地方的Memo
@@ -177,8 +180,8 @@ const useTableColumns = <T>({ props, tableState }: Props<T>) => {
 			fixedRightMap, // 右固定的map
 			splitColumnsArr, // 渲染的columns
 			gridTemplateColumns, // columns的grid的宽度css
-			colBodyForceRenderObj, // colBody强制渲染
-			colHeadForceRenderObj, // colHead强制渲染
+			colBodyForceRenderMap, // colBody强制渲染
+			colHeadForceRenderMap, // colHead强制渲染
 		};
 	}, [columnsCore, sizeCacheMap]);
 	// ======================================== part2 ========================================

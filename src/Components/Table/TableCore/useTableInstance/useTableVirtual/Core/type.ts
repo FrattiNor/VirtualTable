@@ -1,5 +1,7 @@
 // 对外
 export interface VirtualProps {
+	// 校验是否存在重复的key【使用的报错提示名】
+	keyName?: string;
 	// 启用
 	enabled?: boolean;
 	// 数量

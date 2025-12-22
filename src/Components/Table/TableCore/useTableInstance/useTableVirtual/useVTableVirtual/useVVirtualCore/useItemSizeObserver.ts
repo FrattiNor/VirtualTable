@@ -1,7 +1,7 @@
 import { useRef, useEffect, useCallback } from 'react';
 
-import useRefValue from '../../../TableHooks/useRefValue';
-import { getDisplayNone } from '../../../TableUtils/index';
+import useRefValue from '../../../../TableHooks/useRefValue';
+import { getDisplayNone } from '../../../../TableUtils/index';
 
 import type useSizeCacheMap from './useSizeCacheMap';
 

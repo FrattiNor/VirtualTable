@@ -3,6 +3,7 @@ import type { VirtualProps, VirtualSizeListItem, VirtualState } from './type';
 export const getSizeList = ({
 	gap,
 	count,
+	keyName,
 	getItemKey,
 	getItemSize,
 }: {
@@ -10,7 +11,15 @@ export const getSizeList = ({
 	gap: VirtualProps['gap'];
 	getItemKey: VirtualProps['getItemKey'];
 	getItemSize: VirtualProps['getItemSize'];
+	keyName?: string;
 }) => {
+	// 检测重复的rowKey
+	const rowKeysMap = new Map<string, number>();
+	const checkSameKey = (key: string) => {
+		if (rowKeysMap.get(key) === 1) console.error(`same ${keyName ?? 'key'}: ${key}`);
+		rowKeysMap.set(key, (rowKeysMap.get(key) ?? 0) + 1);
+	};
+
 	const { itemGap = 0, startGap = 0, endGap = 0 } = gap ?? {};
 	const sizeList: Array<VirtualSizeListItem> = [];
 	for (let index = 0; index < count; index++) {
@@ -21,6 +30,7 @@ export const getSizeList = ({
 		const start = index === 0 ? startGap : beforeEnd + itemGap;
 		const end = start + size;
 		const nextStart = index === count - 1 ? end + endGap : end + itemGap;
+		checkSameKey(key);
 		sizeList.push({ key, size, index, start, end, nextStart });
 	}
 	return sizeList;

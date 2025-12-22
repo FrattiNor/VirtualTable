@@ -76,7 +76,7 @@ const ObserverStickyRow = <T,>(props: Props<T>) => {
 		>
 			{splitColumnsArr.map((splitColumns, colIndex) => {
 				const leafColumn = getLeafColumn(splitColumns);
-				if (leafColumn.fixed) {
+				if (leafColumn.fixed === 'left' || leafColumn.fixed === 'right') {
 					return (
 						<ObserverItem
 							colIndex={colIndex}
