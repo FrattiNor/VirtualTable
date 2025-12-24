@@ -4,34 +4,37 @@
 	outline: none;
 	display: flex;
 	position: relative;
-	white-space: nowrap;
 	align-items: center;
 	box-sizing: border-box;
 	transition: background-color 0.2s;
 	padding: var(--table-body-cell-v-padding) var(--table-body-cell-h-padding);
+	// 默认有borderTop
 	border-top: var(--table-cell-border-width) solid var(--table-cell-border-color);
 
+	// 第一行删除borderTop
 	&.first-row {
 		border-top: 0 solid var(--table-cell-border-color);
 	}
 
+	// bordered的情况下，默认有borderLeft
 	&.bordered {
 		border-left: var(--table-cell-border-width) solid var(--table-cell-border-color);
-
-		&.first-col {
-			border-left: 0 solid var(--table-cell-border-color);
-		}
-
-		&.not-first-col-and-right-last-pinged,
-		&.not-first-col-and-left-first-pinged {
-			border-left: 0 solid var(--table-cell-border-color);
-			padding-left: calc(var(--table-body-cell-h-padding) + var(--table-cell-border-width));
-		}
 	}
 
-	&.left-last-pinged::after {
+	// bordered，但第一列删除borderLeft
+	&.bordered.first-col {
+		border-left: 0 solid var(--table-cell-border-color);
+	}
+
+	// bordered，但隐藏borderLeft【部分pinged情况】
+	&.bordered.hidden-left-border {
+		border-left: var(--table-cell-border-width) solid transparent;
+	}
+
+	// 左固定最后一位默认显示阴影，默认top包含上边框
+	&.left-last-pinged::before {
 		content: '';
-		top: 0;
+		top: calc(-1 * var(--table-cell-border-width));
 		left: 100%;
 		bottom: 0;
 		width: 30px;
@@ -41,9 +44,15 @@
 		box-shadow: var(--table-sticky-box-shadow-left);
 	}
 
+	// 左固定最后一位，但是第一行，删除top包含的上边框
+	&.left-last-pinged.first-row::before {
+		top: 0;
+	}
+
+	// 右固定最后一位默认显示阴影，默认top包含上边框
 	&.right-last-pinged::before {
 		content: '';
-		top: 0;
+		top: calc(-1 * var(--table-cell-border-width));
 		right: 100%;
 		bottom: 0;
 		width: 30px;
@@ -53,11 +62,36 @@
 		box-shadow: var(--table-sticky-box-shadow-right);
 	}
 
-	.ellipsis-wrapper {
+	// 右固定最后一位，但是第一行，删除top包含的上边框
+	&.right-last-pinged.first-row::before {
+		top: 0;
+	}
+
+	// 右固定最后一位，但是bordered，默认right包含左边框
+	&.right-last-pinged.bordered::before {
+		right: calc(100% + var(--table-cell-border-width));
+	}
+
+	// 右固定最后一位，bordered，但是第一列，删除right包含的左边框
+	&.right-last-pinged.bordered.first-col::before {
+		right: 100%;
+	}
+
+	.text-wrapper {
 		min-width: 0;
 		max-width: 100%;
 		overflow: hidden;
 		white-space: nowrap;
 		text-overflow: ellipsis;
+	}
+
+	.block-wrapper {
+		height: 100%;
+		min-width: 0;
+		max-width: 100%;
+		overflow: hidden;
+		white-space: nowrap;
+		display: inline-flex;
+		align-items: center;
 	}
 }

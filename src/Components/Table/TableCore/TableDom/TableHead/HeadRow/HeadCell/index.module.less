@@ -5,18 +5,34 @@
 	display: flex;
 	position: relative;
 	align-items: center;
-	white-space: nowrap;
 	box-sizing: border-box;
 	justify-content: flex-start;
 	transition: background-color 0.2s;
 	padding: var(--table-head-cell-v-padding) var(--table-head-cell-h-padding);
+	// 默认有borderBottom
 	border-bottom: var(--table-cell-border-width) solid var(--table-cell-border-color);
 
-	&.left-last-pinged::after {
+	// bordered的情况下，默认有borderLeft
+	&.bordered {
+		border-left: var(--table-cell-border-width) solid var(--table-cell-border-color);
+	}
+
+	// bordered，但第一列删除borderLeft
+	&.bordered.first-col {
+		border-left: 0 solid var(--table-cell-border-color);
+	}
+
+	// bordered，但隐藏borderLeft【部分pinged情况】
+	&.bordered.hidden-left-border {
+		border-left: var(--table-cell-border-width) solid transparent;
+	}
+
+	// 左固定最后一位默认显示阴影，默认bottom包含下边框
+	&.left-last-pinged::before {
 		content: '';
 		top: 0;
 		left: 100%;
-		bottom: 0;
+		bottom: calc(-1 * var(--table-cell-border-width));
 		width: 30px;
 		position: absolute;
 		pointer-events: none;
@@ -24,11 +40,12 @@
 		box-shadow: var(--table-sticky-box-shadow-left);
 	}
 
+	// 右固定最后一位默认显示阴影，默认bottom包含下边框
 	&.right-last-pinged::before {
 		content: '';
 		top: 0;
 		right: 100%;
-		bottom: 0;
+		bottom: calc(-1 * var(--table-cell-border-width));
 		width: 30px;
 		position: absolute;
 		pointer-events: none;
@@ -36,18 +53,14 @@
 		box-shadow: var(--table-sticky-box-shadow-right);
 	}
 
-	&.bordered {
-		border-left: var(--table-cell-border-width) solid var(--table-cell-border-color);
+	// 右固定最后一位，但是bordered，默认right包含左边框
+	&.right-last-pinged.bordered::before {
+		right: calc(100% + var(--table-cell-border-width));
+	}
 
-		&.first-col {
-			border-left: 0 solid var(--table-cell-border-color);
-		}
-
-		&.not-first-col-and-right-last-pinged,
-		&.not-first-col-and-left-first-pinged {
-			border-left: 0 solid var(--table-cell-border-color);
-			padding-left: calc(var(--table-head-cell-h-padding) + var(--table-cell-border-width));
-		}
+	// 右固定最后一位，bordered，但是第一列，删除right包含的左边框
+	&.right-last-pinged.bordered.first-col::before {
+		right: 100%;
 	}
 
 	.head-cell-inner {
@@ -60,11 +73,21 @@
 		justify-content: flex-start;
 	}
 
-	.ellipsis-wrapper {
+	.text-wrapper {
 		min-width: 0;
 		max-width: 100%;
 		overflow: hidden;
 		white-space: nowrap;
 		text-overflow: ellipsis;
+	}
+
+	.block-wrapper {
+		height: 100%;
+		min-width: 0;
+		max-width: 100%;
+		overflow: hidden;
+		white-space: nowrap;
+		display: inline-flex;
+		align-items: center;
 	}
 }

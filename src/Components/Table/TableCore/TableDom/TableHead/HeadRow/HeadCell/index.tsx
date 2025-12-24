@@ -42,17 +42,27 @@ const HeadCell = <T,>(props: Props<T>) => {
 		getHeadStickyStyle,
 		getHeadCellBg,
 	} = props;
-
+	// 是否可以resize
 	const resize = useMemo(() => getResize(splitColumnsArr, colIndexStart, colIndexEnd), [splitColumnsArr, colIndexStart, colIndexEnd]);
+	// 列keys
 	const colKeys = useMemo(() => getColKeys(splitColumnsArr, colIndexStart, colIndexEnd), [splitColumnsArr, colIndexStart, colIndexEnd]);
-
+	// 最终渲染结果
 	const renderDom = !isEmptyRender(column.title) ? column.title : '-';
+	// 筛选dom
 	const filterDom = column.filter;
+	// 是否存在筛选
 	const haveFilter = isLeaf && filterDom;
+	// 当前head的title
 	const title = getCellTitle(renderDom);
+	// 是否可省略
 	const canEllipsis = isStrNum(renderDom);
+	// 当前head的背景色
 	const backgroundColor = getHeadCellBg({ colKeys });
-	const { stickyStyle, rightLastPinged, leftFirstPinged, leftLastPinged } = getHeadStickyStyle({ colKeys });
+	// 当前head的sticky情况
+	const { stickyStyle, hiddenLeftBorder, leftLastPinged, rightLastPinged } = getHeadStickyStyle({ colKeys });
+	// 当前head配置的style
+	const style = column.headStyle;
+	// 当前head的align相关style
 	const alignJustifyContent: CSSProperties['justifyContent'] =
 		column.align === 'center' ? 'center' : column.align === 'right' ? 'flex-end' : 'flex-start';
 
@@ -64,28 +74,43 @@ const HeadCell = <T,>(props: Props<T>) => {
 				[styles['first-col']]: colIndexStart === 0,
 				[styles['left-last-pinged']]: leftLastPinged,
 				[styles['right-last-pinged']]: rightLastPinged,
-				[styles['not-first-col-and-left-first-pinged']]: colIndexStart !== 0 && leftFirstPinged,
-				[styles['not-first-col-and-right-last-pinged']]: colIndexStart !== 0 && rightLastPinged,
+				[styles['hidden-left-border']]: colIndexStart !== 0 && hiddenLeftBorder,
 			})}
 			style={{
-				...stickyStyle,
 				backgroundColor,
 				gridRow: `${rowIndexStart + 1}/${rowIndexEnd + 2}`,
 				gridColumn: `${colIndexStart + 1}/${colIndexEnd + 2}`,
 				minHeight: (rowIndexEnd - rowIndexStart + 1) * rowHeight,
 				justifyContent: !haveFilter ? alignJustifyContent : undefined,
+				...stickyStyle,
+				...style,
 			}}
 		>
-			{!haveFilter ? (
-				<Fragment>{!canEllipsis ? renderDom : <div className={styles['ellipsis-wrapper']}>{renderDom}</div>}</Fragment>
-			) : (
-				<Fragment>
-					<div className={styles['head-cell-inner']} style={{ justifyContent: alignJustifyContent }}>
-						{!canEllipsis ? renderDom : <div className={styles['ellipsis-wrapper']}>{renderDom}</div>}
-					</div>
-					<Fragment>{filterDom}</Fragment>
-				</Fragment>
-			)}
+			{(() => {
+				// head主要内容
+				const content = (
+					<Fragment>
+						{!canEllipsis ? (
+							<div className={styles['block-wrapper']}>{renderDom}</div>
+						) : (
+							<div className={styles['text-wrapper']}>{renderDom}</div>
+						)}
+					</Fragment>
+				);
+
+				// 不存在filter
+				if (!haveFilter) return content;
+
+				// 存在filter
+				return (
+					<Fragment>
+						<div className={styles['head-cell-inner']} style={{ justifyContent: alignJustifyContent }}>
+							{content}
+						</div>
+						<Fragment>{filterDom}</Fragment>
+					</Fragment>
+				);
+			})()}
 
 			{resize === true && (
 				<ResizeHandle

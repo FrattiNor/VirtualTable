@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import type { CSSProperties, ReactNode } from 'react';
 
 // Table 列render配置
 export type TableCoreColumnRender<T> = (item: T, otherData: { index: number; highlightKeywords?: string[] }) => ReactNode;
@@ -17,8 +17,11 @@ export type TableCoreColumnOnCellSpan<T> = (
 	colSpan?: number;
 };
 
-// Table 配置cell的span属性
+// Table 配置cell的title属性
 export type TableCoreColumnOnCellTitle<T> = (item: T, index: number) => string;
+
+// Table 配置cell的style属性
+export type TableCoreColumnOnCellStyle<T> = (item: T, index: number) => CSSProperties;
 
 // Table 滚动条State
 export type TableCoreScrollbarState = { have: boolean; width: number };

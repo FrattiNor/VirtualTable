@@ -1,4 +1,4 @@
-import { Fragment, memo, useMemo } from 'react';
+import { type CSSProperties, memo, useMemo } from 'react';
 
 import classNames from 'classnames';
 
@@ -69,7 +69,12 @@ const BodyCell = <T,>(props: Props<T>) => {
 	// 当前cell的背景色
 	const backgroundColor = getBodyCellBg({ rowKeys, colKeys });
 	// 当前cell的sticky情况
-	const { stickyStyle, rightLastPinged, leftFirstPinged, leftLastPinged } = getBodyStickyStyle({ colKeys });
+	const { stickyStyle, hiddenLeftBorder, leftLastPinged, rightLastPinged } = getBodyStickyStyle({ colKeys });
+	// 当前cell配置的style
+	const style = typeof leafColumn.onCellStyle === 'function' ? leafColumn.onCellStyle(dataItem, index) : undefined;
+	// 当前cell的align相关style
+	const alignJustifyContent: CSSProperties['justifyContent'] =
+		leafColumn.align === 'center' ? 'center' : leafColumn.align === 'right' ? 'flex-end' : 'flex-start';
 
 	return (
 		<div
@@ -84,23 +89,23 @@ const BodyCell = <T,>(props: Props<T>) => {
 				[styles['first-row']]: rowIndexStart === 0,
 				[styles['left-last-pinged']]: leftLastPinged,
 				[styles['right-last-pinged']]: rightLastPinged,
-				[styles['not-first-col-and-left-first-pinged']]: colIndexStart !== 0 && leftFirstPinged,
-				[styles['not-first-col-and-right-last-pinged']]: colIndexStart !== 0 && rightLastPinged,
+				[styles['hidden-left-border']]: colIndexStart !== 0 && hiddenLeftBorder,
 			})}
 			style={{
-				...stickyStyle,
 				backgroundColor,
+				justifyContent: alignJustifyContent,
 				gridRow: `${rowIndexStart + 1}/${rowIndexEnd + 2}`,
 				gridColumn: `${colIndexStart + 1}/${colIndexEnd + 2}`,
-				justifyContent: leafColumn.align === 'center' ? 'center' : leafColumn.align === 'right' ? 'flex-end' : 'flex-start',
+				...stickyStyle,
+				...style,
 			}}
 		>
 			{canEllipsis ? (
-				<div className={styles['ellipsis-wrapper']}>
+				<div className={styles['text-wrapper']}>
 					<Highlight keyword={mergeHighlightKeywords}>{renderDom.toString()}</Highlight>
 				</div>
 			) : (
-				<Fragment>{renderDom}</Fragment>
+				<div className={styles['block-wrapper']}>{renderDom}</div>
 			)}
 		</div>
 	);

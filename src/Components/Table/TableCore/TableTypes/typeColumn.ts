@@ -1,9 +1,10 @@
-import { type ReactNode } from 'react';
+import { type CSSProperties, type ReactNode } from 'react';
 
 import type {
 	TableCoreColumnAlign,
 	TableCoreColumnFixed,
 	TableCoreColumnOnCellSpan,
+	TableCoreColumnOnCellStyle,
 	TableCoreColumnOnCellTitle,
 	TableCoreColumnRender,
 	TableCoreColumnWidth,
@@ -22,10 +23,6 @@ export type TableCoreColumn<T> = {
 	width?: TableCoreColumnWidth;
 	// 未resize的情况下，自动填充【默认1】
 	flexGrow?: number;
-	// 配置span
-	onCellSpan?: TableCoreColumnOnCellSpan<T>;
-	// 配置title
-	onCellTitle?: TableCoreColumnOnCellTitle<T>;
 	// 左右对齐
 	align?: TableCoreColumnAlign;
 	// 左右固定【和colSpan有冲突】
@@ -40,6 +37,14 @@ export type TableCoreColumn<T> = {
 	filter?: ReactNode;
 	// 高亮关键字
 	highlightKeywords?: string[];
+	// 配置cell span
+	onCellSpan?: TableCoreColumnOnCellSpan<T>;
+	// 配置cell title
+	onCellTitle?: TableCoreColumnOnCellTitle<T>;
+	// 配置cell style
+	onCellStyle?: TableCoreColumnOnCellStyle<T>;
+	// 配置head style
+	headStyle?: CSSProperties;
 } & {
 	children?: undefined;
 };

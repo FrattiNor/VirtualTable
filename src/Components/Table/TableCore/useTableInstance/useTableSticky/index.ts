@@ -17,7 +17,7 @@ const useTableSticky = <T>({ tableColumns, tableState }: Props<T>) => {
 	const { fixedLeftMap, fixedRightMap, colKey2Index, colIndex2Key } = tableColumns;
 
 	// 根据pingedMap计算相关数据
-	const { getPinged, pingedLeftStart, pingedLeftEnd, pingedRightStart } = useMemo(() => {
+	const { getPinged, pingedLeftStartKey, pingedLeftEndKey, pingedRightStartKey } = useMemo(() => {
 		const getPinged = (fixed: TableCoreColumnFixed, key: string) => {
 			return pingedMap.get(key)?.fixed === fixed;
 		};
@@ -41,19 +41,19 @@ const useTableSticky = <T>({ tableColumns, tableState }: Props<T>) => {
 			}
 		});
 
-		const pingedLeftStart = typeof pingedLeftStartIndex === 'number' ? colIndex2Key.get(pingedLeftStartIndex) : undefined;
-		const pingedLeftEnd = typeof pingedLeftEndIndex === 'number' ? colIndex2Key.get(pingedLeftEndIndex) : undefined;
-		const pingedRightStart = typeof pingedRightStartIndex === 'number' ? colIndex2Key.get(pingedRightStartIndex) : undefined;
-		const pingedRightEnd = typeof pingedRightEndIndex === 'number' ? colIndex2Key.get(pingedRightEndIndex) : undefined;
+		const pingedLeftStartKey = typeof pingedLeftStartIndex === 'number' ? colIndex2Key.get(pingedLeftStartIndex) : undefined;
+		const pingedLeftEndKey = typeof pingedLeftEndIndex === 'number' ? colIndex2Key.get(pingedLeftEndIndex) : undefined;
+		const pingedRightStartKey = typeof pingedRightStartIndex === 'number' ? colIndex2Key.get(pingedRightStartIndex) : undefined;
+		// const pingedRightEndKey = typeof pingedRightEndIndex === 'number' ? colIndex2Key.get(pingedRightEndIndex) : undefined;
 
-		return { getPinged, pingedLeftStart, pingedLeftEnd, pingedRightStart, pingedRightEnd };
+		return { getPinged, pingedLeftStartKey, pingedLeftEndKey, pingedRightStartKey };
 	}, [pingedMap, colKey2Index, colIndex2Key]);
 
 	const getBodyStickyStyle = useCallback(
 		({ colKeys }: { colKeys: string[] }) => {
-			let leftLastPinged = false;
 			let leftFirstPinged = false;
 			let rightLastPinged = false;
+			let leftLastPinged = false;
 			let stickyStyle: CSSProperties = {};
 
 			const startKey = colKeys[0];
@@ -63,8 +63,8 @@ const useTableSticky = <T>({ tableColumns, tableState }: Props<T>) => {
 			if (fixedLeftValue) {
 				const stickySize = fixedLeftValue.stickySize;
 				stickyStyle = { transform: 'translate3d(0,0,0)', position: 'sticky', zIndex: 6, left: stickySize };
-				leftFirstPinged = startKey === pingedLeftStart;
-				leftLastPinged = endKey === pingedLeftEnd;
+				leftFirstPinged = startKey === pingedLeftStartKey;
+				leftLastPinged = endKey === pingedLeftEndKey;
 				const pinged = getPinged('left', startKey);
 				if (pinged) stickyStyle.zIndex = 11;
 			}
@@ -73,21 +73,23 @@ const useTableSticky = <T>({ tableColumns, tableState }: Props<T>) => {
 			if (fixedRightValue) {
 				const stickySize = fixedRightValue.stickySize;
 				stickyStyle = { transform: 'translate3d(0,0,0)', position: 'sticky', zIndex: 5, right: stickySize };
-				rightLastPinged = startKey === pingedRightStart;
+				rightLastPinged = startKey === pingedRightStartKey;
 				const pinged = getPinged('right', endKey);
 				if (pinged) stickyStyle.zIndex = 10;
 			}
 
-			return { stickyStyle, leftLastPinged, leftFirstPinged, rightLastPinged };
+			const hiddenLeftBorder = leftFirstPinged || rightLastPinged;
+
+			return { stickyStyle, hiddenLeftBorder, leftLastPinged, rightLastPinged };
 		},
-		[fixedLeftMap, fixedRightMap, getPinged, pingedLeftEnd, pingedLeftStart, pingedRightStart],
+		[fixedLeftMap, fixedRightMap, getPinged, pingedLeftStartKey, pingedRightStartKey, pingedLeftEndKey],
 	);
 
 	const getHeadStickyStyle = useCallback(
 		({ colKeys }: { colKeys: string[] }) => {
-			let leftLastPinged = false;
 			let leftFirstPinged = false;
 			let rightLastPinged = false;
+			let leftLastPinged = false;
 			let stickyStyle: CSSProperties = {};
 
 			const startKey = colKeys[0];
@@ -97,8 +99,8 @@ const useTableSticky = <T>({ tableColumns, tableState }: Props<T>) => {
 			if (fixedLeftValue) {
 				const stickySize = fixedLeftValue.stickySize;
 				stickyStyle = { transform: 'translate3d(0,0,0)', position: 'sticky', zIndex: 6, left: stickySize };
-				leftFirstPinged = startKey === pingedLeftStart;
-				leftLastPinged = endKey === pingedLeftEnd;
+				leftFirstPinged = startKey === pingedLeftStartKey;
+				leftLastPinged = endKey === pingedLeftEndKey;
 				const pinged = getPinged('left', startKey);
 				if (pinged) stickyStyle.zIndex = 11;
 			}
@@ -112,14 +114,16 @@ const useTableSticky = <T>({ tableColumns, tableState }: Props<T>) => {
 					zIndex: 5,
 					right: !v_scrollbar.have ? stickySize : transformWidthArrToStr([...v_scrollbar.widthArr, `${stickySize}px`]),
 				};
-				rightLastPinged = startKey === pingedRightStart;
+				rightLastPinged = startKey === pingedRightStartKey;
 				const pinged = getPinged('right', endKey);
 				if (pinged) stickyStyle.zIndex = 10;
 			}
 
-			return { stickyStyle, leftLastPinged, leftFirstPinged, rightLastPinged };
+			const hiddenLeftBorder = leftFirstPinged || rightLastPinged;
+
+			return { stickyStyle, hiddenLeftBorder, leftLastPinged, rightLastPinged };
 		},
-		[v_scrollbar, fixedLeftMap, fixedRightMap, getPinged, pingedLeftEnd, pingedLeftStart, pingedRightStart],
+		[v_scrollbar, fixedLeftMap, fixedRightMap, getPinged, pingedLeftStartKey, pingedRightStartKey],
 	);
 
 	return { getBodyStickyStyle, getHeadStickyStyle };
