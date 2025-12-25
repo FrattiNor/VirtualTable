@@ -22,7 +22,7 @@ const useTableVirtual = <T>({ tableColumns, tableInnerProps, tableDomRef }: Prop
 		count: data?.length ?? 0,
 		bodyRef: tableDomRef.bodyRef,
 		getItemSize: useCallback(() => rowHeight, [rowHeight]),
-		getItemKey: useCallback((index: number) => getRowKey(rowKey, data?.[index] as T, index), [rowKey, data]),
+		getItemKey: useCallback((index: number) => getRowKey(rowKey, data?.[index] as T), [rowKey, data]),
 	});
 
 	const v_sizeList = v_virtual.sizeList;
@@ -54,11 +54,11 @@ const useTableVirtual = <T>({ tableColumns, tableInnerProps, tableDomRef }: Prop
 		let v_rangeStart: number | null = null;
 
 		// 遍历重新计算v_rangeStart，v_rangeEnd
-		data?.forEach((dataItem, rowIndex) => {
+		data?.forEach((itemData, rowIndex) => {
 			for (let i = 0; i < splitColumnsArr.length; i++) {
 				const splitColumns = splitColumnsArr[i];
 				const leafColumn = getLeafColumn(splitColumns);
-				const { rowSpan = 1, colSpan = 1 } = leafColumn.onCellSpan ? leafColumn.onCellSpan(dataItem, rowIndex) : {};
+				const { rowSpan = 1, colSpan = 1 } = leafColumn.onCellSpan ? leafColumn.onCellSpan(itemData, rowIndex) : {};
 				if (rowSpan <= 0 || colSpan <= 0) continue;
 				const rowIndexStart = rowIndex;
 				const rowIndexEnd = rowIndex + rowSpan - 1;

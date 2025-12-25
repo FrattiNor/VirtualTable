@@ -26,6 +26,7 @@ type Props<T> = Pick<
 	| 'v_measureItemSize'
 	| 'highlightKeywords'
 	| 'renderBodyDom'
+	| 'renderCellPrefix'
 >;
 
 const BodyInner = <T,>(props: Props<T>) => {
@@ -38,14 +39,14 @@ const BodyInner = <T,>(props: Props<T>) => {
 				style={{ gridTemplateColumns: gridTemplateColumns + ` minmax(0px, 1fr)`, transform: `translate3d(0,${v_offsetTop}px,0)` }}
 			>
 				{renderBodyDom(({ rowIndex, isPlaceholder, getBodyCellColShow, getBodyCellColForceShow }) => {
-					const dataItem = data[rowIndex];
-					if (dataItem !== undefined) {
-						const dataRowKey = getRowKey(rowKey, dataItem, rowIndex);
+					const itemData = data[rowIndex];
+					if (itemData !== undefined) {
+						const dataRowKey = getRowKey(rowKey, itemData);
 						return (
 							<div key={dataRowKey} data-row={rowIndex + 1} style={{ display: 'contents' }}>
 								{splitColumnsArr.map((splitColumns, colIndex) => {
 									const leafColumn = getLeafColumn(splitColumns);
-									const { rowSpan = 1, colSpan = 1 } = leafColumn.onCellSpan ? leafColumn.onCellSpan(dataItem, rowIndex) : {};
+									const { rowSpan = 1, colSpan = 1 } = leafColumn.onCellSpan ? leafColumn.onCellSpan(itemData, rowIndex) : {};
 									// span为0，不渲染
 									if (rowSpan <= 0 || colSpan <= 0) return null;
 									const rowIndexStart = rowIndex;
@@ -59,7 +60,7 @@ const BodyInner = <T,>(props: Props<T>) => {
 									return (
 										<BodyCell
 											data={props.data}
-											dataItem={dataItem}
+											itemData={itemData}
 											key={leafColumn.key}
 											rowKey={props.rowKey}
 											leafColumn={leafColumn}
@@ -71,6 +72,7 @@ const BodyInner = <T,>(props: Props<T>) => {
 											bodyRowClick={props.bodyRowClick}
 											splitColumnsArr={splitColumnsArr}
 											getBodyCellBg={props.getBodyCellBg}
+											renderCellPrefix={props.renderCellPrefix}
 											highlightKeywords={props.highlightKeywords}
 											bodyRowMouseEnter={props.bodyRowMouseEnter}
 											bodyRowMouseLeave={props.bodyRowMouseLeave}

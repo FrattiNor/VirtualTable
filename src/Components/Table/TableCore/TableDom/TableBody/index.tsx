@@ -38,6 +38,7 @@ type Props<T> = Pick<
 	| 'theme'
 	| 'highlightKeywords'
 	| 'renderBodyDom'
+	| 'renderCellPrefix'
 >;
 
 const TableBody = <T,>(props: Props<T>) => {
@@ -73,6 +74,7 @@ const TableBody = <T,>(props: Props<T>) => {
 				getBodyCellBg={props.getBodyCellBg}
 				renderBodyDom={props.renderBodyDom}
 				splitColumnsArr={props.splitColumnsArr}
+				renderCellPrefix={props.renderCellPrefix}
 				highlightKeywords={props.highlightKeywords}
 				v_measureItemSize={props.v_measureItemSize}
 				bodyRowMouseEnter={props.bodyRowMouseEnter}

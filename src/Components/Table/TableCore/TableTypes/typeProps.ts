@@ -1,10 +1,7 @@
 import { type ReactNode, type CSSProperties, type RefObject } from 'react';
 
-import type { TableCoreColumnConf, TableCoreTheme, TableCoreRef } from './type';
+import type { TableCoreColumnConf, TableCoreTheme, TableCoreRef, TableRowKey } from './type';
 import type { TableCoreColumn, TableCoreColumns } from './typeColumn';
-import type { ValueTypeKeys } from './typeUtil';
-
-type TableRowKey<T> = ValueTypeKeys<T, string> | ((item: T, index: number) => string);
 
 export type TableCoreProps<T> = {
 	// 对外暴露api
@@ -35,14 +32,24 @@ export type TableCoreProps<T> = {
 	pagination?: ReactNode;
 	// 高亮关键字
 	highlightKeywords?: string[];
-	// 行选中状态
-	rowSelectionKeyMap?: Map<string, boolean>;
-	// 行选择列配置
-	rowSelectionColum?: TableCoreColumn<T>;
 	// 行高亮配置
 	rowBgHighlight?: {
 		rowHover?: boolean;
 		rowClick?: boolean;
 		rowSelect?: boolean;
 	};
+
+	// === rowSelectProps ===
+	// 行选中状态
+	rowSelectionKeyMap?: Map<string, boolean>;
+	// 行选择列配置
+	rowSelectionColum?: TableCoreColumn<T>;
+	// === rowSelectProps ===
+
+	// === treeExpandProps ===
+	// 渲染head的前缀，用于渲染tree展开符或是缩进【只在叶子节点渲染】
+	renderHeadPrefix?: (colKey: string) => ReactNode;
+	// 渲染body的前缀，用于渲染tree展开符或是缩进
+	renderCellPrefix?: (colKey: string, itemData: T) => ReactNode;
+	// === treeExpandProps ===
 };

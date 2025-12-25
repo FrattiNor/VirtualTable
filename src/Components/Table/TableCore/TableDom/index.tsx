@@ -42,8 +42,9 @@ const Table = <T,>(coreProps: TableCoreProps<T>) => {
 					v_scrollbar={props.v_scrollbar}
 					startResize={props.startResize}
 					getHeadCellBg={props.getHeadCellBg}
-					getHeadCellColShow={props.getHeadCellColShow}
 					splitColumnsArr={props.splitColumnsArr}
+					renderHeadPrefix={props.renderHeadPrefix}
+					getHeadCellColShow={props.getHeadCellColShow}
 					getHeadStickyStyle={props.getHeadStickyStyle}
 					gridTemplateColumns={props.gridTemplateColumns}
 				/>
@@ -71,6 +72,7 @@ const Table = <T,>(coreProps: TableCoreProps<T>) => {
 						renderBodyDom={props.renderBodyDom}
 						setSizeCacheMap={props.setSizeCacheMap}
 						splitColumnsArr={props.splitColumnsArr}
+						renderCellPrefix={props.renderCellPrefix}
 						highlightKeywords={props.highlightKeywords}
 						v_measureItemSize={props.v_measureItemSize}
 						bodyRowMouseEnter={props.bodyRowMouseEnter}

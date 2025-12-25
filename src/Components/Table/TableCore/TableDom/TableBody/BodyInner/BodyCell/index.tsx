@@ -22,8 +22,9 @@ type Props<T> = Pick<
 	| 'bodyRowMouseEnter'
 	| 'bodyRowMouseLeave'
 	| 'highlightKeywords'
+	| 'renderCellPrefix'
 > & {
-	dataItem: T;
+	itemData: T;
 	colIndexStart: number;
 	colIndexEnd: number;
 	rowIndexStart: number;
@@ -38,7 +39,7 @@ const BodyCell = <T,>(props: Props<T>) => {
 		leafColumn,
 		splitColumnsArr,
 		bordered,
-		dataItem,
+		itemData,
 		colIndexStart,
 		colIndexEnd,
 		rowIndexStart,
@@ -49,7 +50,12 @@ const BodyCell = <T,>(props: Props<T>) => {
 		bodyRowClick,
 		bodyRowMouseEnter,
 		bodyRowMouseLeave,
+		renderCellPrefix,
 	} = props;
+
+	const index = rowIndexStart;
+	const colKey = leafColumn.key;
+	const render = leafColumn.render;
 
 	// 行keys
 	const rowKeys = useMemo(() => getRowKeys(rowKey, data, rowIndexStart, rowIndexEnd), [rowKey, data, rowIndexStart, rowIndexEnd]);
@@ -58,12 +64,9 @@ const BodyCell = <T,>(props: Props<T>) => {
 	// 合并 全局高亮关键字 和 列高亮关键字
 	const mergeHighlightKeywords = getMergeHighlightKeywords(highlightKeywords, leafColumn.highlightKeywords);
 	// 最终渲染结果
-	const index = rowIndexStart;
-	const colKey = leafColumn.key;
-	const render = leafColumn.render;
-	const renderDom = getRenderDom({ dataItem, index, colKey, render, highlightKeywords: mergeHighlightKeywords });
+	const renderDom = getRenderDom({ itemData, index, colKey, render, highlightKeywords: mergeHighlightKeywords });
 	// 当前cell的title
-	const title = typeof leafColumn.onCellTitle === 'function' ? leafColumn.onCellTitle(dataItem, index) : getCellTitle(renderDom);
+	const title = typeof leafColumn.onCellTitle === 'function' ? leafColumn.onCellTitle(itemData, index) : getCellTitle(renderDom);
 	// 是否可省略
 	const canEllipsis = isStrNum(renderDom);
 	// 当前cell的背景色
@@ -71,7 +74,7 @@ const BodyCell = <T,>(props: Props<T>) => {
 	// 当前cell的sticky情况
 	const { stickyStyle, hiddenLeftBorder, leftLastPinged, rightLastPinged } = getBodyStickyStyle({ colKeys });
 	// 当前cell配置的style
-	const style = typeof leafColumn.onCellStyle === 'function' ? leafColumn.onCellStyle(dataItem, index) : undefined;
+	const style = typeof leafColumn.onCellStyle === 'function' ? leafColumn.onCellStyle(itemData, index) : undefined;
 	// 当前cell的align相关style
 	const alignJustifyContent: CSSProperties['justifyContent'] =
 		leafColumn.align === 'center' ? 'center' : leafColumn.align === 'right' ? 'flex-end' : 'flex-start';
@@ -100,6 +103,7 @@ const BodyCell = <T,>(props: Props<T>) => {
 				...style,
 			}}
 		>
+			{typeof renderCellPrefix === 'function' && renderCellPrefix(colKey, itemData)}
 			{canEllipsis ? (
 				<div className={styles['text-wrapper']}>
 					<Highlight keyword={mergeHighlightKeywords}>{renderDom.toString()}</Highlight>

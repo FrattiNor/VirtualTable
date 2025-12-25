@@ -11,3 +11,4 @@ export type Table2ColumnFixed = TableCoreColumnFixed;
 
 export { TableCoreFilterIcon } from './TableCore';
 export { default as Table2 } from './TableTotal';
+export { default as TableTree } from './TableTree';

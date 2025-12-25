@@ -11,7 +11,7 @@ import type { TableInstance } from '../../../../useTableInstance';
 
 type Props<T> = Pick<
 	TableInstance<T>,
-	'splitColumnsArr' | 'bordered' | 'rowHeight' | 'getHeadStickyStyle' | 'startResize' | 'resizeFlag' | 'getHeadCellBg'
+	'splitColumnsArr' | 'bordered' | 'rowHeight' | 'getHeadStickyStyle' | 'startResize' | 'resizeFlag' | 'getHeadCellBg' | 'renderHeadPrefix'
 > & {
 	rowIndexStart: number;
 	rowIndexEnd: number;
@@ -41,6 +41,7 @@ const HeadCell = <T,>(props: Props<T>) => {
 		rowHeight,
 		getHeadStickyStyle,
 		getHeadCellBg,
+		renderHeadPrefix,
 	} = props;
 	// 是否可以resize
 	const resize = useMemo(() => getResize(splitColumnsArr, colIndexStart, colIndexEnd), [splitColumnsArr, colIndexStart, colIndexEnd]);
@@ -90,6 +91,7 @@ const HeadCell = <T,>(props: Props<T>) => {
 				// head主要内容
 				const content = (
 					<Fragment>
+						{isLeaf && typeof renderHeadPrefix === 'function' && renderHeadPrefix(column.key)}
 						{!canEllipsis ? (
 							<div className={styles['block-wrapper']}>{renderDom}</div>
 						) : (

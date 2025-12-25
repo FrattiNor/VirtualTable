@@ -1,5 +1,9 @@
 import type { CSSProperties, ReactNode } from 'react';
 
+import { type ValueTypeKeys } from './typeUtil';
+
+export type TableRowKey<T> = ValueTypeKeys<T, string> | ((item: T) => string);
+
 // Table 列render配置
 export type TableCoreColumnRender<T> = (item: T, otherData: { index: number; highlightKeywords?: string[] }) => ReactNode;
 

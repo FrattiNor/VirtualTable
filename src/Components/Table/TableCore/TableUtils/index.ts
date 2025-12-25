@@ -4,8 +4,8 @@ import type { TableCoreColumnGroup, TableCoreColumn } from '../TableTypes/typeCo
 import type { TableCoreProps } from '../TableTypes/typeProps';
 
 // 根据参数rowKey，获取【rowKey】
-export const getRowKey = <T>(rowKey: TableCoreProps<T>['rowKey'], item: T, index: number) => {
-	if (typeof rowKey === 'function') return rowKey(item, index);
+export const getRowKey = <T>(rowKey: TableCoreProps<T>['rowKey'], item: T) => {
+	if (typeof rowKey === 'function') return rowKey(item);
 	return item[rowKey] as string;
 };
 
@@ -47,9 +47,9 @@ export const getRowKeys = <T>(rowKey: TableCoreProps<T>['rowKey'], datasource: T
 	const rowKeys: string[] = [];
 	if (Array.isArray(datasource)) {
 		for (let i = rowIndexStart; i <= rowIndexEnd; i++) {
-			const dataItem = datasource[i];
-			if (dataItem) {
-				const dataRowKey = getRowKey(rowKey, dataItem, i);
+			const itemData = datasource[i];
+			if (itemData) {
+				const dataRowKey = getRowKey(rowKey, itemData);
 				rowKeys.push(dataRowKey);
 			}
 		}

@@ -22,6 +22,7 @@ type Props<T> = Pick<
 	| 'resizeFlag'
 	| 'getHeadCellBg'
 	| 'getHeadCellColShow'
+	| 'renderHeadPrefix'
 >;
 
 const TableHead = <T,>(props: Props<T>) => {
@@ -43,8 +44,9 @@ const TableHead = <T,>(props: Props<T>) => {
 							resizeFlag={props.resizeFlag}
 							startResize={props.startResize}
 							getHeadCellBg={props.getHeadCellBg}
-							getHeadCellColShow={props.getHeadCellColShow}
 							splitColumnsArr={props.splitColumnsArr}
+							renderHeadPrefix={props.renderHeadPrefix}
+							getHeadCellColShow={props.getHeadCellColShow}
 							getHeadStickyStyle={props.getHeadStickyStyle}
 						/>
 					))}

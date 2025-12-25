@@ -14,6 +14,8 @@ const useTableInnerProps = <T>(props: TableCoreProps<T>) => {
 		data: useMemo(() => props.data ?? [], [props.data]),
 		rowKey: useMemo(() => props.rowKey, [props.rowKey?.toString()]),
 		highlightKeywords: useMemo(() => props.highlightKeywords, [props.highlightKeywords?.toString()]),
+		renderHeadPrefix: props.renderHeadPrefix,
+		renderCellPrefix: props.renderCellPrefix,
 	};
 
 	return { ...requiredProps };
