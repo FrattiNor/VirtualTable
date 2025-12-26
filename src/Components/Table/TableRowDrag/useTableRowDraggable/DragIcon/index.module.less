@@ -1,0 +1,18 @@
+.drag-icon {
+	width: 21px;
+	height: 21px;
+	cursor: move;
+	border-radius: var(--table-border-radius);
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	transition: background-color 0.2s;
+
+	&:hover {
+		background-color: rgba(0, 0, 0, 0.04);
+	}
+
+	&.active {
+		background-color: var(--table-primary-color-hover);
+	}
+}

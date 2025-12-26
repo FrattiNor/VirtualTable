@@ -12,8 +12,10 @@ type Props<T> = {
 };
 
 const useTableColumns = <T>({ props, tableState }: Props<T>) => {
+	const { columns } = props;
 	const { sizeCacheMap } = tableState;
-	const { columns, rowSelectionColum } = props;
+	const rowSelectionColum = props.rowSelectionProps?.rowSelectionColum;
+	const rowDraggableColum = props.rowDraggableProps?.rowDraggableColum;
 	const { visibleConf, sortConf, widthConf, fixedConf, flexGrowConf } = props.columnConf ?? {};
 
 	const columnsCore = useMemo(() => {
@@ -65,8 +67,13 @@ const useTableColumns = <T>({ props, tableState }: Props<T>) => {
 			columnsCore.unshift([rowSelectionColum]);
 		}
 
+		// 增加行拖拽列
+		if (rowDraggableColum) {
+			columnsCore.unshift([rowDraggableColum]);
+		}
+
 		return columnsCore;
-	}, [rowSelectionColum, columns, widthConf, visibleConf, sortConf, fixedConf, flexGrowConf]);
+	}, [rowSelectionColum, rowDraggableColum, columns, widthConf, visibleConf, sortConf, fixedConf, flexGrowConf]);
 
 	// ======================================== part2 ========================================
 	const colHandleRes = useMemo(() => {

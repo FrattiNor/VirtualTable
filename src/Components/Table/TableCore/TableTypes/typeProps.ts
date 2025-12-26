@@ -1,4 +1,4 @@
-import { type ReactNode, type CSSProperties, type RefObject } from 'react';
+import { type ReactNode, type CSSProperties, type RefObject, type FC } from 'react';
 
 import type { TableCoreColumnConf, TableCoreTheme, TableCoreRef, TableRowKey } from './type';
 import type { TableCoreColumn, TableCoreColumns } from './typeColumn';
@@ -38,18 +38,30 @@ export type TableCoreProps<T> = {
 		rowClick?: boolean;
 		rowSelect?: boolean;
 	};
+	// empty
+	renderEmpty?: ReactNode;
 
 	// === rowSelectProps ===
-	// 行选中状态
-	rowSelectionKeyMap?: Map<string, boolean>;
-	// 行选择列配置
-	rowSelectionColum?: TableCoreColumn<T>;
-	// === rowSelectProps ===
+	rowSelectionProps?: {
+		// 行选中状态
+		rowSelectionKeyMap: Map<string, boolean>;
+		// 行选择列配置
+		rowSelectionColum: TableCoreColumn<T>;
+	};
 
 	// === treeExpandProps ===
-	// 渲染head的前缀，用于渲染tree展开符或是缩进【只在叶子节点渲染】
-	renderHeadPrefix?: (colKey: string) => ReactNode;
-	// 渲染body的前缀，用于渲染tree展开符或是缩进
-	renderCellPrefix?: (colKey: string, itemData: T) => ReactNode;
-	// === treeExpandProps ===
+	treeExpandProps?: {
+		// 渲染head的前缀，用于渲染tree展开符或是缩进【只在叶子节点渲染】
+		renderHeadPrefix: (colKey: string) => ReactNode;
+		// 渲染body的前缀，用于渲染tree展开符或是缩进
+		renderCellPrefix: (colKey: string, itemData: T) => ReactNode;
+	};
+
+	// === rowDraggableProps ===
+	rowDraggableProps?: {
+		// 行拖拽列配置
+		rowDraggableColum: TableCoreColumn<T>;
+		// 配置每行的外壳，注入参数
+		RowDraggableWrapper: FC<{ rowKey: string; rowIndex: number; children: JSX.Element }>;
+	};
 };

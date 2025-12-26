@@ -16,7 +16,7 @@ const useTableCellBg = <T>({ tableState, props }: Props<T>) => {
 	const { throttle: throttle1 } = useFrameThrottle();
 	const { throttle: throttle2 } = useFrameThrottle();
 
-	const { rowSelectionKeyMap } = props;
+	const rowSelectionKeyMap = props.rowSelectionProps?.rowSelectionKeyMap;
 	const { rowClick = true, rowHover = true, rowSelect = true } = props.rowBgHighlight ?? {};
 	const { resizeFlag, rowClickedMap, rowHoveredMap, setRowClickedMap, setRowHoveredMap } = tableState;
 

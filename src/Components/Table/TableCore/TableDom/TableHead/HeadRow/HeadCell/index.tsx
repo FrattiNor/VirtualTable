@@ -1,4 +1,4 @@
-import { type CSSProperties, Fragment, memo, useMemo } from 'react';
+import { Fragment, memo, useMemo } from 'react';
 
 import classNames from 'classnames';
 
@@ -63,9 +63,6 @@ const HeadCell = <T,>(props: Props<T>) => {
 	const { stickyStyle, hiddenLeftBorder, leftLastPinged, rightLastPinged } = getHeadStickyStyle({ colKeys });
 	// 当前head配置的style
 	const style = column.headStyle;
-	// 当前head的align相关style
-	const alignJustifyContent: CSSProperties['justifyContent'] =
-		column.align === 'center' ? 'center' : column.align === 'right' ? 'flex-end' : 'flex-start';
 
 	return (
 		<div
@@ -82,7 +79,7 @@ const HeadCell = <T,>(props: Props<T>) => {
 				gridRow: `${rowIndexStart + 1}/${rowIndexEnd + 2}`,
 				gridColumn: `${colIndexStart + 1}/${colIndexEnd + 2}`,
 				minHeight: (rowIndexEnd - rowIndexStart + 1) * rowHeight,
-				justifyContent: !haveFilter ? alignJustifyContent : undefined,
+				justifyContent: column.align === 'center' ? 'center' : column.align === 'right' ? 'flex-end' : 'flex-start',
 				...stickyStyle,
 				...style,
 			}}
@@ -106,9 +103,7 @@ const HeadCell = <T,>(props: Props<T>) => {
 				// 存在filter
 				return (
 					<Fragment>
-						<div className={styles['head-cell-inner']} style={{ justifyContent: alignJustifyContent }}>
-							{content}
-						</div>
+						<div className={styles['head-cell-inner']}>{content}</div>
 						<Fragment>{filterDom}</Fragment>
 					</Fragment>
 				);

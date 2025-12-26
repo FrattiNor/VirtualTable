@@ -9,6 +9,7 @@ import ScrollbarV from './ScrollbarV';
 import TableBody from './TableBody';
 import TableHead from './TableHead';
 import TableLoading from './TableLoading';
+import { type TableComponent } from '../TableTypes/type';
 
 import type { TableCoreProps } from '../TableTypes/typeProps';
 
@@ -16,6 +17,7 @@ const Table = <T,>(coreProps: TableCoreProps<T>) => {
 	const props = useTableInstance(coreProps);
 	const isEmpty = (props.data ?? []).length === 0;
 	const havePagination = !isEmpty && coreProps.pagination;
+	const haveHScrollbar = props.h_scrollbar.have && props.h_scrollbar.width > 0;
 
 	return (
 		<TableLoading
@@ -30,7 +32,8 @@ const Table = <T,>(coreProps: TableCoreProps<T>) => {
 			<div
 				className={classNames(styles['table'], {
 					[styles['bordered']]: props.bordered,
-					[styles['no-bordered-and-no-h-scrollbar']]: !props.bordered && !(props.h_scrollbar.width > 0),
+					// bordered为false，但是显示border-bottom的情况，非空，没有横向滚动条
+					[styles['no-bordered-and-show-border-bottom']]: !isEmpty && !props.bordered && !haveHScrollbar,
 				})}
 			>
 				<TableHead
@@ -59,6 +62,7 @@ const Table = <T,>(coreProps: TableCoreProps<T>) => {
 						rowHeight={props.rowHeight}
 						tableWidth={props.tableWidth}
 						resizeFlag={props.resizeFlag}
+						renderEmpty={props.renderEmpty}
 						v_offsetTop={props.v_offsetTop}
 						columnsCore={props.columnsCore}
 						v_totalSize={props.v_totalSize}
@@ -72,12 +76,14 @@ const Table = <T,>(coreProps: TableCoreProps<T>) => {
 						renderBodyDom={props.renderBodyDom}
 						setSizeCacheMap={props.setSizeCacheMap}
 						splitColumnsArr={props.splitColumnsArr}
+						rowDraggableMode={props.rowDraggableMode}
 						renderCellPrefix={props.renderCellPrefix}
 						highlightKeywords={props.highlightKeywords}
 						v_measureItemSize={props.v_measureItemSize}
 						bodyRowMouseEnter={props.bodyRowMouseEnter}
 						bodyRowMouseLeave={props.bodyRowMouseLeave}
 						getBodyStickyStyle={props.getBodyStickyStyle}
+						RowDraggableWrapper={props.RowDraggableWrapper}
 						gridTemplateColumns={props.gridTemplateColumns}
 					/>
 					<ScrollbarV
@@ -104,4 +110,4 @@ const Table = <T,>(coreProps: TableCoreProps<T>) => {
 	);
 };
 
-export default memo(Table) as typeof Table;
+export default memo(Table) as TableComponent;

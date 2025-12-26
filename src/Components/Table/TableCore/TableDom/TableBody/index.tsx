@@ -39,6 +39,9 @@ type Props<T> = Pick<
 	| 'highlightKeywords'
 	| 'renderBodyDom'
 	| 'renderCellPrefix'
+	| 'rowDraggableMode'
+	| 'RowDraggableWrapper'
+	| 'renderEmpty'
 >;
 
 const TableBody = <T,>(props: Props<T>) => {
@@ -75,14 +78,16 @@ const TableBody = <T,>(props: Props<T>) => {
 				renderBodyDom={props.renderBodyDom}
 				splitColumnsArr={props.splitColumnsArr}
 				renderCellPrefix={props.renderCellPrefix}
+				rowDraggableMode={props.rowDraggableMode}
 				highlightKeywords={props.highlightKeywords}
 				v_measureItemSize={props.v_measureItemSize}
 				bodyRowMouseEnter={props.bodyRowMouseEnter}
 				bodyRowMouseLeave={props.bodyRowMouseLeave}
 				getBodyStickyStyle={props.getBodyStickyStyle}
+				RowDraggableWrapper={props.RowDraggableWrapper}
 				gridTemplateColumns={props.gridTemplateColumns}
 			/>
-			{isEmpty && <BodyEmpty tableWidth={props.tableWidth} theme={props.theme} />}
+			{isEmpty && <BodyEmpty tableWidth={props.tableWidth} theme={props.theme} renderEmpty={props.renderEmpty} />}
 		</div>
 	);
 };

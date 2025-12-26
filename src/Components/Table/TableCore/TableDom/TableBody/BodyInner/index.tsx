@@ -1,5 +1,7 @@
 import { memo } from 'react';
 
+import classNames from 'classnames';
+
 import BodyCell from './BodyCell';
 import BodyCellPlaceholder from './BodyCellPlaceholder';
 import styles from './index.module.less';
@@ -27,23 +29,43 @@ type Props<T> = Pick<
 	| 'highlightKeywords'
 	| 'renderBodyDom'
 	| 'renderCellPrefix'
+	| 'rowDraggableMode'
+	| 'RowDraggableWrapper'
 >;
 
 const BodyInner = <T,>(props: Props<T>) => {
-	const { rowKey, data, gridTemplateColumns, bodyInnerRef, v_offsetTop, v_totalSize, splitColumnsArr, renderBodyDom } = props;
+	const {
+		rowKey,
+		data,
+		gridTemplateColumns,
+		bodyInnerRef,
+		v_offsetTop,
+		v_totalSize,
+		splitColumnsArr,
+		rowDraggableMode,
+		RowDraggableWrapper,
+		renderBodyDom,
+	} = props;
 
 	return (
 		<div ref={bodyInnerRef} className={styles['body-inner']} style={{ minHeight: v_totalSize }}>
 			<div
-				className={styles['body-content']}
+				className={classNames({ [styles['body-content']]: !rowDraggableMode, [styles['draggable-mode-content']]: rowDraggableMode })}
 				style={{ gridTemplateColumns: gridTemplateColumns + ` minmax(0px, 1fr)`, transform: `translate3d(0,${v_offsetTop}px,0)` }}
 			>
 				{renderBodyDom(({ rowIndex, isPlaceholder, getBodyCellColShow, getBodyCellColForceShow }) => {
 					const itemData = data[rowIndex];
 					if (itemData !== undefined) {
 						const dataRowKey = getRowKey(rowKey, itemData);
-						return (
-							<div key={dataRowKey} data-row={rowIndex + 1} style={{ display: 'contents' }}>
+						const row = (
+							<div
+								key={dataRowKey}
+								data-row={rowIndex + 1}
+								className={classNames({
+									[styles['body-row']]: !rowDraggableMode,
+									[styles['draggable-mode-row']]: rowDraggableMode,
+								})}
+							>
 								{splitColumnsArr.map((splitColumns, colIndex) => {
 									const leafColumn = getLeafColumn(splitColumns);
 									const { rowSpan = 1, colSpan = 1 } = leafColumn.onCellSpan ? leafColumn.onCellSpan(itemData, rowIndex) : {};
@@ -94,6 +116,16 @@ const BodyInner = <T,>(props: Props<T>) => {
 								/>
 							</div>
 						);
+
+						if (RowDraggableWrapper) {
+							return (
+								<RowDraggableWrapper key={dataRowKey} rowKey={dataRowKey} rowIndex={rowIndex}>
+									{row}
+								</RowDraggableWrapper>
+							);
+						}
+
+						return row;
 					}
 				})}
 			</div>

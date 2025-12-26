@@ -9,5 +9,21 @@
 		width: max-content;
 		position: relative;
 		align-content: start;
+
+		.body-row {
+			display: contents;
+		}
+	}
+
+	.draggable-mode-content {
+		min-width: 100%;
+		width: max-content;
+		position: relative;
+
+		.draggable-mode-row {
+			display: grid;
+			align-content: start;
+			grid-template-columns: inherit;
+		}
 	}
 }

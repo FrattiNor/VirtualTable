@@ -1,6 +1,9 @@
 import type { CSSProperties, ReactNode } from 'react';
 
+import { type TableCoreProps } from './typeProps';
 import { type ValueTypeKeys } from './typeUtil';
+
+export type TableComponent = <T extends Record<string, unknown>>(props: TableCoreProps<T>) => ReactNode;
 
 export type TableRowKey<T> = ValueTypeKeys<T, string> | ((item: T) => string);
 

@@ -1,4 +1,4 @@
-import { type CSSProperties, memo, useMemo } from 'react';
+import { memo, useMemo } from 'react';
 
 import classNames from 'classnames';
 
@@ -75,9 +75,6 @@ const BodyCell = <T,>(props: Props<T>) => {
 	const { stickyStyle, hiddenLeftBorder, leftLastPinged, rightLastPinged } = getBodyStickyStyle({ colKeys });
 	// 当前cell配置的style
 	const style = typeof leafColumn.onCellStyle === 'function' ? leafColumn.onCellStyle(itemData, index) : undefined;
-	// 当前cell的align相关style
-	const alignJustifyContent: CSSProperties['justifyContent'] =
-		leafColumn.align === 'center' ? 'center' : leafColumn.align === 'right' ? 'flex-end' : 'flex-start';
 
 	return (
 		<div
@@ -96,9 +93,9 @@ const BodyCell = <T,>(props: Props<T>) => {
 			})}
 			style={{
 				backgroundColor,
-				justifyContent: alignJustifyContent,
 				gridRow: `${rowIndexStart + 1}/${rowIndexEnd + 2}`,
 				gridColumn: `${colIndexStart + 1}/${colIndexEnd + 2}`,
+				justifyContent: leafColumn.align === 'center' ? 'center' : leafColumn.align === 'right' ? 'flex-end' : 'flex-start',
 				...stickyStyle,
 				...style,
 			}}
