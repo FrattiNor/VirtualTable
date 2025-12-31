@@ -9,23 +9,6 @@ export const getRowKey = <T>(rowKey: TableCoreProps<T>['rowKey'], item: T) => {
 	return item[rowKey] as string;
 };
 
-// 根据span获取colKeys
-export const getColKeys = <T>(
-	splitColumnsArr: Array<Array<TableCoreColumn<T> | TableCoreColumnGroup<T>>>,
-	colIndexStart: number,
-	colIndexEnd: number,
-) => {
-	const colKeys: string[] = [];
-	for (let i = colIndexStart; i <= colIndexEnd; i++) {
-		const splitColumns = splitColumnsArr[i];
-		if (splitColumns) {
-			const leafColumn = getLeafColumn(splitColumns);
-			colKeys.push(leafColumn.key);
-		}
-	}
-	return colKeys;
-};
-
 // 根据span获取resize，如果是group，只要有一个子节点不能resize就不支持resize
 export const getResize = <T>(
 	splitColumnsArr: Array<Array<TableCoreColumn<T> | TableCoreColumnGroup<T>>>,
@@ -40,21 +23,6 @@ export const getResize = <T>(
 		}
 	}
 	return true;
-};
-
-// 根据span获取rowKeys
-export const getRowKeys = <T>(rowKey: TableCoreProps<T>['rowKey'], datasource: T[] | undefined, rowIndexStart: number, rowIndexEnd: number) => {
-	const rowKeys: string[] = [];
-	if (Array.isArray(datasource)) {
-		for (let i = rowIndexStart; i <= rowIndexEnd; i++) {
-			const itemData = datasource[i];
-			if (itemData) {
-				const dataRowKey = getRowKey(rowKey, itemData);
-				rowKeys.push(dataRowKey);
-			}
-		}
-	}
-	return rowKeys;
 };
 
 // 是否为str或number

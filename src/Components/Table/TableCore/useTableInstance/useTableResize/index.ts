@@ -20,16 +20,16 @@ function pauseEvent(e: Event) {
 }
 
 type Props<T> = {
-	props: TableCoreProps<T>;
+	coreProps: TableCoreProps<T>;
 	tableState: ReturnType<typeof useTableState>;
 	tableColumns: ReturnType<typeof useTableColumns<T>>;
 };
 
 // 表格resize宽度
-const useTableResize = <T>({ tableState, tableColumns, props }: Props<T>) => {
+const useTableResize = <T>({ tableState, tableColumns, coreProps }: Props<T>) => {
 	const { throttle } = useFrameThrottle();
 	const { colIndex2Key } = tableColumns;
-	const [getResizeEndCallback] = useRefValue(props.onResizeEnd);
+	const [getResizeEndCallback] = useRefValue(coreProps.onResizeEnd);
 	const { resizeFlag, setResized, setResizeFlag, setSizeCacheMap, sizeCacheMap } = tableState;
 
 	useEffect(() => {

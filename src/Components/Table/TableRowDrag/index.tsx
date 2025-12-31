@@ -1,23 +1,32 @@
-import { memo, useEffect, useState } from 'react';
+import { memo, useState } from 'react';
 
-import { TableCore } from '../TableCore';
+import { TableDom } from '../TableCore';
 import DraggableWrapper from './DraggableWrapper';
+import RowDraggableOverlay from './RowDraggableOverlay';
 import RowDraggableWrapper from './RowDraggableWrapper';
 import { type TableRowDragProps } from './type';
-import useTableRowDraggable from './useTableRowDraggable';
+import useRowDraggableColum from './useRowDraggableColum';
+import useTableInstance from '../TableCore/useTableInstance';
 
 const TableRowDrag = <T extends Record<string, unknown>>(props: TableRowDragProps<T>) => {
-	const { rowDraggable, ...restProps } = props;
-	const [dragActiveKey, setDragActiveKey] = useState<string | null>(null);
-	const { rowDraggableColum } = useTableRowDraggable({ rowDraggable, props });
+	const { rowDraggable, ...coreProps } = props;
+	const rowDraggableColum = useRowDraggableColum({ rowDraggable, coreProps });
+	const [dragActive, setDragActive] = useState<{ rowKey: string; rowIndex: number } | null>(null);
 
-	useEffect(() => {
-		console.log('dragActiveKey', dragActiveKey);
-	}, [dragActiveKey]);
+	const instance = useTableInstance({
+		...coreProps,
+		rowDraggableProps: {
+			rowDraggableColum,
+			RowDraggableWrapper,
+			rowDraggingKey: dragActive?.rowKey,
+			rowDraggingIndex: dragActive?.rowIndex,
+		},
+	});
 
 	return (
-		<DraggableWrapper data={props.data} rowKey={props.rowKey} rowDraggable={rowDraggable} setDragActiveKey={setDragActiveKey}>
-			<TableCore {...restProps} rowDraggableProps={{ rowDraggableColum, RowDraggableWrapper }} />
+		<DraggableWrapper coreProps={coreProps} rowDraggable={rowDraggable} setDragActive={setDragActive}>
+			<TableDom {...instance} />
+			{dragActive && <RowDraggableOverlay dragActive={dragActive} />}
 		</DraggableWrapper>
 	);
 };

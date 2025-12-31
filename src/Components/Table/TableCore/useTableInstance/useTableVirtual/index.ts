@@ -2,6 +2,7 @@ import { type ReactNode, useCallback } from 'react';
 
 import useHTableVirtual from './useHTableVirtual';
 import useVTableVirtual from './useVTableVirtual';
+import { type TableCoreProps } from '../../TableTypes/typeProps';
 
 import type useTableColumns from '../useTableColumns';
 import type useTableDomRef from '../useTableDomRef';
@@ -9,13 +10,16 @@ import type useTableInnerProps from '../useTableInnerProps';
 import type useTableState from '../useTableState';
 
 type Props<T> = {
+	coreProps: TableCoreProps<T>;
 	tableState: ReturnType<typeof useTableState>;
 	tableDomRef: ReturnType<typeof useTableDomRef>;
 	tableColumns: ReturnType<typeof useTableColumns<T>>;
 	tableInnerProps: ReturnType<typeof useTableInnerProps<T>>;
 };
 
-const useTableVirtual = <T>({ tableColumns, tableState, tableInnerProps, tableDomRef }: Props<T>) => {
+const useTableVirtual = <T>({ coreProps, tableColumns, tableState, tableInnerProps, tableDomRef }: Props<T>) => {
+	const rowDraggingIndex = coreProps.rowDraggableProps?.rowDraggingIndex;
+
 	const { h_totalSize, getH_virtualCore, getHeadCellColShow, getBodyCellColShow, getBodyCellColForceShow } = useHTableVirtual({
 		tableState,
 		tableDomRef,
@@ -24,6 +28,7 @@ const useTableVirtual = <T>({ tableColumns, tableState, tableInnerProps, tableDo
 
 	const { v_totalSize, v_offsetTop, v_rangeStart, v_rangeEnd, v_rangeStart_origin, v_rangeEnd_origin, getV_virtualCore, v_measureItemSize } =
 		useVTableVirtual({
+			coreProps,
 			tableDomRef,
 			tableColumns,
 			tableInnerProps,
@@ -46,13 +51,14 @@ const useTableVirtual = <T>({ tableColumns, tableState, tableInnerProps, tableDo
 				typeof v_rangeEnd_origin === 'number'
 			) {
 				for (let rowIndex = v_rangeStart; rowIndex <= v_rangeEnd; rowIndex++) {
-					const isPlaceholder = !(rowIndex >= v_rangeStart_origin && rowIndex <= v_rangeEnd_origin);
+					const isDragging = typeof rowDraggingIndex === 'number' && rowIndex === rowDraggingIndex;
+					const isPlaceholder = !(isDragging || (rowIndex >= v_rangeStart_origin && rowIndex <= v_rangeEnd_origin));
 					bodyDom.push(renderRow({ rowIndex, isPlaceholder, getBodyCellColShow, getBodyCellColForceShow }));
 				}
 			}
 			return bodyDom;
 		},
-		[v_rangeStart, v_rangeEnd, v_rangeStart_origin, v_rangeEnd_origin, getBodyCellColShow, getBodyCellColForceShow],
+		[v_rangeStart, v_rangeEnd, v_rangeStart_origin, v_rangeEnd_origin, rowDraggingIndex, getBodyCellColShow, getBodyCellColForceShow],
 	);
 
 	return {

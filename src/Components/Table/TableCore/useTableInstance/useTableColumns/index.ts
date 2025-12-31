@@ -7,16 +7,16 @@ import type { TableCoreProps } from '../../TableTypes/typeProps';
 import type useTableState from '../useTableState';
 
 type Props<T> = {
-	props: TableCoreProps<T>;
+	coreProps: TableCoreProps<T>;
 	tableState: ReturnType<typeof useTableState>;
 };
 
-const useTableColumns = <T>({ props, tableState }: Props<T>) => {
-	const { columns } = props;
+const useTableColumns = <T>({ coreProps, tableState }: Props<T>) => {
+	const { columns } = coreProps;
 	const { sizeCacheMap } = tableState;
-	const rowSelectionColum = props.rowSelectionProps?.rowSelectionColum;
-	const rowDraggableColum = props.rowDraggableProps?.rowDraggableColum;
-	const { visibleConf, sortConf, widthConf, fixedConf, flexGrowConf } = props.columnConf ?? {};
+	const rowSelectionColum = coreProps.rowSelectionProps?.rowSelectionColum;
+	const rowDraggableColum = coreProps.rowDraggableProps?.rowDraggableColum;
+	const { visibleConf, sortConf, widthConf, fixedConf, flexGrowConf } = coreProps.columnConf ?? {};
 
 	const columnsCore = useMemo(() => {
 		let index = 0;

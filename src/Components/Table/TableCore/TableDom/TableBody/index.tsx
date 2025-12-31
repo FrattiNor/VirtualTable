@@ -42,6 +42,8 @@ type Props<T> = Pick<
 	| 'rowDraggableMode'
 	| 'RowDraggableWrapper'
 	| 'renderEmpty'
+	| 'getRowKeys'
+	| 'getColKeys'
 >;
 
 const TableBody = <T,>(props: Props<T>) => {
@@ -70,6 +72,8 @@ const TableBody = <T,>(props: Props<T>) => {
 				rowKey={props.rowKey}
 				bordered={props.bordered}
 				rowHeight={props.rowHeight}
+				getColKeys={props.getColKeys}
+				getRowKeys={props.getRowKeys}
 				v_offsetTop={props.v_offsetTop}
 				v_totalSize={props.v_totalSize}
 				bodyInnerRef={props.bodyInnerRef}

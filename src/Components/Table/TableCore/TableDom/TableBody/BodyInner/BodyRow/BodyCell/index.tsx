@@ -5,24 +5,23 @@ import classNames from 'classnames';
 import Highlight from './Highlight';
 import styles from './index.module.less';
 import { getMergeHighlightKeywords, getRenderDom } from './utils';
-import { getCellTitle, getColKeys, getRowKeys, isStrNum } from '../../../../TableUtils';
+import { getCellTitle, isStrNum } from '../../../../../TableUtils';
 
-import type { TableCoreColumn } from '../../../../TableTypes/typeColumn';
-import type { TableInstance } from '../../../../useTableInstance';
+import type { TableCoreColumn } from '../../../../../TableTypes/typeColumn';
+import type { TableInstance } from '../../../../../useTableInstance';
 
 type Props<T> = Pick<
 	TableInstance<T>,
-	| 'splitColumnsArr'
 	| 'bordered'
 	| 'getBodyStickyStyle'
 	| 'getBodyCellBg'
-	| 'rowKey'
-	| 'data'
 	| 'bodyRowClick'
 	| 'bodyRowMouseEnter'
 	| 'bodyRowMouseLeave'
 	| 'highlightKeywords'
 	| 'renderCellPrefix'
+	| 'getRowKeys'
+	| 'getColKeys'
 > & {
 	itemData: T;
 	colIndexStart: number;
@@ -34,10 +33,7 @@ type Props<T> = Pick<
 
 const BodyCell = <T,>(props: Props<T>) => {
 	const {
-		data,
-		rowKey,
 		leafColumn,
-		splitColumnsArr,
 		bordered,
 		itemData,
 		colIndexStart,
@@ -45,6 +41,8 @@ const BodyCell = <T,>(props: Props<T>) => {
 		rowIndexStart,
 		rowIndexEnd,
 		highlightKeywords,
+		getRowKeys,
+		getColKeys,
 		getBodyStickyStyle,
 		getBodyCellBg,
 		bodyRowClick,
@@ -58,9 +56,9 @@ const BodyCell = <T,>(props: Props<T>) => {
 	const render = leafColumn.render;
 
 	// 行keys
-	const rowKeys = useMemo(() => getRowKeys(rowKey, data, rowIndexStart, rowIndexEnd), [rowKey, data, rowIndexStart, rowIndexEnd]);
+	const rowKeys = useMemo(() => getRowKeys(rowIndexStart, rowIndexEnd), [rowIndexStart, rowIndexEnd]);
 	// 列keys
-	const colKeys = useMemo(() => getColKeys(splitColumnsArr, colIndexStart, colIndexEnd), [splitColumnsArr, colIndexStart, colIndexEnd]);
+	const colKeys = useMemo(() => getColKeys(colIndexStart, colIndexEnd), [colIndexStart, colIndexEnd]);
 	// 合并 全局高亮关键字 和 列高亮关键字
 	const mergeHighlightKeywords = getMergeHighlightKeywords(highlightKeywords, leafColumn.highlightKeywords);
 	// 最终渲染结果

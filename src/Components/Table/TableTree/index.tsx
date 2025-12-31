@@ -1,13 +1,24 @@
 import { memo } from 'react';
 
-import { TableCore } from '../TableCore';
+import { TableDom } from '../TableCore';
 import { type TableTreeProps } from './type';
 import useTableTree from './useTableTree';
+import useTableInstance from '../TableCore/useTableInstance';
 
 const TableTree = <T extends Record<string, unknown>>(props: TableTreeProps<T>) => {
-	const { treeExpand, ...restProps } = props;
-	const { dataSource, renderHeadPrefix, renderCellPrefix } = useTableTree({ props, treeExpand });
-	return <TableCore {...restProps} data={dataSource} treeExpandProps={{ renderHeadPrefix, renderCellPrefix }} />;
+	const { treeExpand, ...coreProps } = props;
+	const { dataSource, renderHeadPrefix, renderCellPrefix } = useTableTree({ coreProps, treeExpand });
+
+	const instance = useTableInstance({
+		...coreProps,
+		data: dataSource,
+		treeExpandProps: {
+			renderHeadPrefix,
+			renderCellPrefix,
+		},
+	});
+
+	return <TableDom {...instance} />;
 };
 
 export default memo(TableTree) as typeof TableTree;

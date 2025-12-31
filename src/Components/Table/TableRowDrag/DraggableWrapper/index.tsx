@@ -1,54 +1,47 @@
-import { type Dispatch, type SetStateAction, useMemo, type PropsWithChildren } from 'react';
+import { useMemo, type PropsWithChildren } from 'react';
 
-import { DndContext, type DragEndEvent, type DragStartEvent } from '@dnd-kit/core';
-import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
+import { DndContext, type DragStartEvent, type DragEndEvent } from '@dnd-kit/core';
 import { arrayMove, SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 
+import { type TableCoreProps } from '../../TableCore/TableTypes/typeProps';
 import { getRowKey } from '../../TableCore/TableUtils';
-import { type TableRowDraggable, type TableRowDragProps } from '../type';
+import { type TableRowDraggable } from '../type';
 
 type Props<T> = PropsWithChildren<{
-	data: TableRowDragProps<T>['data'];
-	rowKey: TableRowDragProps<T>['rowKey'];
+	coreProps: TableCoreProps<T>;
 	rowDraggable: TableRowDraggable;
-	setDragActiveKey: Dispatch<SetStateAction<string | null>>;
+	setDragActive: React.Dispatch<React.SetStateAction<{ rowKey: string; rowIndex: number } | null>>;
 }>;
 
-const DraggableWrapper = <T,>({ data, rowKey, rowDraggable, setDragActiveKey, children }: Props<T>) => {
+const DraggableWrapper = <T,>({ coreProps, rowDraggable, children, setDragActive }: Props<T>) => {
+	const { data, rowKey } = coreProps;
+
 	const sortableItems = useMemo(() => (data ?? []).map((itemData) => getRowKey(rowKey, itemData)), [data]);
 
 	const onDragStart = ({ active }: DragStartEvent) => {
 		const rowKey = (active.data.current as any).rowKey;
-		// const rowData = (active.data.current as any).rowData;
-		// const rowIndex = (active.data.current as any).rowIndex;
+		const rowIndex = (active.data.current as any).rowIndex;
 		if (active.id) {
-			// setDragActiveItem({ rowData, rowIndex, rowKey });
-			setDragActiveKey(rowKey);
+			setDragActive({ rowKey, rowIndex });
 		} else {
-			setDragActiveKey(null);
+			setDragActive(null);
 		}
 	};
 
 	const onDragEnd = (event: DragEndEvent) => {
-		setDragActiveKey(null);
+		setDragActive(null);
 		const { active, over } = event;
 		const overId = over?.id as string;
 		const activeId = active.id as string;
 		if (overId && activeId && overId !== activeId) {
-			if (typeof rowDraggable.onDragEnd === 'function') {
-				rowDraggable.onDragEnd({ activeKey: activeId, overKey: overId, arrayMove });
+			if (typeof rowDraggable?.onDragEnd === 'function') {
+				rowDraggable?.onDragEnd({ activeKey: activeId, overKey: overId, arrayMove });
 			}
 		}
 	};
 
 	return (
-		<DndContext
-			id="DndContext"
-			onDragEnd={onDragEnd}
-			onDragStart={onDragStart}
-			modifiers={[restrictToVerticalAxis]}
-			autoScroll={{ enabled: true, threshold: { x: -1, y: 0.1 }, acceleration: 20 }}
-		>
+		<DndContext id="DndContext" onDragEnd={onDragEnd} onDragStart={onDragStart}>
 			<SortableContext id="SortableContext" items={sortableItems} strategy={verticalListSortingStrategy}>
 				{children}
 			</SortableContext>

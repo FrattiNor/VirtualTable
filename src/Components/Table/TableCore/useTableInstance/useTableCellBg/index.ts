@@ -6,18 +6,19 @@ import { type TableCoreProps } from '../../TableTypes/typeProps';
 import type useTableState from '../useTableState';
 
 type Props<T> = {
-	props: TableCoreProps<T>;
+	coreProps: TableCoreProps<T>;
 	tableState: ReturnType<typeof useTableState>;
 };
 
 // 表格 单元格 背景色
 // 根据点击、hover、resize决定
-const useTableCellBg = <T>({ tableState, props }: Props<T>) => {
+const useTableCellBg = <T>({ tableState, coreProps }: Props<T>) => {
 	const { throttle: throttle1 } = useFrameThrottle();
 	const { throttle: throttle2 } = useFrameThrottle();
 
-	const rowSelectionKeyMap = props.rowSelectionProps?.rowSelectionKeyMap;
-	const { rowClick = true, rowHover = true, rowSelect = true } = props.rowBgHighlight ?? {};
+	const rowDraggingKey = coreProps.rowDraggableProps?.rowDraggingKey;
+	const rowSelectedKeyMap = coreProps.rowSelectionProps?.rowSelectedKeyMap;
+	const { rowClick = true, rowHover = true, rowSelect = true } = coreProps.rowBgHighlight ?? {};
 	const { resizeFlag, rowClickedMap, rowHoveredMap, setRowClickedMap, setRowHoveredMap } = tableState;
 
 	// 配置变更时触发清除原本数据
@@ -86,14 +87,14 @@ const useTableCellBg = <T>({ tableState, props }: Props<T>) => {
 	// 获取行是否hovered
 	const getRowSelected = useCallback(
 		({ rowKeys }: { rowKeys: string[] }) => {
-			if (!rowSelectionKeyMap) return false;
-			if (rowSelectionKeyMap.size === 0) return false;
+			if (!rowSelectedKeyMap) return false;
+			if (rowSelectedKeyMap.size === 0) return false;
 			for (let i = 0; i < rowKeys.length; i++) {
-				if (rowSelectionKeyMap.get(rowKeys[i])) return true;
+				if (rowSelectedKeyMap.get(rowKeys[i])) return true;
 			}
 			return false;
 		},
-		[rowSelectionKeyMap],
+		[rowSelectedKeyMap],
 	);
 
 	// 获取body cell 背景色
@@ -101,17 +102,18 @@ const useTableCellBg = <T>({ tableState, props }: Props<T>) => {
 	const getBodyCellBg = useCallback(
 		({ rowKeys, colKeys, defaultBgLevel }: { rowKeys: string[]; colKeys: undefined | string[]; defaultBgLevel?: number }) => {
 			let bgColorLevel = defaultBgLevel ?? 0;
+			if (typeof rowDraggingKey === 'string' && rowKeys.some((key) => key === rowDraggingKey)) bgColorLevel += 2;
+			if (rowHover === true && getRowHovered({ rowKeys }) === true) bgColorLevel += 1;
+			if (rowSelect === true && getRowSelected({ rowKeys }) === true) bgColorLevel += 2;
 			if (colKeys && getColOnResized({ colKeys, every: false })) bgColorLevel += 2;
 			if (rowClick === true && getRowClicked({ rowKeys })) bgColorLevel += 2;
-			if (rowSelect === true && getRowSelected({ rowKeys }) === true) bgColorLevel += 2;
-			if (rowHover === true && getRowHovered({ rowKeys }) === true) bgColorLevel += 1;
 			if (bgColorLevel === 0) return 'var(--table-body-cell-bg)';
 			if (bgColorLevel === 1) return 'var(--table-body-cell-active-bg-L1)';
 			if (bgColorLevel === 2) return 'var(--table-body-cell-active-bg-L2)';
 			if (bgColorLevel >= 3) return 'var(--table-body-cell-active-bg-L3)';
 			return 'var(--table-body-cell-bg)';
 		},
-		[getColOnResized, getRowClicked, getRowHovered, getRowSelected],
+		[getColOnResized, getRowClicked, getRowHovered, getRowSelected, rowDraggingKey],
 	);
 
 	// 获取head cell 背景色

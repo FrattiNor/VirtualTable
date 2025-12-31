@@ -8,15 +8,15 @@ import type useTableDomRef from '../useTableDomRef';
 import type useTableState from '../useTableState';
 
 type Props<T> = {
-	props: TableCoreProps<T>;
+	coreProps: TableCoreProps<T>;
 	tableState: ReturnType<typeof useTableState>;
 	tableDomRef: ReturnType<typeof useTableDomRef>;
 };
 
-const useTableRef = <T>(props: Props<T>) => {
-	const { tableRef, columns, columnConf } = props.props;
-	const { setResized, setSizeCacheMap } = props.tableState;
-	const { vScrollbarRef, hScrollbarRef } = props.tableDomRef;
+const useTableRef = <T>({ coreProps, tableState, tableDomRef }: Props<T>) => {
+	const { tableRef, columns, columnConf } = coreProps;
+	const { setResized, setSizeCacheMap } = tableState;
+	const { vScrollbarRef, hScrollbarRef } = tableDomRef;
 	const { visibleConf, sortConf, fixedConf } = columnConf ?? {};
 
 	useImperativeHandle(tableRef, () => {

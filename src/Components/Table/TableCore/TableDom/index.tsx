@@ -2,32 +2,32 @@ import { Fragment, memo } from 'react';
 
 import classNames from 'classnames';
 
-import useTableInstance from '../useTableInstance';
+import { type TableInstance } from '../useTableInstance';
 import styles from './index.module.less';
 import ScrollbarH from './ScrollbarH';
 import ScrollbarV from './ScrollbarV';
 import TableBody from './TableBody';
 import TableHead from './TableHead';
 import TableLoading from './TableLoading';
-import { type TableComponent } from '../TableTypes/type';
+import themeStyles from '../TableTheme/index.theme.module.less';
 
-import type { TableCoreProps } from '../TableTypes/typeProps';
+const TableDom = <T,>(props: TableInstance<T>) => {
+	const { data, pagination, h_scrollbar, style, loading, className } = props;
 
-const Table = <T,>(coreProps: TableCoreProps<T>) => {
-	const props = useTableInstance(coreProps);
-	const isEmpty = (props.data ?? []).length === 0;
-	const havePagination = !isEmpty && coreProps.pagination;
-	const haveHScrollbar = props.h_scrollbar.have && props.h_scrollbar.width > 0;
+	const isEmpty = (data ?? []).length === 0;
+	const havePagination = !isEmpty && pagination;
+	const haveHScrollbar = h_scrollbar.have && h_scrollbar.width > 0;
 
 	return (
 		<TableLoading
+			style={style}
+			loading={loading}
 			loadingMaxHeight={400}
-			style={coreProps.style}
-			loading={coreProps.loading}
-			className={classNames(styles['table-wrapper'], coreProps.className, {
-				[styles['theme-dark']]: props.theme === 'dark',
-				[styles['theme-light']]: props.theme === 'light',
-			})}
+			className={classNames(
+				{ [themeStyles['theme-dark']]: props.theme === 'dark', [themeStyles['theme-light']]: props.theme === 'light' },
+				styles['table-wrapper'],
+				className,
+			)}
 		>
 			<div
 				className={classNames(styles['table'], {
@@ -42,6 +42,7 @@ const Table = <T,>(coreProps: TableCoreProps<T>) => {
 					deepLevel={props.deepLevel}
 					rowHeight={props.rowHeight}
 					resizeFlag={props.resizeFlag}
+					getColKeys={props.getColKeys}
 					v_scrollbar={props.v_scrollbar}
 					startResize={props.startResize}
 					getHeadCellBg={props.getHeadCellBg}
@@ -62,6 +63,8 @@ const Table = <T,>(coreProps: TableCoreProps<T>) => {
 						rowHeight={props.rowHeight}
 						tableWidth={props.tableWidth}
 						resizeFlag={props.resizeFlag}
+						getColKeys={props.getColKeys}
+						getRowKeys={props.getRowKeys}
 						renderEmpty={props.renderEmpty}
 						v_offsetTop={props.v_offsetTop}
 						columnsCore={props.columnsCore}
@@ -83,8 +86,8 @@ const Table = <T,>(coreProps: TableCoreProps<T>) => {
 						bodyRowMouseEnter={props.bodyRowMouseEnter}
 						bodyRowMouseLeave={props.bodyRowMouseLeave}
 						getBodyStickyStyle={props.getBodyStickyStyle}
-						RowDraggableWrapper={props.RowDraggableWrapper}
 						gridTemplateColumns={props.gridTemplateColumns}
+						RowDraggableWrapper={props.RowDraggableWrapper}
 					/>
 					<ScrollbarV
 						bodyRef={props.bodyRef}
@@ -105,9 +108,9 @@ const Table = <T,>(coreProps: TableCoreProps<T>) => {
 					getH_virtualCore={props.getH_virtualCore}
 				/>
 			</div>
-			{havePagination && <Fragment>{coreProps.pagination}</Fragment>}
+			{havePagination && <Fragment>{pagination}</Fragment>}
 		</TableLoading>
 	);
 };
 
-export default memo(Table) as TableComponent;
+export default memo(TableDom) as typeof TableDom;

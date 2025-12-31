@@ -2,6 +2,7 @@ import { useCallback, useMemo } from 'react';
 
 import useVVirtualCore from './useVVirtualCore';
 import useRefValue from '../../../TableHooks/useRefValue';
+import { type TableCoreProps } from '../../../TableTypes/typeProps';
 import { getLeafColumn, getRowKey } from '../../../TableUtils';
 
 import type useTableColumns from '../../useTableColumns';
@@ -9,14 +10,16 @@ import type useTableDomRef from '../../useTableDomRef';
 import type useTableInnerProps from '../../useTableInnerProps';
 
 type Props<T> = {
+	coreProps: TableCoreProps<T>;
 	tableDomRef: ReturnType<typeof useTableDomRef>;
 	tableColumns: ReturnType<typeof useTableColumns<T>>;
 	tableInnerProps: ReturnType<typeof useTableInnerProps<T>>;
 };
 
-const useTableVirtual = <T>({ tableColumns, tableInnerProps, tableDomRef }: Props<T>) => {
-	const { data, rowKey, rowHeight } = tableInnerProps;
+const useTableVirtual = <T>({ coreProps, tableColumns, tableInnerProps, tableDomRef }: Props<T>) => {
 	const { splitColumnsArr, existOnCellSpan } = tableColumns;
+	const { data, rowKey, rowHeight, rowDraggableMode } = tableInnerProps;
+	const rowDraggingIndex = coreProps.rowDraggableProps?.rowDraggingIndex;
 
 	const v_virtual = useVVirtualCore({
 		count: data?.length ?? 0,
@@ -34,42 +37,52 @@ const useTableVirtual = <T>({ tableColumns, tableInnerProps, tableDomRef }: Prop
 
 	// 根据是否存在rowSpan，重新计算v_rangeStart，v_rangeEnd
 	const { v_rangeStart, v_rangeEnd } = useMemo(() => {
-		if (existOnCellSpan !== true) {
+		// 拖拽模式，不支持rowCellSpan
+		if (rowDraggableMode === true) {
+			if (typeof rowDraggingIndex === 'number' && typeof v_rangeStart_origin === 'number' && typeof v_rangeEnd_origin === 'number') {
+				return { v_rangeStart: Math.min(v_rangeStart_origin, rowDraggingIndex), v_rangeEnd: Math.max(v_rangeEnd_origin, rowDraggingIndex) };
+			}
 			return { v_rangeStart: v_rangeStart_origin, v_rangeEnd: v_rangeEnd_origin };
 		}
 
-		// 根据原始v_rangeStart，v_rangeEnd计算row是否显示
-		const getOriginBodyCellRowShow = ({ rowIndexStart, rowIndexEnd }: { rowIndexStart: number; rowIndexEnd: number }) => {
-			if (typeof v_rangeEnd_origin === 'number' && typeof v_rangeStart_origin === 'number') {
-				for (let i = rowIndexStart; i <= rowIndexEnd; i++) {
-					if (i <= v_rangeEnd_origin && i >= v_rangeStart_origin) {
-						return true;
+		// 存在cellSpan
+		// 根据rowCellSpan重新计算当前的v_rangeStart，v_rangeEnd
+		if (existOnCellSpan === true) {
+			// 根据原始v_rangeStart，v_rangeEnd计算row是否显示
+			const getOriginBodyCellRowShow = ({ rowIndexStart, rowIndexEnd }: { rowIndexStart: number; rowIndexEnd: number }) => {
+				if (typeof v_rangeEnd_origin === 'number' && typeof v_rangeStart_origin === 'number') {
+					for (let i = rowIndexStart; i <= rowIndexEnd; i++) {
+						if (i <= v_rangeEnd_origin && i >= v_rangeStart_origin) {
+							return true;
+						}
 					}
 				}
-			}
-			return false;
-		};
+				return false;
+			};
 
-		let v_rangeEnd: number | null = null;
-		let v_rangeStart: number | null = null;
+			let v_rangeEnd: number | null = null;
+			let v_rangeStart: number | null = null;
 
-		// 遍历重新计算v_rangeStart，v_rangeEnd
-		data?.forEach((itemData, rowIndex) => {
-			for (let i = 0; i < splitColumnsArr.length; i++) {
-				const splitColumns = splitColumnsArr[i];
-				const leafColumn = getLeafColumn(splitColumns);
-				const { rowSpan = 1, colSpan = 1 } = leafColumn.onCellSpan ? leafColumn.onCellSpan(itemData, rowIndex) : {};
-				if (rowSpan <= 0 || colSpan <= 0) continue;
-				const rowIndexStart = rowIndex;
-				const rowIndexEnd = rowIndex + rowSpan - 1;
-				if (!getOriginBodyCellRowShow({ rowIndexStart, rowIndexEnd })) continue;
-				if (v_rangeStart === null) v_rangeStart = rowIndexStart;
-				if (v_rangeEnd === null || rowIndexEnd > v_rangeEnd) v_rangeEnd = rowIndexEnd;
-			}
-		});
+			// 遍历重新计算v_rangeStart，v_rangeEnd
+			data?.forEach((itemData, rowIndex) => {
+				for (let i = 0; i < splitColumnsArr.length; i++) {
+					const splitColumns = splitColumnsArr[i];
+					const leafColumn = getLeafColumn(splitColumns);
+					const { rowSpan = 1, colSpan = 1 } = leafColumn.onCellSpan ? leafColumn.onCellSpan(itemData, rowIndex) : {};
+					if (rowSpan <= 0 || colSpan <= 0) continue;
+					const rowIndexStart = rowIndex;
+					const rowIndexEnd = rowIndex + rowSpan - 1;
+					if (!getOriginBodyCellRowShow({ rowIndexStart, rowIndexEnd })) continue;
+					if (v_rangeStart === null) v_rangeStart = rowIndexStart;
+					if (v_rangeEnd === null || rowIndexEnd > v_rangeEnd) v_rangeEnd = rowIndexEnd;
+				}
+			});
 
-		return { v_rangeStart, v_rangeEnd };
-	}, [v_rangeStart_origin, v_rangeEnd_origin, data, splitColumnsArr, existOnCellSpan]);
+			return { v_rangeStart, v_rangeEnd };
+		}
+
+		return { v_rangeStart: v_rangeStart_origin, v_rangeEnd: v_rangeEnd_origin };
+	}, [v_rangeStart_origin, v_rangeEnd_origin, data, splitColumnsArr, existOnCellSpan, rowDraggableMode, rowDraggingIndex]);
 
 	const v_offsetTop = useMemo(() => v_sizeList?.[v_rangeStart ?? -1]?.start ?? 0, [v_sizeList, v_rangeStart]);
 

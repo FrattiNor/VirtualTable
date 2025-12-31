@@ -4,14 +4,22 @@ import classNames from 'classnames';
 
 import styles from './index.module.less';
 import ResizeHandle from './ResizeHandle';
-import { getCellTitle, getColKeys, getResize, isEmptyRender, isStrNum } from '../../../../TableUtils';
+import { getCellTitle, getResize, isEmptyRender, isStrNum } from '../../../../TableUtils';
 
 import type { TableCoreColumn, TableCoreColumnGroup } from '../../../../TableTypes/typeColumn';
 import type { TableInstance } from '../../../../useTableInstance';
 
 type Props<T> = Pick<
 	TableInstance<T>,
-	'splitColumnsArr' | 'bordered' | 'rowHeight' | 'getHeadStickyStyle' | 'startResize' | 'resizeFlag' | 'getHeadCellBg' | 'renderHeadPrefix'
+	| 'splitColumnsArr'
+	| 'bordered'
+	| 'rowHeight'
+	| 'getHeadStickyStyle'
+	| 'startResize'
+	| 'resizeFlag'
+	| 'getHeadCellBg'
+	| 'renderHeadPrefix'
+	| 'getColKeys'
 > & {
 	rowIndexStart: number;
 	rowIndexEnd: number;
@@ -39,6 +47,7 @@ const HeadCell = <T,>(props: Props<T>) => {
 		colIndexStart,
 		colIndexEnd,
 		rowHeight,
+		getColKeys,
 		getHeadStickyStyle,
 		getHeadCellBg,
 		renderHeadPrefix,
@@ -46,7 +55,7 @@ const HeadCell = <T,>(props: Props<T>) => {
 	// 是否可以resize
 	const resize = useMemo(() => getResize(splitColumnsArr, colIndexStart, colIndexEnd), [splitColumnsArr, colIndexStart, colIndexEnd]);
 	// 列keys
-	const colKeys = useMemo(() => getColKeys(splitColumnsArr, colIndexStart, colIndexEnd), [splitColumnsArr, colIndexStart, colIndexEnd]);
+	const colKeys = useMemo(() => getColKeys(colIndexStart, colIndexEnd), [colIndexStart, colIndexEnd]);
 	// 最终渲染结果
 	const renderDom = !isEmptyRender(column.title) ? column.title : '-';
 	// 筛选dom

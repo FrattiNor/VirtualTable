@@ -1,7 +1,7 @@
 import { type ReactNode } from 'react';
 
-import { type TableCoreColumnRender } from '../../../../TableTypes/type';
-import { isEmptyRender } from '../../../../TableUtils';
+import { type TableCoreColumnRender } from '../../../../../TableTypes/type';
+import { isEmptyRender } from '../../../../../TableUtils';
 
 export const getMergeHighlightKeywords = (keywords: string[] | undefined, keywords2: string[] | undefined) => {
 	return [...(keywords ?? []), ...(keywords2 ?? [])];

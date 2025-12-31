@@ -17,6 +17,7 @@ type Props<T> = Pick<
 	| 'getHeadCellBg'
 	| 'getHeadCellColShow'
 	| 'renderHeadPrefix'
+	| 'getColKeys'
 > & {
 	rowIndex: number;
 };
@@ -54,6 +55,7 @@ const HeadRow = <T,>(props: Props<T>) => {
 						resizeFlag={props.resizeFlag}
 						colIndexStart={colIndexStart}
 						rowIndexStart={rowIndexStart}
+						getColKeys={props.getColKeys}
 						startResize={props.startResize}
 						splitColumnsArr={splitColumnsArr}
 						getHeadCellBg={props.getHeadCellBg}
@@ -102,6 +104,7 @@ const HeadRow = <T,>(props: Props<T>) => {
 						resizeFlag={props.resizeFlag}
 						colIndexStart={colIndexStart}
 						rowIndexStart={rowIndexStart}
+						getColKeys={props.getColKeys}
 						startResize={props.startResize}
 						splitColumnsArr={splitColumnsArr}
 						getHeadCellBg={props.getHeadCellBg}

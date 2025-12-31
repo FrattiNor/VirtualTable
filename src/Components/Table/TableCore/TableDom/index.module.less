@@ -1,5 +1,3 @@
-@import './index.theme.module.less';
-
 .table-wrapper {
 	width: 100%;
 	min-height: 0;
@@ -8,14 +6,6 @@
 	overflow: hidden;
 	position: relative;
 	flex-direction: column;
-
-	&.theme-dark {
-		.table-theme-dark();
-	}
-
-	&.theme-light {
-		.table-theme-light();
-	}
 
 	.table {
 		width: 100%;
@@ -44,7 +34,6 @@
 		}
 
 		.table-body-wrapper {
-			z-index: 1;
 			width: 100%;
 			min-height: 0;
 			flex-shrink: 1;
