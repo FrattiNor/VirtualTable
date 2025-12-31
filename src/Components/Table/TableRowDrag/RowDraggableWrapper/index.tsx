@@ -10,20 +10,25 @@ type Props = {
 };
 
 const RowDraggableWrapper: FC<Props> = ({ rowIndex, rowKey, children }) => {
-	const { attributes, setNodeRef, transform, transition, isDragging, isSorting } = useSortable({
+	const { attributes, setNodeRef, transform, transition, isSorting, isDragging } = useSortable({
 		id: rowKey,
 		data: { rowKey, rowIndex },
 	});
 
 	const _style: React.CSSProperties = {
 		transition,
-		position: 'relative',
 		zIndex: isDragging ? 2 : 1,
 		transform: CSS.Translate.toString(transform),
 		pointerEvents: isSorting ? 'none' : 'initial',
 	};
 
-	return cloneElement(children, { draggableSetNodeRef: setNodeRef, style: { ...children.props.style, ..._style }, draggableProps: attributes });
+	const coverProps = {
+		draggableProps: attributes,
+		draggableSetNodeRef: setNodeRef,
+		style: { ...children.props.style, ..._style },
+	};
+
+	return cloneElement(children, coverProps);
 };
 
 export default RowDraggableWrapper;

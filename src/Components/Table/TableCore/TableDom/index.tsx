@@ -79,15 +79,20 @@ const TableDom = <T,>(props: TableInstance<T>) => {
 						renderBodyDom={props.renderBodyDom}
 						setSizeCacheMap={props.setSizeCacheMap}
 						splitColumnsArr={props.splitColumnsArr}
+						draggingRowIndex={props.draggingRowIndex}
 						rowDraggableMode={props.rowDraggableMode}
 						renderCellPrefix={props.renderCellPrefix}
 						highlightKeywords={props.highlightKeywords}
 						v_measureItemSize={props.v_measureItemSize}
 						bodyRowMouseEnter={props.bodyRowMouseEnter}
 						bodyRowMouseLeave={props.bodyRowMouseLeave}
+						getBodyCellColShow={props.getBodyCellColShow}
 						getBodyStickyStyle={props.getBodyStickyStyle}
+						draggingRow_notShow={props.draggingRow_notShow}
 						gridTemplateColumns={props.gridTemplateColumns}
 						RowDraggableWrapper={props.RowDraggableWrapper}
+						draggingRow_offsetTop={props.draggingRow_offsetTop}
+						getBodyCellColForceShow={props.getBodyCellColForceShow}
 					/>
 					<ScrollbarV
 						bodyRef={props.bodyRef}

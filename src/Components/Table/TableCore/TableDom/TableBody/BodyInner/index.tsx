@@ -1,4 +1,4 @@
-import { memo } from 'react';
+import { type CSSProperties, memo } from 'react';
 
 import classNames from 'classnames';
 
@@ -32,10 +32,71 @@ type Props<T> = Pick<
 	| 'RowDraggableWrapper'
 	| 'getRowKeys'
 	| 'getColKeys'
+	| 'getBodyCellColShow'
+	| 'getBodyCellColForceShow'
+	| 'draggingRow_offsetTop'
+	| 'draggingRow_notShow'
+	| 'draggingRowIndex'
 >;
 
 const BodyInner = <T,>(props: Props<T>) => {
-	const { data, rowKey, v_offsetTop, v_totalSize, bodyInnerRef, renderBodyDom, rowDraggableMode, gridTemplateColumns, RowDraggableWrapper } = props;
+	const {
+		data,
+		rowKey,
+		v_offsetTop,
+		v_totalSize,
+		bodyInnerRef,
+		renderBodyDom,
+		rowDraggableMode,
+		gridTemplateColumns,
+		RowDraggableWrapper,
+		draggingRow_notShow,
+		draggingRow_offsetTop,
+		draggingRowIndex,
+		getBodyCellColShow,
+		getBodyCellColForceShow,
+	} = props;
+
+	const renderRow = ({
+		style,
+		itemData,
+		rowIndex,
+		itemRowKey,
+		isPlaceholder,
+	}: {
+		itemData: T;
+		rowIndex: number;
+		itemRowKey: string;
+		isPlaceholder: boolean;
+		style?: CSSProperties;
+	}) => {
+		return (
+			<BodyRow
+				style={style}
+				key={itemRowKey}
+				itemData={itemData}
+				rowIndex={rowIndex}
+				itemRowKey={itemRowKey}
+				bordered={props.bordered}
+				rowHeight={props.rowHeight}
+				getColKeys={props.getColKeys}
+				getRowKeys={props.getRowKeys}
+				isPlaceholder={isPlaceholder}
+				bodyRowClick={props.bodyRowClick}
+				getBodyCellBg={props.getBodyCellBg}
+				getBodyCellColShow={getBodyCellColShow}
+				splitColumnsArr={props.splitColumnsArr}
+				rowDraggableMode={props.rowDraggableMode}
+				renderCellPrefix={props.renderCellPrefix}
+				highlightKeywords={props.highlightKeywords}
+				v_measureItemSize={props.v_measureItemSize}
+				bodyRowMouseEnter={props.bodyRowMouseEnter}
+				bodyRowMouseLeave={props.bodyRowMouseLeave}
+				getBodyStickyStyle={props.getBodyStickyStyle}
+				getBodyCellColForceShow={getBodyCellColForceShow}
+			/>
+		);
+	};
 
 	return (
 		<div ref={bodyInnerRef} className={styles['body-inner']} style={{ minHeight: v_totalSize }}>
@@ -43,50 +104,47 @@ const BodyInner = <T,>(props: Props<T>) => {
 				style={{ gridTemplateColumns: gridTemplateColumns + ` minmax(0px, 1fr)`, transform: `translate3d(0,${v_offsetTop}px,0)` }}
 				className={classNames({ [styles['body-content']]: !rowDraggableMode, [styles['draggable-mode-content']]: rowDraggableMode })}
 			>
-				{renderBodyDom(({ rowIndex, isPlaceholder, getBodyCellColShow, getBodyCellColForceShow }) => {
+				{renderBodyDom(({ rowIndex, isPlaceholder }) => {
 					const itemData = data[rowIndex];
-
 					if (itemData !== undefined) {
 						const itemRowKey = getRowKey(rowKey, itemData);
-
-						const row = (
-							<BodyRow
-								key={itemRowKey}
-								itemData={itemData}
-								rowIndex={rowIndex}
-								itemRowKey={itemRowKey}
-								bordered={props.bordered}
-								rowHeight={props.rowHeight}
-								getColKeys={props.getColKeys}
-								getRowKeys={props.getRowKeys}
-								isPlaceholder={isPlaceholder}
-								bodyRowClick={props.bodyRowClick}
-								getBodyCellBg={props.getBodyCellBg}
-								getBodyCellColShow={getBodyCellColShow}
-								splitColumnsArr={props.splitColumnsArr}
-								rowDraggableMode={props.rowDraggableMode}
-								renderCellPrefix={props.renderCellPrefix}
-								highlightKeywords={props.highlightKeywords}
-								v_measureItemSize={props.v_measureItemSize}
-								bodyRowMouseEnter={props.bodyRowMouseEnter}
-								bodyRowMouseLeave={props.bodyRowMouseLeave}
-								getBodyStickyStyle={props.getBodyStickyStyle}
-								getBodyCellColForceShow={getBodyCellColForceShow}
-							/>
-						);
-
 						if (RowDraggableWrapper) {
 							return (
 								<RowDraggableWrapper key={`${isPlaceholder}-${itemRowKey}`} rowKey={itemRowKey} rowIndex={rowIndex}>
-									{row}
+									{renderRow({ itemData, rowIndex, itemRowKey, isPlaceholder })}
 								</RowDraggableWrapper>
 							);
 						}
-
-						return row;
+						return renderRow({ itemData, rowIndex, itemRowKey, isPlaceholder });
 					}
 				})}
 			</div>
+
+			{(() => {
+				if (typeof draggingRowIndex === 'number' && draggingRow_notShow && RowDraggableWrapper) {
+					const itemData = data[draggingRowIndex];
+					if (itemData) {
+						const rowIndex = draggingRowIndex;
+						const itemRowKey = getRowKey(rowKey, itemData);
+						return (
+							<RowDraggableWrapper rowKey={itemRowKey} rowIndex={rowIndex}>
+								{renderRow({
+									itemData,
+									rowIndex,
+									itemRowKey,
+									isPlaceholder: false,
+									style: {
+										left: 0,
+										position: 'absolute',
+										top: draggingRow_offsetTop,
+										gridTemplateColumns: gridTemplateColumns + ` minmax(0px, 1fr)`,
+									},
+								})}
+							</RowDraggableWrapper>
+						);
+					}
+				}
+			})()}
 		</div>
 	);
 };

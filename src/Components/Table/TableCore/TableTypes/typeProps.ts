@@ -61,13 +61,13 @@ export type TableCoreProps<T> = {
 
 	// 影响：Row列增加外壳RowDraggableWrapper，注入额外参数
 	// 影响：BodyInner从grid转换为initial，Row从contents转换为grid，且不再支持RowCellSpan
-	// 影响：增加排序列、排序选中行背景色修改、纵向虚拟列表Range受排序选中行影响，以及isPlaceholder受排序选中行影响
+	// 影响：增加排序列、排序选中行背景色修改、DraggingRow被虚拟列表隐藏时，额外渲染DraggingRow
 	// === rowDraggableProps ===
 	rowDraggableProps?: {
 		// 正在行拖拽的key 【行高亮使用】
-		rowDraggingKey?: string;
+		draggingRowKey?: string;
 		// 正在行拖拽的key 【虚拟渲染使用】
-		rowDraggingIndex?: number;
+		draggingRowIndex?: number;
 		// 行拖拽列配置
 		rowDraggableColum: TableCoreColumn<T>;
 		// 配置每行的外壳，注入参数

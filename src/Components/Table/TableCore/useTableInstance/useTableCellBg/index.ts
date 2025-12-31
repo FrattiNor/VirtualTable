@@ -16,7 +16,7 @@ const useTableCellBg = <T>({ tableState, coreProps }: Props<T>) => {
 	const { throttle: throttle1 } = useFrameThrottle();
 	const { throttle: throttle2 } = useFrameThrottle();
 
-	const rowDraggingKey = coreProps.rowDraggableProps?.rowDraggingKey;
+	const draggingRowKey = coreProps.rowDraggableProps?.draggingRowKey;
 	const rowSelectedKeyMap = coreProps.rowSelectionProps?.rowSelectedKeyMap;
 	const { rowClick = true, rowHover = true, rowSelect = true } = coreProps.rowBgHighlight ?? {};
 	const { resizeFlag, rowClickedMap, rowHoveredMap, setRowClickedMap, setRowHoveredMap } = tableState;
@@ -102,7 +102,7 @@ const useTableCellBg = <T>({ tableState, coreProps }: Props<T>) => {
 	const getBodyCellBg = useCallback(
 		({ rowKeys, colKeys, defaultBgLevel }: { rowKeys: string[]; colKeys: undefined | string[]; defaultBgLevel?: number }) => {
 			let bgColorLevel = defaultBgLevel ?? 0;
-			if (typeof rowDraggingKey === 'string' && rowKeys.some((key) => key === rowDraggingKey)) bgColorLevel += 2;
+			if (typeof draggingRowKey === 'string' && rowKeys.some((key) => key === draggingRowKey)) bgColorLevel += 2;
 			if (rowHover === true && getRowHovered({ rowKeys }) === true) bgColorLevel += 1;
 			if (rowSelect === true && getRowSelected({ rowKeys }) === true) bgColorLevel += 2;
 			if (colKeys && getColOnResized({ colKeys, every: false })) bgColorLevel += 2;
@@ -113,7 +113,7 @@ const useTableCellBg = <T>({ tableState, coreProps }: Props<T>) => {
 			if (bgColorLevel >= 3) return 'var(--table-body-cell-active-bg-L3)';
 			return 'var(--table-body-cell-bg)';
 		},
-		[getColOnResized, getRowClicked, getRowHovered, getRowSelected, rowDraggingKey],
+		[getColOnResized, getRowClicked, getRowHovered, getRowSelected, draggingRowKey],
 	);
 
 	// 获取head cell 背景色

@@ -44,6 +44,11 @@ type Props<T> = Pick<
 	| 'renderEmpty'
 	| 'getRowKeys'
 	| 'getColKeys'
+	| 'getBodyCellColShow'
+	| 'getBodyCellColForceShow'
+	| 'draggingRow_offsetTop'
+	| 'draggingRow_notShow'
+	| 'draggingRowIndex'
 >;
 
 const TableBody = <T,>(props: Props<T>) => {
@@ -82,14 +87,19 @@ const TableBody = <T,>(props: Props<T>) => {
 				renderBodyDom={props.renderBodyDom}
 				splitColumnsArr={props.splitColumnsArr}
 				renderCellPrefix={props.renderCellPrefix}
+				draggingRowIndex={props.draggingRowIndex}
 				rowDraggableMode={props.rowDraggableMode}
 				highlightKeywords={props.highlightKeywords}
 				v_measureItemSize={props.v_measureItemSize}
 				bodyRowMouseEnter={props.bodyRowMouseEnter}
 				bodyRowMouseLeave={props.bodyRowMouseLeave}
+				getBodyCellColShow={props.getBodyCellColShow}
 				getBodyStickyStyle={props.getBodyStickyStyle}
+				draggingRow_notShow={props.draggingRow_notShow}
 				RowDraggableWrapper={props.RowDraggableWrapper}
 				gridTemplateColumns={props.gridTemplateColumns}
+				draggingRow_offsetTop={props.draggingRow_offsetTop}
+				getBodyCellColForceShow={props.getBodyCellColForceShow}
 			/>
 			{isEmpty && <BodyEmpty tableWidth={props.tableWidth} theme={props.theme} renderEmpty={props.renderEmpty} />}
 		</div>

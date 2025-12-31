@@ -19,7 +19,7 @@ type Props<T> = {
 const useTableVirtual = <T>({ coreProps, tableColumns, tableInnerProps, tableDomRef }: Props<T>) => {
 	const { splitColumnsArr, existOnCellSpan } = tableColumns;
 	const { data, rowKey, rowHeight, rowDraggableMode } = tableInnerProps;
-	const rowDraggingIndex = coreProps.rowDraggableProps?.rowDraggingIndex;
+	const draggingRowIndex = coreProps.rowDraggableProps?.draggingRowIndex;
 
 	const v_virtual = useVVirtualCore({
 		count: data?.length ?? 0,
@@ -37,14 +37,6 @@ const useTableVirtual = <T>({ coreProps, tableColumns, tableInnerProps, tableDom
 
 	// 根据是否存在rowSpan，重新计算v_rangeStart，v_rangeEnd
 	const { v_rangeStart, v_rangeEnd } = useMemo(() => {
-		// 拖拽模式，不支持rowCellSpan
-		if (rowDraggableMode === true) {
-			if (typeof rowDraggingIndex === 'number' && typeof v_rangeStart_origin === 'number' && typeof v_rangeEnd_origin === 'number') {
-				return { v_rangeStart: Math.min(v_rangeStart_origin, rowDraggingIndex), v_rangeEnd: Math.max(v_rangeEnd_origin, rowDraggingIndex) };
-			}
-			return { v_rangeStart: v_rangeStart_origin, v_rangeEnd: v_rangeEnd_origin };
-		}
-
 		// 存在cellSpan
 		// 根据rowCellSpan重新计算当前的v_rangeStart，v_rangeEnd
 		if (existOnCellSpan === true) {
@@ -82,9 +74,16 @@ const useTableVirtual = <T>({ coreProps, tableColumns, tableInnerProps, tableDom
 		}
 
 		return { v_rangeStart: v_rangeStart_origin, v_rangeEnd: v_rangeEnd_origin };
-	}, [v_rangeStart_origin, v_rangeEnd_origin, data, splitColumnsArr, existOnCellSpan, rowDraggableMode, rowDraggingIndex]);
+	}, [v_rangeStart_origin, v_rangeEnd_origin, data, splitColumnsArr, existOnCellSpan, rowDraggableMode]);
 
 	const v_offsetTop = useMemo(() => v_sizeList?.[v_rangeStart ?? -1]?.start ?? 0, [v_sizeList, v_rangeStart]);
+
+	const draggingRow_offsetTop = useMemo(() => v_sizeList?.[draggingRowIndex ?? -1]?.start ?? 0, [v_sizeList, draggingRowIndex]);
+
+	const draggingRow_notShow = useMemo(() => {
+		if (typeof draggingRowIndex !== 'number' || typeof v_rangeStart !== 'number' || typeof v_rangeEnd !== 'number') return false;
+		return !(draggingRowIndex >= v_rangeStart && draggingRowIndex <= v_rangeEnd);
+	}, [v_rangeStart, v_rangeEnd, draggingRowIndex]);
 
 	return {
 		v_totalSize,
@@ -95,6 +94,8 @@ const useTableVirtual = <T>({ coreProps, tableColumns, tableInnerProps, tableDom
 		v_rangeEnd_origin,
 		getV_virtualCore,
 		v_measureItemSize,
+		draggingRow_offsetTop,
+		draggingRow_notShow,
 	};
 };
 

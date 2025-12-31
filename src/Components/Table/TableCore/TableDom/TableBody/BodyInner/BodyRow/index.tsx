@@ -25,13 +25,13 @@ type Props<T> = Pick<
 	| 'rowDraggableMode'
 	| 'getRowKeys'
 	| 'getColKeys'
+	| 'getBodyCellColShow'
+	| 'getBodyCellColForceShow'
 > & {
 	itemData: T;
 	rowIndex: number;
 	itemRowKey: string;
 	isPlaceholder: boolean;
-	getBodyCellColShow: ({ colIndexStart, colIndexEnd }: { colIndexStart: number; colIndexEnd: number }) => boolean;
-	getBodyCellColForceShow: ({ colIndexStart, colIndexEnd }: { colIndexStart: number; colIndexEnd: number }) => boolean;
 	// ==== 给RowDraggableWrapper组件注入使用 ====
 	style?: CSSProperties;
 	draggableProps?: Record<string, any>;

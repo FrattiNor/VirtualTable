@@ -22,6 +22,7 @@ const useTableInnerProps = <T>(props: TableCoreProps<T>) => {
 
 		// TableDrag
 		rowDraggableMode: !!props.rowDraggableProps,
+		draggingRowIndex: props.rowDraggableProps?.draggingRowIndex,
 		RowDraggableWrapper: props.rowDraggableProps?.RowDraggableWrapper,
 
 		// 只有最外层使用

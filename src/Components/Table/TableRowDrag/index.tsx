@@ -18,8 +18,8 @@ const TableRowDrag = <T extends Record<string, unknown>>(props: TableRowDragProp
 		rowDraggableProps: {
 			rowDraggableColum,
 			RowDraggableWrapper,
-			rowDraggingKey: dragActive?.rowKey,
-			rowDraggingIndex: dragActive?.rowIndex,
+			draggingRowKey: dragActive?.rowKey,
+			draggingRowIndex: dragActive?.rowIndex,
 		},
 	});
 

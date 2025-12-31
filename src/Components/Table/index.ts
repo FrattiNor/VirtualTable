@@ -11,3 +11,6 @@ export type Table2Props<T> = TableProps<T>;
 export type Table2Column<T> = TableCoreColumn<T>;
 export type Table2Columns<T> = TableCoreColumns<T>;
 export type Table2ColumnFixed = TableCoreColumnFixed;
+
+// TODO 拖拽行数太多会卡顿
+// TODO 拖拽、多选、Tree，状态开启关闭，状态会刷新
