@@ -2,7 +2,7 @@ import { Fragment, memo } from 'react';
 
 import classNames from 'classnames';
 
-import { type TableInstance } from '../useTableInstance';
+import useTableInstance from '../useTableInstance';
 import styles from './index.module.less';
 import ScrollbarH from './ScrollbarH';
 import ScrollbarV from './ScrollbarV';
@@ -10,9 +10,13 @@ import TableBody from './TableBody';
 import TableHead from './TableHead';
 import TableLoading from './TableLoading';
 import themeStyles from '../TableTheme/index.theme.module.less';
+import { type TableComponent } from '../TableTypes/type';
+import { type TableCoreProps } from '../TableTypes/typeProps';
 
-const TableDom = <T,>(props: TableInstance<T>) => {
-	const { data, pagination, h_scrollbar, style, loading, className } = props;
+const TableDom = <T,>(coreProps: TableCoreProps<T>) => {
+	const props = useTableInstance(coreProps);
+	const { data, h_scrollbar, theme, bordered } = props;
+	const { pagination, style, loading, className } = coreProps;
 
 	const isEmpty = (data ?? []).length === 0;
 	const havePagination = !isEmpty && pagination;
@@ -24,16 +28,16 @@ const TableDom = <T,>(props: TableInstance<T>) => {
 			loading={loading}
 			loadingMaxHeight={400}
 			className={classNames(
-				{ [themeStyles['theme-dark']]: props.theme === 'dark', [themeStyles['theme-light']]: props.theme === 'light' },
+				{ [themeStyles['theme-dark']]: theme === 'dark', [themeStyles['theme-light']]: theme === 'light' },
 				styles['table-wrapper'],
 				className,
 			)}
 		>
 			<div
 				className={classNames(styles['table'], {
-					[styles['bordered']]: props.bordered,
+					[styles['bordered']]: bordered,
 					// bordered为false，但是显示border-bottom的情况，非空，没有横向滚动条
-					[styles['no-bordered-and-show-border-bottom']]: !isEmpty && !props.bordered && !haveHScrollbar,
+					[styles['no-bordered-and-show-border-bottom']]: !isEmpty && !bordered && !haveHScrollbar,
 				})}
 			>
 				<TableHead
@@ -77,6 +81,7 @@ const TableDom = <T,>(props: TableInstance<T>) => {
 						fixedRightMap={props.fixedRightMap}
 						getBodyCellBg={props.getBodyCellBg}
 						renderBodyDom={props.renderBodyDom}
+						draggingRowKey={props.draggingRowKey}
 						setSizeCacheMap={props.setSizeCacheMap}
 						splitColumnsArr={props.splitColumnsArr}
 						draggingRowIndex={props.draggingRowIndex}
@@ -93,6 +98,7 @@ const TableDom = <T,>(props: TableInstance<T>) => {
 						RowDraggableWrapper={props.RowDraggableWrapper}
 						draggingRow_offsetTop={props.draggingRow_offsetTop}
 						getBodyCellColForceShow={props.getBodyCellColForceShow}
+						renderWidthDraggableWrapper={props.renderWidthDraggableWrapper}
 					/>
 					<ScrollbarV
 						bodyRef={props.bodyRef}
@@ -118,4 +124,4 @@ const TableDom = <T,>(props: TableInstance<T>) => {
 	);
 };
 
-export default memo(TableDom) as typeof TableDom;
+export default memo(TableDom) as TableComponent;

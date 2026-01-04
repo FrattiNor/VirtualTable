@@ -1,23 +1,31 @@
+/* eslint-disable react-refresh/only-export-components */
 import { memo } from 'react';
 
-import { TableDom } from '../TableCore';
+import TableCore from '../TableCore';
 import { type TableRowSelectionProps } from './type';
 import useTableRowSelection from './useTableRowSelection';
-import useTableInstance from '../TableCore/useTableInstance';
+
+export const _selectionHooksProps: Parameters<typeof useTableRowSelection<any>>[0] = {
+	data: undefined,
+	rowKey: '',
+	rowSelection: { selectedKeys: [], setSelectedKeys: () => {}, renderCheckbox: () => null },
+};
 
 const TableRowSelection = <T extends Record<string, unknown>>(props: TableRowSelectionProps<T>) => {
 	const { rowSelection, ...coreProps } = props;
-	const { rowSelectionColum, rowSelectedKeyMap } = useTableRowSelection({ coreProps, rowSelection });
 
-	const instance = useTableInstance({
+	const enabled = rowSelection?.enabled ?? true;
+
+	const selectionHooksProps: Parameters<typeof useTableRowSelection<T>>[0] = { data: coreProps.data, rowKey: coreProps.rowKey, rowSelection };
+
+	const rowSelectionProps = useTableRowSelection(enabled ? selectionHooksProps : _selectionHooksProps);
+
+	const tableDomProps = {
 		...coreProps,
-		rowSelectionProps: {
-			rowSelectionColum,
-			rowSelectedKeyMap,
-		},
-	});
+		rowSelectionProps: enabled ? rowSelectionProps : undefined,
+	};
 
-	return <TableDom {...instance} />;
+	return <TableCore {...tableDomProps} />;
 };
 
 export default memo(TableRowSelection) as typeof TableRowSelection;

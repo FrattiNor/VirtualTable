@@ -7,21 +7,22 @@ import useRowParams from './useRowParams';
 import useSelectionColTitle from './useSelectionColTitle';
 
 type Props<T> = {
-	coreProps: TableCoreProps<T>;
+	data: TableCoreProps<T>['data'];
+	rowKey: TableCoreProps<T>['rowKey'];
 	rowSelection: TableRowSelection<T>;
 };
 
-const useTableRowSelection = <T>({ coreProps, rowSelection }: Props<T>) => {
+const useTableRowSelection = <T>({ data, rowKey, rowSelection }: Props<T>) => {
 	const { setSelectedKeys } = rowSelection;
 
 	// 全部已经选中的key、全部可选列、全部列的disabled状态【不受getDisabled影响】
-	const { allSelectedKeyMap, allCouldSelectedKeyMap, disabledMap } = useRowParams({ coreProps, rowSelection });
+	const { allSelectedKeyMap, allCouldSelectedKeyMap, disabledMap } = useRowParams({ data, rowKey, rowSelection });
 
 	// 列标题
 	const title = useSelectionColTitle({ rowSelection, allSelectedKeyMap, allCouldSelectedKeyMap });
 
 	// 列配置
-	const rowSelectionColum = useRowSelectionColum({ title, disabledMap, allSelectedKeyMap, coreProps, rowSelection });
+	const rowSelectionColum = useRowSelectionColum({ title, disabledMap, allSelectedKeyMap, rowKey, rowSelection });
 
 	// 可选中的key变更，清除不存在的key
 	useEffect(() => {

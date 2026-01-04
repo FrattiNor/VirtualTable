@@ -1,6 +1,4 @@
-import { type CSSProperties, memo } from 'react';
-
-import classNames from 'classnames';
+import { type CSSProperties, Fragment, memo } from 'react';
 
 import BodyRow from './BodyRow';
 import styles from './index.module.less';
@@ -18,34 +16,32 @@ type Props<T> = Pick<
 	| 'rowHeight'
 	| 'getBodyStickyStyle'
 	| 'getBodyCellBg'
-	| 'bodyInnerRef'
 	| 'bodyRowClick'
 	| 'bodyRowMouseEnter'
 	| 'bodyRowMouseLeave'
-	| 'v_totalSize'
 	| 'v_offsetTop'
 	| 'v_measureItemSize'
 	| 'highlightKeywords'
 	| 'renderBodyDom'
 	| 'renderCellPrefix'
-	| 'rowDraggableMode'
-	| 'RowDraggableWrapper'
 	| 'getRowKeys'
 	| 'getColKeys'
 	| 'getBodyCellColShow'
 	| 'getBodyCellColForceShow'
+	| 'renderWidthDraggableWrapper'
 	| 'draggingRow_offsetTop'
 	| 'draggingRow_notShow'
+	| 'RowDraggableWrapper'
+	| 'rowDraggableMode'
 	| 'draggingRowIndex'
+	| 'draggingRowKey'
 >;
 
-const BodyInner = <T,>(props: Props<T>) => {
+const BodyContent = <T,>(props: Props<T>) => {
 	const {
 		data,
 		rowKey,
 		v_offsetTop,
-		v_totalSize,
-		bodyInnerRef,
 		renderBodyDom,
 		rowDraggableMode,
 		gridTemplateColumns,
@@ -53,23 +49,15 @@ const BodyInner = <T,>(props: Props<T>) => {
 		draggingRow_notShow,
 		draggingRow_offsetTop,
 		draggingRowIndex,
+		draggingRowKey,
 		getBodyCellColShow,
 		getBodyCellColForceShow,
+		renderWidthDraggableWrapper,
 	} = props;
 
-	const renderRow = ({
-		style,
-		itemData,
-		rowIndex,
-		itemRowKey,
-		isPlaceholder,
-	}: {
-		itemData: T;
-		rowIndex: number;
-		itemRowKey: string;
-		isPlaceholder: boolean;
-		style?: CSSProperties;
-	}) => {
+	// 渲染行
+	type RenderRowProps = { itemData: T; rowIndex: number; itemRowKey: string; isPlaceholder: boolean; style?: CSSProperties };
+	const renderRow = ({ style, itemData, rowIndex, itemRowKey, isPlaceholder }: RenderRowProps) => {
 		return (
 			<BodyRow
 				style={style}
@@ -98,34 +86,19 @@ const BodyInner = <T,>(props: Props<T>) => {
 		);
 	};
 
-	return (
-		<div ref={bodyInnerRef} className={styles['body-inner']} style={{ minHeight: v_totalSize }}>
-			<div
-				style={{ gridTemplateColumns: gridTemplateColumns + ` minmax(0px, 1fr)`, transform: `translate3d(0,${v_offsetTop}px,0)` }}
-				className={classNames({ [styles['body-content']]: !rowDraggableMode, [styles['draggable-mode-content']]: rowDraggableMode })}
-			>
-				{renderBodyDom(({ rowIndex, isPlaceholder }) => {
-					const itemData = data[rowIndex];
-					if (itemData !== undefined) {
-						const itemRowKey = getRowKey(rowKey, itemData);
-						if (RowDraggableWrapper) {
-							return (
-								<RowDraggableWrapper key={`${isPlaceholder}-${itemRowKey}`} rowKey={itemRowKey} rowIndex={rowIndex}>
-									{renderRow({ itemData, rowIndex, itemRowKey, isPlaceholder })}
-								</RowDraggableWrapper>
-							);
-						}
-						return renderRow({ itemData, rowIndex, itemRowKey, isPlaceholder });
-					}
-				})}
-			</div>
+	// content样式
+	const contentStyle = { gridTemplateColumns: gridTemplateColumns + ` minmax(0px, 1fr)`, transform: `translate3d(0,${v_offsetTop}px,0)` };
 
-			{(() => {
-				if (typeof draggingRowIndex === 'number' && draggingRow_notShow && RowDraggableWrapper) {
-					const itemData = data[draggingRowIndex];
-					if (itemData) {
+	// 如果存在行拖拽
+	if (rowDraggableMode && RowDraggableWrapper && typeof renderWidthDraggableWrapper === 'function') {
+		// 渲染正在拖拽的行【当此行被虚拟列表隐藏】
+		const renderDraggingRow = () => {
+			if (typeof draggingRowIndex === 'number' && draggingRow_notShow && RowDraggableWrapper) {
+				const itemData = data[draggingRowIndex];
+				if (itemData) {
+					const itemRowKey = getRowKey(rowKey, itemData);
+					if (itemRowKey === draggingRowKey) {
 						const rowIndex = draggingRowIndex;
-						const itemRowKey = getRowKey(rowKey, itemData);
 						return (
 							<RowDraggableWrapper rowKey={itemRowKey} rowIndex={rowIndex}>
 								{renderRow({
@@ -144,9 +117,33 @@ const BodyInner = <T,>(props: Props<T>) => {
 						);
 					}
 				}
-			})()}
+			}
+		};
+
+		return renderWidthDraggableWrapper(
+			<Fragment>
+				<div className={styles['draggable-mode-content']} style={contentStyle}>
+					{renderBodyDom(({ itemData, itemRowKey, rowIndex, isPlaceholder }) => {
+						return (
+							<RowDraggableWrapper key={`${isPlaceholder}-${itemRowKey}`} rowKey={itemRowKey} rowIndex={rowIndex}>
+								{renderRow({ itemData, rowIndex, itemRowKey, isPlaceholder })}
+							</RowDraggableWrapper>
+						);
+					})}
+				</div>
+				{renderDraggingRow()}
+			</Fragment>,
+		);
+	}
+
+	// 不存在行拖拽
+	return (
+		<div className={styles['body-content']} style={contentStyle}>
+			{renderBodyDom(({ itemData, itemRowKey, rowIndex, isPlaceholder }) => {
+				return renderRow({ itemData, rowIndex, itemRowKey, isPlaceholder });
+			})}
 		</div>
 	);
 };
 
-export default memo(BodyInner) as typeof BodyInner;
+export default memo(BodyContent) as typeof BodyContent;

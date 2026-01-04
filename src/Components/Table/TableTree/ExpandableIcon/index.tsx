@@ -11,7 +11,7 @@ type Props = {
 	onChange?: (c: boolean) => void;
 };
 
-const Expandable: FC<Props> = ({ expanded, onChange, indentSize, display }) => {
+const ExpandableIcon: FC<Props> = ({ expanded, onChange, indentSize, display }) => {
 	return (
 		<div
 			style={{ marginLeft: indentSize }}
@@ -29,4 +29,4 @@ const Expandable: FC<Props> = ({ expanded, onChange, indentSize, display }) => {
 	);
 };
 
-export default Expandable;
+export default ExpandableIcon;

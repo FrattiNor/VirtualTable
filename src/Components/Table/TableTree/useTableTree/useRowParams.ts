@@ -6,12 +6,12 @@ import { type TableTreeExpand } from '../type';
 
 type Props<T> = {
 	expandKeys: string[];
-	coreProps: TableCoreProps<T>;
 	treeExpand: TableTreeExpand<T>;
+	data: TableCoreProps<T>['data'];
+	rowKey: TableCoreProps<T>['rowKey'];
 };
 
-const useRowParams = <T>({ coreProps, treeExpand, expandKeys }: Props<T>) => {
-	const { data, rowKey } = coreProps;
+const useRowParams = <T>({ data, rowKey, treeExpand, expandKeys }: Props<T>) => {
 	const { children } = treeExpand;
 
 	// 全部已经open的key

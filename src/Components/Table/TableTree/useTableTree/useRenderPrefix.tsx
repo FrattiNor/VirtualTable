@@ -2,12 +2,13 @@ import { useCallback } from 'react';
 
 import { type TableCoreProps } from '../../TableCore/TableTypes/typeProps';
 import { getRowKey } from '../../TableCore/TableUtils';
-import Expandable from '../Expandable';
+import ExpandableIcon from '../ExpandableIcon';
 import { type TableTreeExpand } from '../type';
 import useRenderKeyMap from './useRenderKeyMap';
 
 type Props<T> = {
-	coreProps: TableCoreProps<T>;
+	rowKey: TableCoreProps<T>['rowKey'];
+	columns: TableCoreProps<T>['columns'];
 	treeExpand: TableTreeExpand<T>;
 	allCouldExpandKeyMap: Map<string, true>;
 	levelMap: Map<string, number>;
@@ -16,10 +17,10 @@ type Props<T> = {
 };
 
 const useRenderPrefix = <T,>(props: Props<T>) => {
-	const { rowKey } = props.coreProps;
+	const { rowKey, columns } = props;
 	const { indentSize = 24 } = props.treeExpand;
 	const { allCouldExpandKeyMap, allExpandedKeyMap, levelMap, setExpandKeys } = props;
-	const { renderTreeIconKey, renderTreeIndentKeyMap } = useRenderKeyMap({ coreProps: props.coreProps, treeExpand: props.treeExpand });
+	const { renderTreeIconKey, renderTreeIndentKeyMap } = useRenderKeyMap({ columns, treeExpand: props.treeExpand });
 
 	// 渲染表头缩进
 	const renderHeadPrefix = useCallback(
@@ -27,7 +28,7 @@ const useRenderPrefix = <T,>(props: Props<T>) => {
 			if (allCouldExpandKeyMap.size === 0) return null;
 
 			if (colKey === renderTreeIconKey) {
-				return <Expandable indentSize={0} display={false} expanded={false} />;
+				return <ExpandableIcon indentSize={0} display={false} expanded={false} />;
 			}
 
 			return null;
@@ -54,7 +55,7 @@ const useRenderPrefix = <T,>(props: Props<T>) => {
 					}
 					setExpandKeys(Array.from(allExpandedKeyMap.keys()));
 				};
-				return <Expandable indentSize={level * indentSize} display={display} expanded={expanded} onChange={onChange} />;
+				return <ExpandableIcon indentSize={level * indentSize} display={display} expanded={expanded} onChange={onChange} />;
 			}
 
 			if (level > 0 && renderTreeIndentKeyMap.get(colKey) === true) {

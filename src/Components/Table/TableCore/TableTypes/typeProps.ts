@@ -72,5 +72,7 @@ export type TableCoreProps<T> = {
 		rowDraggableColum: TableCoreColumn<T>;
 		// 配置每行的外壳，注入参数
 		RowDraggableWrapper: FC<{ rowKey: string; rowIndex: number; children: JSX.Element }>;
+		// 渲染DraggableContext外壳
+		renderWidthDraggableWrapper: (children: ReactNode) => JSX.Element;
 	};
 };

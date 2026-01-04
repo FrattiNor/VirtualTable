@@ -5,6 +5,7 @@ import { type TableCoreProps } from '../TableCore/TableTypes/typeProps';
 // 行选择参数
 export type TableRowSelection<T> = {
 	width?: number;
+	enabled?: boolean;
 	selectedKeys: string[];
 	setSelectedKeys: Dispatch<SetStateAction<string[]>>;
 	renderCheckbox: (params: { checked: boolean; indeterminate?: boolean; disabled?: boolean; onChange: (checked: boolean) => void }) => ReactNode;

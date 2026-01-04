@@ -5,31 +5,33 @@ import { getRowKey } from '../../TableCore/TableUtils';
 import { type TableTreeExpand } from '../type';
 
 type Props<T> = {
-	coreProps: TableCoreProps<T>;
 	treeExpand: TableTreeExpand<T>;
 	allExpandedKeyMap: Map<string, true>;
+	data: TableCoreProps<T>['data'];
+	rowKey: TableCoreProps<T>['rowKey'];
 };
 
-const useTreeData = <T>({ coreProps, treeExpand, allExpandedKeyMap }: Props<T>) => {
+const useTreeData = <T>({ data, rowKey, treeExpand, allExpandedKeyMap }: Props<T>) => {
 	const { children } = treeExpand;
-	const { data, rowKey } = coreProps;
 
 	// tree最终的数据源
 	return useMemo(() => {
-		const dataSource: T[] = [];
-		const loopData = (_data: T[]) => {
+		const showData: T[] = [];
+		const totalData: T[] = [];
+		const loopData = (_data: T[], parentsOpen = true) => {
 			_data.forEach((itemData) => {
-				dataSource.push(itemData);
+				totalData.push(itemData);
+				if (parentsOpen) showData.push(itemData);
 				const key = getRowKey(rowKey, itemData);
 				const itemChild = itemData[children];
-				const open = allExpandedKeyMap.get(key) === true;
-				if (Array.isArray(itemChild) && itemChild.length > 0 && open === true) {
-					loopData(itemChild);
+				const currentOpen = parentsOpen && allExpandedKeyMap.get(key) === true;
+				if (Array.isArray(itemChild) && itemChild.length > 0) {
+					loopData(itemChild, currentOpen);
 				}
 			});
 		};
 		loopData(data ?? []);
-		return dataSource;
+		return { showData, totalData };
 	}, [data, children, allExpandedKeyMap]);
 };
 

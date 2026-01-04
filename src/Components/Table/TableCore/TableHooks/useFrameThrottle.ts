@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useEffect, useRef } from 'react';
 
 // 节流
 const useFrameThrottle = <T extends () => void>() => {
@@ -21,6 +21,14 @@ const useFrameThrottle = <T extends () => void>() => {
 		lastFnRef.current = fn;
 		if (!timeoutRef.current) start();
 	};
+
+	useEffect(() => {
+		return () => {
+			if (timeoutRef.current) {
+				cancelAnimationFrame(timeoutRef.current);
+			}
+		};
+	}, []);
 
 	return { throttle };
 };

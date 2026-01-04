@@ -1,10 +1,11 @@
-import { type CSSProperties, memo, useEffect, useRef } from 'react';
+import { type CSSProperties, memo } from 'react';
 
 import classNames from 'classnames';
 
 import BodyCell from './BodyCell';
 import BodyCellPlaceholder from './BodyCellPlaceholder';
 import styles from './index.module.less';
+import useRefCallback from '../../../../TableHooks/useRefCallback';
 import { getLeafColumn } from '../../../../TableUtils';
 
 import type { TableInstance } from '../../../../useTableInstance';
@@ -54,16 +55,7 @@ const BodyRow = <T,>(props: Props<T>) => {
 		getBodyCellColForceShow,
 	} = props;
 
-	const ref = useRef<HTMLDivElement | null>(null);
-
-	useEffect(() => {
-		if (ref.current && typeof draggableSetNodeRef === 'function') {
-			draggableSetNodeRef(ref.current);
-			return () => {
-				draggableSetNodeRef(null);
-			};
-		}
-	}, []);
+	const ref = useRefCallback<HTMLDivElement>(draggableSetNodeRef);
 
 	return (
 		<div

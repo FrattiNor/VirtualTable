@@ -1,24 +1,38 @@
+/* eslint-disable react-refresh/only-export-components */
 import { memo } from 'react';
 
-import { TableDom } from '../TableCore';
+import TableCore from '../TableCore';
 import { type TableTreeProps } from './type';
 import useTableTree from './useTableTree';
-import useTableInstance from '../TableCore/useTableInstance';
+
+export const _treeHookProps: Parameters<typeof useTableTree<any>>[0] = {
+	data: undefined,
+	rowKey: '',
+	columns: [],
+	treeExpand: { children: 'children' },
+};
 
 const TableTree = <T extends Record<string, unknown>>(props: TableTreeProps<T>) => {
 	const { treeExpand, ...coreProps } = props;
-	const { dataSource, renderHeadPrefix, renderCellPrefix } = useTableTree({ coreProps, treeExpand });
 
-	const instance = useTableInstance({
+	const enabled = treeExpand?.enabled ?? true;
+
+	const treeHookProps: Parameters<typeof useTableTree<T>>[0] = {
+		data: coreProps.data,
+		rowKey: coreProps.rowKey,
+		columns: coreProps.columns,
+		treeExpand,
+	};
+
+	const { showData, renderHeadPrefix, renderCellPrefix } = useTableTree(enabled ? treeHookProps : _treeHookProps);
+
+	const tableDomProps = {
 		...coreProps,
-		data: dataSource,
-		treeExpandProps: {
-			renderHeadPrefix,
-			renderCellPrefix,
-		},
-	});
+		data: enabled ? showData : props.data,
+		treeExpandProps: enabled ? { renderHeadPrefix, renderCellPrefix } : undefined,
+	};
 
-	return <TableDom {...instance} />;
+	return <TableCore {...tableDomProps} />;
 };
 
 export default memo(TableTree) as typeof TableTree;

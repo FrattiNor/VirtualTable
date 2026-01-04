@@ -8,14 +8,13 @@ import { getRowKey } from '../../TableCore/TableUtils';
 import { type TableRowDraggable } from '../type';
 
 type Props<T> = PropsWithChildren<{
-	coreProps: TableCoreProps<T>;
+	data: TableCoreProps<T>['data'];
+	rowKey: TableCoreProps<T>['rowKey'];
 	rowDraggable: TableRowDraggable;
 	setDragActive: React.Dispatch<React.SetStateAction<{ rowKey: string; rowIndex: number } | null>>;
 }>;
 
-const DraggableWrapper = <T,>({ coreProps, rowDraggable, children, setDragActive }: Props<T>) => {
-	const { data, rowKey } = coreProps;
-
+const DraggableWrapper = <T,>({ data, rowKey, rowDraggable, children, setDragActive }: Props<T>) => {
 	const sortableItems = useMemo(() => (data ?? []).map((itemData) => getRowKey(rowKey, itemData)), [data]);
 
 	const onDragStart = ({ active }: DragStartEvent) => {

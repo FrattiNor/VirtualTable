@@ -22,14 +22,10 @@ const useTableInnerProps = <T>(props: TableCoreProps<T>) => {
 
 		// TableDrag
 		rowDraggableMode: !!props.rowDraggableProps,
+		draggingRowKey: props.rowDraggableProps?.draggingRowKey,
 		draggingRowIndex: props.rowDraggableProps?.draggingRowIndex,
 		RowDraggableWrapper: props.rowDraggableProps?.RowDraggableWrapper,
-
-		// 只有最外层使用
-		loading: props.loading,
-		className: props.className,
-		pagination: props.pagination,
-		style: useMemo(() => props.style, [JSON.stringify(props.style)]),
+		renderWidthDraggableWrapper: props.rowDraggableProps?.renderWidthDraggableWrapper,
 	};
 
 	return { ...requiredProps };

@@ -1,34 +1,31 @@
-import { memo, useState } from 'react';
+/* eslint-disable react-refresh/only-export-components */
+import { memo } from 'react';
 
-import { TableDom } from '../TableCore';
-import DraggableWrapper from './DraggableWrapper';
-import RowDraggableOverlay from './RowDraggableOverlay';
-import RowDraggableWrapper from './RowDraggableWrapper';
+import TableCore from '../TableCore';
 import { type TableRowDragProps } from './type';
-import useRowDraggableColum from './useRowDraggableColum';
-import useTableInstance from '../TableCore/useTableInstance';
+import useRowDraggable from './useRowDraggable';
+
+export const _dragHooksProps: Parameters<typeof useRowDraggable<any>>[0] = {
+	data: undefined,
+	rowKey: '',
+	rowDraggable: {},
+};
 
 const TableRowDrag = <T extends Record<string, unknown>>(props: TableRowDragProps<T>) => {
 	const { rowDraggable, ...coreProps } = props;
-	const rowDraggableColum = useRowDraggableColum({ rowDraggable, coreProps });
-	const [dragActive, setDragActive] = useState<{ rowKey: string; rowIndex: number } | null>(null);
 
-	const instance = useTableInstance({
+	const enabled = rowDraggable?.enabled ?? true;
+
+	const dragHooksProps: Parameters<typeof useRowDraggable<T>>[0] = { data: coreProps.data, rowKey: coreProps.rowKey, rowDraggable };
+
+	const rowDraggableProps = useRowDraggable(enabled ? dragHooksProps : _dragHooksProps);
+
+	const tableDomProps = {
 		...coreProps,
-		rowDraggableProps: {
-			rowDraggableColum,
-			RowDraggableWrapper,
-			draggingRowKey: dragActive?.rowKey,
-			draggingRowIndex: dragActive?.rowIndex,
-		},
-	});
+		rowDraggableProps: enabled ? rowDraggableProps : undefined,
+	};
 
-	return (
-		<DraggableWrapper coreProps={coreProps} rowDraggable={rowDraggable} setDragActive={setDragActive}>
-			<TableDom {...instance} />
-			{dragActive && <RowDraggableOverlay dragActive={dragActive} />}
-		</DraggableWrapper>
-	);
+	return <TableCore {...tableDomProps} />;
 };
 
 export default memo(TableRowDrag) as typeof TableRowDrag;

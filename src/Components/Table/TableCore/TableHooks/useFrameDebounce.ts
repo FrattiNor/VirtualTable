@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useEffect, useRef } from 'react';
 
 // 使用requestAnimationFrame防抖，一帧只执行一次
 const useFrameDebounce = <T extends () => void>() => {
@@ -10,6 +10,14 @@ const useFrameDebounce = <T extends () => void>() => {
 			fn();
 		});
 	};
+
+	useEffect(() => {
+		return () => {
+			if (timeoutRef.current) {
+				cancelAnimationFrame(timeoutRef.current);
+			}
+		};
+	}, []);
 
 	return { debounce };
 };

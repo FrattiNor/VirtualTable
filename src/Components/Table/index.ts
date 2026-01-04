@@ -2,7 +2,7 @@ import { type TableProps } from './Table/type';
 import { type TableCoreRef, type TableCoreColumnFixed } from './TableCore/TableTypes/type';
 import { type TableCoreColumns, type TableCoreColumn } from './TableCore/TableTypes/typeColumn';
 
-export { TableCoreFilterIcon } from './TableCore';
+export { default as TableCoreFilterIcon } from './TableFilterIcon';
 
 export { default as Table2 } from './Table';
 

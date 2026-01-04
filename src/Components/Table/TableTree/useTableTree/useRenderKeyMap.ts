@@ -5,12 +5,11 @@ import { type TableCoreProps } from '../../TableCore/TableTypes/typeProps';
 import { type TableTreeExpand } from '../type';
 
 type Props<T> = {
-	coreProps: TableCoreProps<T>;
 	treeExpand: TableTreeExpand<T>;
+	columns: TableCoreProps<T>['columns'];
 };
 
-const useRenderKeyMap = <T>({ coreProps, treeExpand }: Props<T>) => {
-	const { columns } = coreProps;
+const useRenderKeyMap = <T>({ columns, treeExpand }: Props<T>) => {
 	const { renderIconKey, renderIndentKeys } = treeExpand;
 
 	// 渲染展开符的列的key

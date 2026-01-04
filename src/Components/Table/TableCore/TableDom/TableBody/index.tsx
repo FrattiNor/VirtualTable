@@ -1,7 +1,7 @@
 import { memo } from 'react';
 
+import BodyContent from './BodyContent';
 import BodyEmpty from './BodyEmpty';
-import BodyInner from './BodyInner';
 import styles from './index.module.less';
 import MeasureColSizeRow from './MeasureColSizeRow';
 import ObserverStickyRow from './ObserverStickyRow';
@@ -39,21 +39,23 @@ type Props<T> = Pick<
 	| 'highlightKeywords'
 	| 'renderBodyDom'
 	| 'renderCellPrefix'
-	| 'rowDraggableMode'
-	| 'RowDraggableWrapper'
 	| 'renderEmpty'
 	| 'getRowKeys'
 	| 'getColKeys'
 	| 'getBodyCellColShow'
 	| 'getBodyCellColForceShow'
+	| 'renderWidthDraggableWrapper'
 	| 'draggingRow_offsetTop'
 	| 'draggingRow_notShow'
+	| 'RowDraggableWrapper'
+	| 'rowDraggableMode'
 	| 'draggingRowIndex'
+	| 'draggingRowKey'
 >;
 
 const TableBody = <T,>(props: Props<T>) => {
-	const { bodyRef } = props;
 	const isEmpty = (props.data ?? []).length === 0;
+	const { bodyRef, bodyInnerRef, v_totalSize } = props;
 
 	return (
 		<div ref={bodyRef} className={styles['body']}>
@@ -72,35 +74,37 @@ const TableBody = <T,>(props: Props<T>) => {
 				splitColumnsArr={props.splitColumnsArr}
 				gridTemplateColumns={props.gridTemplateColumns}
 			/>
-			<BodyInner
-				data={props.data}
-				rowKey={props.rowKey}
-				bordered={props.bordered}
-				rowHeight={props.rowHeight}
-				getColKeys={props.getColKeys}
-				getRowKeys={props.getRowKeys}
-				v_offsetTop={props.v_offsetTop}
-				v_totalSize={props.v_totalSize}
-				bodyInnerRef={props.bodyInnerRef}
-				bodyRowClick={props.bodyRowClick}
-				getBodyCellBg={props.getBodyCellBg}
-				renderBodyDom={props.renderBodyDom}
-				splitColumnsArr={props.splitColumnsArr}
-				renderCellPrefix={props.renderCellPrefix}
-				draggingRowIndex={props.draggingRowIndex}
-				rowDraggableMode={props.rowDraggableMode}
-				highlightKeywords={props.highlightKeywords}
-				v_measureItemSize={props.v_measureItemSize}
-				bodyRowMouseEnter={props.bodyRowMouseEnter}
-				bodyRowMouseLeave={props.bodyRowMouseLeave}
-				getBodyCellColShow={props.getBodyCellColShow}
-				getBodyStickyStyle={props.getBodyStickyStyle}
-				draggingRow_notShow={props.draggingRow_notShow}
-				RowDraggableWrapper={props.RowDraggableWrapper}
-				gridTemplateColumns={props.gridTemplateColumns}
-				draggingRow_offsetTop={props.draggingRow_offsetTop}
-				getBodyCellColForceShow={props.getBodyCellColForceShow}
-			/>
+			<div ref={bodyInnerRef} className={styles['body-inner']} style={{ minHeight: v_totalSize }}>
+				<BodyContent
+					data={props.data}
+					rowKey={props.rowKey}
+					bordered={props.bordered}
+					rowHeight={props.rowHeight}
+					getColKeys={props.getColKeys}
+					getRowKeys={props.getRowKeys}
+					v_offsetTop={props.v_offsetTop}
+					bodyRowClick={props.bodyRowClick}
+					getBodyCellBg={props.getBodyCellBg}
+					renderBodyDom={props.renderBodyDom}
+					draggingRowKey={props.draggingRowKey}
+					splitColumnsArr={props.splitColumnsArr}
+					renderCellPrefix={props.renderCellPrefix}
+					draggingRowIndex={props.draggingRowIndex}
+					rowDraggableMode={props.rowDraggableMode}
+					highlightKeywords={props.highlightKeywords}
+					v_measureItemSize={props.v_measureItemSize}
+					bodyRowMouseEnter={props.bodyRowMouseEnter}
+					bodyRowMouseLeave={props.bodyRowMouseLeave}
+					getBodyCellColShow={props.getBodyCellColShow}
+					getBodyStickyStyle={props.getBodyStickyStyle}
+					draggingRow_notShow={props.draggingRow_notShow}
+					RowDraggableWrapper={props.RowDraggableWrapper}
+					gridTemplateColumns={props.gridTemplateColumns}
+					draggingRow_offsetTop={props.draggingRow_offsetTop}
+					getBodyCellColForceShow={props.getBodyCellColForceShow}
+					renderWidthDraggableWrapper={props.renderWidthDraggableWrapper}
+				/>
+			</div>
 			{isEmpty && <BodyEmpty tableWidth={props.tableWidth} theme={props.theme} renderEmpty={props.renderEmpty} />}
 		</div>
 	);

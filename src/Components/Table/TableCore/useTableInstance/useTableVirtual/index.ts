@@ -3,11 +3,14 @@ import { type ReactNode, useCallback } from 'react';
 import useHTableVirtual from './useHTableVirtual';
 import useVTableVirtual from './useVTableVirtual';
 import { type TableCoreProps } from '../../TableTypes/typeProps';
+import { getRowKey } from '../../TableUtils';
 
 import type useTableColumns from '../useTableColumns';
 import type useTableDomRef from '../useTableDomRef';
 import type useTableInnerProps from '../useTableInnerProps';
 import type useTableState from '../useTableState';
+
+type RenderRow<T> = (params: { itemData: T; itemRowKey: string; rowIndex: number; isPlaceholder: boolean }) => ReactNode;
 
 type Props<T> = {
 	coreProps: TableCoreProps<T>;
@@ -18,6 +21,8 @@ type Props<T> = {
 };
 
 const useTableVirtual = <T>({ coreProps, tableColumns, tableState, tableInnerProps, tableDomRef }: Props<T>) => {
+	const { data, rowKey } = tableInnerProps;
+
 	const { h_totalSize, getH_virtualCore, getHeadCellColShow, getBodyCellColShow, getBodyCellColForceShow } = useHTableVirtual({
 		tableState,
 		tableDomRef,
@@ -42,10 +47,8 @@ const useTableVirtual = <T>({ coreProps, tableColumns, tableState, tableInnerPro
 		tableInnerProps,
 	});
 
-	type RenderRow = (params: { rowIndex: number; isPlaceholder: boolean }) => ReactNode;
-
 	const renderBodyDom = useCallback(
-		(renderRow: RenderRow) => {
+		(renderRow: RenderRow<T>) => {
 			const bodyDom: ReactNode[] = [];
 			if (
 				typeof v_rangeStart === 'number' &&
@@ -55,12 +58,16 @@ const useTableVirtual = <T>({ coreProps, tableColumns, tableState, tableInnerPro
 			) {
 				for (let rowIndex = v_rangeStart; rowIndex <= v_rangeEnd; rowIndex++) {
 					const isPlaceholder = !(rowIndex >= v_rangeStart_origin && rowIndex <= v_rangeEnd_origin);
-					bodyDom.push(renderRow({ rowIndex, isPlaceholder }));
+					const itemData = data[rowIndex];
+					if (itemData) {
+						const itemRowKey = getRowKey(rowKey, itemData);
+						bodyDom.push(renderRow({ itemData, itemRowKey, rowIndex, isPlaceholder }));
+					}
 				}
 			}
 			return bodyDom;
 		},
-		[v_rangeStart, v_rangeEnd, v_rangeStart_origin, v_rangeEnd_origin],
+		[data, rowKey, v_rangeStart, v_rangeEnd, v_rangeStart_origin, v_rangeEnd_origin],
 	);
 
 	return {

@@ -2,6 +2,7 @@ import { type TableCoreProps } from '../TableCore/TableTypes/typeProps';
 
 // Tree参数
 export type TableTreeExpand<T> = {
+	enabled?: boolean;
 	// children的key
 	children: keyof T;
 	// 渲染展开符的列key

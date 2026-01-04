@@ -1,16 +1,15 @@
 import { type TableCoreColumn } from '../../TableCore/TableTypes/typeColumn';
 import { type TableCoreProps } from '../../TableCore/TableTypes/typeProps';
 import { getRowKey } from '../../TableCore/TableUtils';
+import DraggableIcon from '../DraggableIcon';
 import { type TableRowDraggable } from '../type';
-import DragIcon from './DragIcon';
 
 type Props<T> = {
-	coreProps: TableCoreProps<T>;
 	rowDraggable: TableRowDraggable;
+	rowKey: TableCoreProps<T>['rowKey'];
 };
 
-const useRowDraggableColum = <T,>({ rowDraggable, coreProps }: Props<T>) => {
-	const { rowKey } = coreProps;
+const useRowDraggableColum = <T,>({ rowDraggable, rowKey }: Props<T>) => {
 	const { width } = rowDraggable;
 
 	// 列配置
@@ -24,7 +23,7 @@ const useRowDraggableColum = <T,>({ rowDraggable, coreProps }: Props<T>) => {
 		key: 'rowDraggableColum',
 		render: (itemData) => {
 			const key = getRowKey(rowKey, itemData);
-			return <DragIcon id={key} />;
+			return <DraggableIcon id={key} />;
 		},
 	};
 

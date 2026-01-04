@@ -5,13 +5,13 @@ import { getRowKey } from '../../TableCore/TableUtils';
 import { type TableRowSelection } from '../type';
 
 type Props<T> = {
-	coreProps: TableCoreProps<T>;
+	data: TableCoreProps<T>['data'];
+	rowKey: TableCoreProps<T>['rowKey'];
 	rowSelection: TableRowSelection<T>;
 };
 
 // 获取全部可选列、全部列的disabled状态【不受getDisabled影响】
-const useRowParams = <T>({ rowSelection, coreProps }: Props<T>) => {
-	const { data, rowKey } = coreProps;
+const useRowParams = <T>({ rowSelection, data, rowKey }: Props<T>) => {
 	const { getDisabled, selectedKeys } = rowSelection;
 
 	const allSelectedKeyMap = useMemo(() => {

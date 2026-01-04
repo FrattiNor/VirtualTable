@@ -20,10 +20,8 @@ const useSelectionColTitle = <T>({ allCouldSelectedKeyMap, allSelectedKeyMap, ro
 		const titleChecked = (() => {
 			// 非禁用
 			if (!titleDisabled) {
-				// 可选项数组
-				const allSelectionKeyArr = Array.from(allCouldSelectedKeyMap.keys());
 				// 可选项全部都被选中
-				return allSelectionKeyArr.every((key) => allSelectedKeyMap.get(key));
+				return Array.from(allCouldSelectedKeyMap.keys()).every((key) => allSelectedKeyMap.get(key));
 			}
 			return false;
 		})();

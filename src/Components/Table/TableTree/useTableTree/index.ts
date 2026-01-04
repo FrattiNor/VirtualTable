@@ -7,22 +7,25 @@ import useRowParams from './useRowParams';
 import useTreeData from './useTreeData';
 
 type Props<T> = {
-	coreProps: TableCoreProps<T>;
 	treeExpand: TableTreeExpand<T>;
+	data: TableCoreProps<T>['data'];
+	rowKey: TableCoreProps<T>['rowKey'];
+	columns: TableCoreProps<T>['columns'];
 };
 
-const useTableTree = <T>({ coreProps, treeExpand }: Props<T>) => {
+const useTableTree = <T>({ data, rowKey, columns, treeExpand }: Props<T>) => {
 	const [expandKeys, setExpandKeys] = useState<string[]>(() => []);
 
 	// 全部已经open的key、全部能open的key、全部key对应的level
-	const { allExpandedKeyMap, allCouldExpandKeyMap, levelMap } = useRowParams({ coreProps, treeExpand, expandKeys });
+	const { allExpandedKeyMap, allCouldExpandKeyMap, levelMap } = useRowParams({ data, rowKey, treeExpand, expandKeys });
 
 	// tree最终的数据源
-	const dataSource = useTreeData({ coreProps, treeExpand, allExpandedKeyMap });
+	const { showData, totalData } = useTreeData({ data, rowKey, treeExpand, allExpandedKeyMap });
 
 	// 渲染表头缩进、渲染表格缩进
 	const { renderHeadPrefix, renderCellPrefix } = useRenderPrefix({
-		coreProps,
+		rowKey,
+		columns,
 		treeExpand,
 		allCouldExpandKeyMap,
 		allExpandedKeyMap,
@@ -41,7 +44,7 @@ const useTableTree = <T>({ coreProps, treeExpand }: Props<T>) => {
 		});
 	}, [allCouldExpandKeyMap]);
 
-	return { dataSource, renderHeadPrefix, renderCellPrefix };
+	return { showData, totalData, renderHeadPrefix, renderCellPrefix };
 };
 
 export default useTableTree;

@@ -7,16 +7,14 @@ import { type TableRowSelection } from '../type';
 
 type Props<T> = {
 	title: ReactNode;
-	coreProps: TableCoreProps<T>;
+	rowKey: TableCoreProps<T>['rowKey'];
 	disabledMap: Map<string, boolean>;
 	allSelectedKeyMap: Map<string, true>;
 	rowSelection: TableRowSelection<T>;
 };
 
 // 列配置
-const useRowSelectionColum = <T>({ title, disabledMap, allSelectedKeyMap, coreProps, rowSelection }: Props<T>) => {
-	const { rowKey } = coreProps;
-
+const useRowSelectionColum = <T>({ title, disabledMap, allSelectedKeyMap, rowKey, rowSelection }: Props<T>) => {
 	const { width, renderCheckbox, setSelectedKeys } = rowSelection;
 
 	const rowSelectionColum: TableCoreColumn<T> = {
