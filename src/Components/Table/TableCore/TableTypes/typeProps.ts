@@ -24,6 +24,8 @@ export type TableCoreProps<T> = {
 	bordered?: boolean;
 	// 最小行高
 	rowHeight?: number;
+	// 边框宽度【不参数设置样式、只用于计算行高】
+	borderWidth?: number;
 	// 加载中
 	loading?: boolean;
 	// 拖动修改大小的回调，用于保存列宽配置

@@ -35,6 +35,7 @@ type Props<T> = Pick<
 	| 'rowDraggableMode'
 	| 'draggingRowIndex'
 	| 'draggingRowKey'
+	| 'borderWidth'
 >;
 
 const BodyContent = <T,>(props: Props<T>) => {
@@ -70,6 +71,7 @@ const BodyContent = <T,>(props: Props<T>) => {
 				getColKeys={props.getColKeys}
 				getRowKeys={props.getRowKeys}
 				isPlaceholder={isPlaceholder}
+				borderWidth={props.borderWidth}
 				bodyRowClick={props.bodyRowClick}
 				getBodyCellBg={props.getBodyCellBg}
 				getBodyCellColShow={getBodyCellColShow}
@@ -99,20 +101,15 @@ const BodyContent = <T,>(props: Props<T>) => {
 					const itemRowKey = getRowKey(rowKey, itemData);
 					if (itemRowKey === draggingRowKey) {
 						const rowIndex = draggingRowIndex;
+						const style: CSSProperties = {
+							left: 0,
+							position: 'absolute',
+							top: draggingRow_offsetTop,
+							gridTemplateColumns: gridTemplateColumns + ` minmax(0px, 1fr)`,
+						};
 						return (
 							<RowDraggableWrapper rowKey={itemRowKey} rowIndex={rowIndex}>
-								{renderRow({
-									itemData,
-									rowIndex,
-									itemRowKey,
-									isPlaceholder: false,
-									style: {
-										left: 0,
-										position: 'absolute',
-										top: draggingRow_offsetTop,
-										gridTemplateColumns: gridTemplateColumns + ` minmax(0px, 1fr)`,
-									},
-								})}
+								{renderRow({ style, itemData, rowIndex, itemRowKey, isPlaceholder: false })}
 							</RowDraggableWrapper>
 						);
 					}

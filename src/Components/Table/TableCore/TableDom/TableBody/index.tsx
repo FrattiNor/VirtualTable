@@ -51,6 +51,7 @@ type Props<T> = Pick<
 	| 'rowDraggableMode'
 	| 'draggingRowIndex'
 	| 'draggingRowKey'
+	| 'borderWidth'
 >;
 
 const TableBody = <T,>(props: Props<T>) => {
@@ -82,6 +83,7 @@ const TableBody = <T,>(props: Props<T>) => {
 					rowHeight={props.rowHeight}
 					getColKeys={props.getColKeys}
 					getRowKeys={props.getRowKeys}
+					borderWidth={props.borderWidth}
 					v_offsetTop={props.v_offsetTop}
 					bodyRowClick={props.bodyRowClick}
 					getBodyCellBg={props.getBodyCellBg}

@@ -73,6 +73,7 @@ const TableDom = <T,>(coreProps: TableCoreProps<T>) => {
 						v_offsetTop={props.v_offsetTop}
 						columnsCore={props.columnsCore}
 						v_totalSize={props.v_totalSize}
+						borderWidth={props.borderWidth}
 						sizeCacheMap={props.sizeCacheMap}
 						bodyInnerRef={props.bodyInnerRef}
 						fixedLeftMap={props.fixedLeftMap}

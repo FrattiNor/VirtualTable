@@ -18,14 +18,14 @@ type Props<T> = {
 
 const useTableVirtual = <T>({ coreProps, tableColumns, tableInnerProps, tableDomRef }: Props<T>) => {
 	const { splitColumnsArr, existOnCellSpan } = tableColumns;
-	const { data, rowKey, rowHeight, rowDraggableMode } = tableInnerProps;
+	const { data, rowKey, rowHeight, borderWidth, rowDraggableMode } = tableInnerProps;
 	const draggingRowIndex = coreProps.rowDraggableProps?.draggingRowIndex;
 
 	const v_virtual = useVVirtualCore({
 		count: data?.length ?? 0,
 		bodyRef: tableDomRef.bodyRef,
-		getItemSize: useCallback(() => rowHeight, [rowHeight]),
 		getItemKey: useCallback((index: number) => getRowKey(rowKey, data?.[index] as T), [rowKey, data]),
+		getItemSize: useCallback((index: number) => (index === 0 ? rowHeight - borderWidth : rowHeight), [rowHeight, borderWidth]),
 	});
 
 	const v_sizeList = v_virtual.sizeList;

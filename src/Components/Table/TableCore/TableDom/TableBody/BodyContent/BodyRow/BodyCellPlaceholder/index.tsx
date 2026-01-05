@@ -8,7 +8,7 @@ import type { TableInstance } from '../../../../../useTableInstance';
 
 type Props<T> = Pick<
 	TableInstance<T>,
-	'bordered' | 'rowHeight' | 'v_measureItemSize' | 'bodyRowClick' | 'bodyRowMouseEnter' | 'bodyRowMouseLeave' | 'getBodyCellBg'
+	'bordered' | 'rowHeight' | 'borderWidth' | 'v_measureItemSize' | 'bodyRowClick' | 'bodyRowMouseEnter' | 'bodyRowMouseLeave' | 'getBodyCellBg'
 > & {
 	rowIndex: number;
 	colIndex: number;
@@ -22,6 +22,7 @@ const BodyCellPlaceholder = <T,>(props: Props<T>) => {
 		rowIndex,
 		colIndex,
 		rowHeight,
+		borderWidth,
 		bodyRowClick,
 		getBodyCellBg,
 		bodyRowMouseEnter,
@@ -48,9 +49,9 @@ const BodyCellPlaceholder = <T,>(props: Props<T>) => {
 			onMouseLeave={bodyRowMouseLeave ? () => bodyRowMouseLeave({ rowKeys: [itemRowKey] }) : undefined}
 			style={{
 				backgroundColor,
-				minHeight: rowHeight,
 				gridRow: `${rowIndex + 1}/${rowIndex + 2}`,
 				gridColumn: `${colIndex + 1}/${colIndex + 2}`,
+				minHeight: rowIndex === 0 ? rowHeight - borderWidth : rowHeight,
 			}}
 			className={classNames(styles['body-cell-placeholder'], {
 				[styles['bordered']]: bordered,
