@@ -31,6 +31,7 @@ const useTableRowSelection = <T>({ data, rowKey, rowSelection }: Props<T>) => {
 			oldKeys.forEach((key) => {
 				if (allCouldSelectedKeyMap.get(key)) newKeys.push(key);
 			});
+			if (newKeys.length === (oldKeys?.length ?? 0)) return oldKeys;
 			return newKeys;
 		});
 	}, [allCouldSelectedKeyMap]);

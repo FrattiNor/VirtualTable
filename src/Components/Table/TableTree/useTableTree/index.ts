@@ -14,7 +14,9 @@ type Props<T> = {
 };
 
 const useTableTree = <T>({ data, rowKey, columns, treeExpand }: Props<T>) => {
-	const [expandKeys, setExpandKeys] = useState<string[]>(() => []);
+	// 默认值设置为null
+	// defaultExpandAll时且expandKeys为默认值null，则判定全打开
+	const [expandKeys, setExpandKeys] = useState<string[] | null>(() => null);
 
 	// 全部已经open的key、全部能open的key、全部key对应的level
 	const { allExpandedKeyMap, allCouldExpandKeyMap, levelMap } = useRowParams({ data, rowKey, treeExpand, expandKeys });
@@ -37,9 +39,10 @@ const useTableTree = <T>({ data, rowKey, columns, treeExpand }: Props<T>) => {
 	useEffect(() => {
 		setExpandKeys((oldKeys) => {
 			const newKeys: string[] = [];
-			oldKeys.forEach((key) => {
+			oldKeys?.forEach((key) => {
 				if (allCouldExpandKeyMap.get(key)) newKeys.push(key);
 			});
+			if (newKeys.length === (oldKeys?.length ?? 0)) return oldKeys;
 			return newKeys;
 		});
 	}, [allCouldExpandKeyMap]);

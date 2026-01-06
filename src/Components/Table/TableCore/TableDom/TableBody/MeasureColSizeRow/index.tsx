@@ -78,6 +78,7 @@ const MeasureColSizeRow = <T,>(props: Props<T>) => {
 						resized={props.resized}
 						resizeObserver={resizeObserver}
 						sizeCacheMap={props.sizeCacheMap}
+						sizeCacheChangeBatch={sizeCacheChangeBatch}
 					/>
 				);
 			})}

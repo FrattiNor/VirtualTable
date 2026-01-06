@@ -13,7 +13,7 @@ type Props<T> = {
 	allCouldExpandKeyMap: Map<string, true>;
 	levelMap: Map<string, number>;
 	allExpandedKeyMap: Map<string, true>;
-	setExpandKeys: React.Dispatch<React.SetStateAction<string[]>>;
+	setExpandKeys: React.Dispatch<React.SetStateAction<string[] | null>>;
 };
 
 const useRenderPrefix = <T,>(props: Props<T>) => {

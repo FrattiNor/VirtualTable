@@ -14,7 +14,7 @@ type Props<T> = {
 };
 
 const useRowDraggable = <T,>({ data, rowKey, rowDraggable }: Props<T>) => {
-	const rowDraggableColum = useRowDraggableColum({ rowDraggable, rowKey });
+	const rowDraggableColum = useRowDraggableColum({ rowDraggable });
 	const [dragActive, setDragActive] = useState<{ rowKey: string; rowIndex: number } | null>(null);
 
 	const renderWidthDraggableWrapper = (children: ReactNode) => (

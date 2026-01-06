@@ -50,13 +50,15 @@ export type TableCoreColumn<T> = {
 };
 
 // Group的fixed将会覆盖子节点，不论left|right|undefined
-export type TableCoreColumnGroup<T> = Partial2Undefined<Omit<TableCoreColumn<T>, 'key' | 'title' | 'align' | 'children'>> & {
+export type TableCoreColumnGroup<T> = Partial2Undefined<Omit<TableCoreColumn<T>, 'key' | 'title' | 'align' | 'children' | 'filter'>> & {
 	// 列key
 	key: string;
 	// 列标题
 	title: ReactNode;
 	// 左右对齐
 	align?: TableCoreColumnAlign;
+	// 列搜索【外部提供搜索】
+	filter?: ReactNode;
 	//
 	children: Array<TableCoreColumn<T> | TableCoreColumnGroup<T>>;
 };

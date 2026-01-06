@@ -60,8 +60,6 @@ const HeadCell = <T,>(props: Props<T>) => {
 	const renderDom = !isEmptyRender(column.title) ? column.title : '-';
 	// 筛选dom
 	const filterDom = column.filter;
-	// 是否存在筛选
-	const haveFilter = isLeaf && filterDom;
 	// 当前head的title
 	const title = getCellTitle(renderDom);
 	// 是否可省略
@@ -72,6 +70,8 @@ const HeadCell = <T,>(props: Props<T>) => {
 	const { stickyStyle, hiddenLeftBorder, leftLastPinged, rightLastPinged } = getHeadStickyStyle({ colKeys });
 	// 当前head配置的style
 	const style = column.headStyle;
+	//  当前head配置的align
+	const align = column.align ?? (isLeaf ? 'left' : 'center');
 
 	return (
 		<div
@@ -88,7 +88,7 @@ const HeadCell = <T,>(props: Props<T>) => {
 				gridRow: `${rowIndexStart + 1}/${rowIndexEnd + 2}`,
 				gridColumn: `${colIndexStart + 1}/${colIndexEnd + 2}`,
 				minHeight: (rowIndexEnd - rowIndexStart + 1) * rowHeight,
-				justifyContent: column.align === 'center' ? 'center' : column.align === 'right' ? 'flex-end' : 'flex-start',
+				justifyContent: align === 'center' ? 'center' : align === 'right' ? 'flex-end' : 'flex-start',
 				...stickyStyle,
 				...style,
 			}}
@@ -107,12 +107,19 @@ const HeadCell = <T,>(props: Props<T>) => {
 				);
 
 				// 不存在filter
-				if (!haveFilter) return content;
+				if (!filterDom) return content;
 
 				// 存在filter
 				return (
 					<Fragment>
-						<div className={styles['head-cell-inner']}>{content}</div>
+						<div
+							className={classNames({
+								[styles['head-cell-inner']]: align !== 'center',
+								[styles['head-cell-inner-center']]: align === 'center',
+							})}
+						>
+							{content}
+						</div>
 						<Fragment>{filterDom}</Fragment>
 					</Fragment>
 				);

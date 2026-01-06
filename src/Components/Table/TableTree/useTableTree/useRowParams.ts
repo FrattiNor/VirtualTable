@@ -5,21 +5,14 @@ import { getRowKey } from '../../TableCore/TableUtils';
 import { type TableTreeExpand } from '../type';
 
 type Props<T> = {
-	expandKeys: string[];
+	expandKeys: string[] | null;
 	treeExpand: TableTreeExpand<T>;
 	data: TableCoreProps<T>['data'];
 	rowKey: TableCoreProps<T>['rowKey'];
 };
 
 const useRowParams = <T>({ data, rowKey, treeExpand, expandKeys }: Props<T>) => {
-	const { children } = treeExpand;
-
-	// 全部已经open的key
-	const allExpandedKeyMap = useMemo(() => {
-		const keyMap = new Map<string, true>();
-		expandKeys.forEach((key) => keyMap.set(key, true));
-		return keyMap;
-	}, [expandKeys]);
+	const { children, defaultExpandAll } = treeExpand;
 
 	// 全部能open的key、全部key对应的level
 	const { allCouldExpandKeyMap, levelMap } = useMemo(() => {
@@ -39,6 +32,15 @@ const useRowParams = <T>({ data, rowKey, treeExpand, expandKeys }: Props<T>) => 
 		loopData(data ?? []);
 		return { allCouldExpandKeyMap, levelMap };
 	}, [data, children]);
+
+	// 全部已经open的key
+	const allExpandedKeyMap = useMemo(() => {
+		// defaultExpandAll时且expandKeys为默认值null，则判定全打开
+		if (defaultExpandAll === true && expandKeys === null) return new Map(allCouldExpandKeyMap);
+		const keyMap = new Map<string, true>();
+		expandKeys?.forEach((key) => keyMap.set(key, true));
+		return keyMap;
+	}, [expandKeys, defaultExpandAll, allCouldExpandKeyMap]);
 
 	return { allExpandedKeyMap, allCouldExpandKeyMap, levelMap };
 };

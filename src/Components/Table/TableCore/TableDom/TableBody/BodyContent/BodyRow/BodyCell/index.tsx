@@ -73,6 +73,8 @@ const BodyCell = <T,>(props: Props<T>) => {
 	const { stickyStyle, hiddenLeftBorder, leftLastPinged, rightLastPinged } = getBodyStickyStyle({ colKeys });
 	// 当前cell配置的style
 	const style = typeof leafColumn.onCellStyle === 'function' ? leafColumn.onCellStyle(itemData, index) : undefined;
+	// 当前cell配置的align
+	const align = leafColumn.align;
 
 	return (
 		<div
@@ -93,7 +95,7 @@ const BodyCell = <T,>(props: Props<T>) => {
 				backgroundColor,
 				gridRow: `${rowIndexStart + 1}/${rowIndexEnd + 2}`,
 				gridColumn: `${colIndexStart + 1}/${colIndexEnd + 2}`,
-				justifyContent: leafColumn.align === 'center' ? 'center' : leafColumn.align === 'right' ? 'flex-end' : 'flex-start',
+				justifyContent: align === 'center' ? 'center' : align === 'right' ? 'flex-end' : 'flex-start',
 				...stickyStyle,
 				...style,
 			}}

@@ -11,6 +11,8 @@ export type TableTreeExpand<T> = {
 	renderIndentKeys?: string[];
 	// 缩进距离
 	indentSize?: number;
+	// 默认展开全部
+	defaultExpandAll?: boolean;
 };
 
 export type TableTreeProps<T> = TableCoreProps<T> & {

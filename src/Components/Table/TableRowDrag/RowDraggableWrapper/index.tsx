@@ -1,7 +1,9 @@
-import { cloneElement, type FC } from 'react';
+import { cloneElement, type CSSProperties, useMemo, type FC } from 'react';
 
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
+
+import { RowDraggableContext, type RowDraggableContextProps } from './RowDraggableContext';
 
 type Props = {
 	rowKey: string;
@@ -10,17 +12,24 @@ type Props = {
 };
 
 const RowDraggableWrapper: FC<Props> = ({ rowIndex, rowKey, children }) => {
-	const { attributes, setNodeRef, transform, transition, isSorting, isDragging } = useSortable({
-		id: rowKey,
-		data: { rowKey, rowIndex },
-	});
+	const sortable = useSortable({ id: rowKey, data: { rowKey, rowIndex } });
 
-	const _style: React.CSSProperties = {
-		transition,
-		zIndex: isDragging ? 2 : 1,
-		transform: CSS.Translate.toString(transform),
-		pointerEvents: isSorting ? 'none' : 'initial',
-	};
+	const { attributes, transform, transition, isSorting, isDragging, listeners, setNodeRef, setActivatorNodeRef } = sortable;
+
+	const contextValue = useMemo<RowDraggableContextProps>(
+		() => ({ isDragging, setActivatorNodeRef, listeners }),
+		[isDragging, setActivatorNodeRef, listeners],
+	);
+
+	const _style = useMemo<CSSProperties>(
+		() => ({
+			transition,
+			zIndex: isDragging ? 2 : 1,
+			transform: CSS.Translate.toString(transform),
+			pointerEvents: isSorting ? 'none' : 'initial',
+		}),
+		[transition, transform, isDragging, isSorting],
+	);
 
 	const coverProps = {
 		draggableProps: attributes,
@@ -28,7 +37,7 @@ const RowDraggableWrapper: FC<Props> = ({ rowIndex, rowKey, children }) => {
 		style: { ...children.props.style, ..._style },
 	};
 
-	return cloneElement(children, coverProps);
+	return <RowDraggableContext.Provider value={contextValue}>{cloneElement(children, coverProps)}</RowDraggableContext.Provider>;
 };
 
 export default RowDraggableWrapper;
