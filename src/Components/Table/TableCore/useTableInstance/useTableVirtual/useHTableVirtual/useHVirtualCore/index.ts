@@ -1,4 +1,4 @@
-import { useLayoutEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 
 import useFrameThrottle from '../../../../TableHooks/useFrameThrottle';
 import VirtualCore from '../../Core';
@@ -36,7 +36,7 @@ const useHVirtualCore = (props: Props) => {
 	const rangeStart = virtualCore.state.rangeStart;
 	const scrollOffset = virtualCore.state.scrollOffset;
 
-	useLayoutEffect(() => {
+	useMemo(() => {
 		if (bodyRef.current && bodyRef.current.scrollLeft !== scrollOffset) bodyRef.current.scrollLeft = scrollOffset;
 		if (headRef.current && headRef.current.scrollLeft !== scrollOffset) headRef.current.scrollLeft = scrollOffset;
 	}, [scrollOffset]);

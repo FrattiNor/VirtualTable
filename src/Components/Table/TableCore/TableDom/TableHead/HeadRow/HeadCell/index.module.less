@@ -13,6 +13,16 @@
 	// 默认有borderBottom
 	border-bottom: var(--table-cell-border-width) solid var(--table-cell-border-color);
 
+	// 能够排序，则点击整个cell都会进行排序
+	&.could-sort {
+		cursor: pointer;
+
+		// 能够排序，hover整个cell都会有反应【!important为需要覆盖style里的bg】
+		&:hover {
+			background-color: var(--table-head-cell-active-bg-L1) !important;
+		}
+	}
+
 	// bordered的情况下，默认有borderLeft
 	&.bordered {
 		border-left: var(--table-cell-border-width) solid var(--table-cell-border-color);
@@ -102,5 +112,15 @@
 		display: inline-flex;
 		align-items: center;
 		justify-content: inherit;
+	}
+
+	.sort-wrapper {
+		flex-shrink: 0;
+		position: relative;
+	}
+
+	.filer-wrapper {
+		flex-shrink: 0;
+		position: relative;
 	}
 }

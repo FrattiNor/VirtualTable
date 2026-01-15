@@ -1,10 +1,7 @@
 import { useRef } from 'react';
 
 // 缓动函数
-const easeOutCubic = (x: number) => {
-	const n = Math.min(1, Math.max(0, x));
-	return 1 - Math.pow(1 - n, 3);
-};
+const linear = (x: number) => x;
 
 export const useVirtualScroll = (direction: 'scrollTop' | 'scrollLeft', getElement: () => HTMLElement | null) => {
 	const dateValueRef = useRef(0);
@@ -59,7 +56,7 @@ export const useVirtualScroll = (direction: 'scrollTop' | 'scrollLeft', getEleme
 				const per = (performance.now() - dateValueRef.current) / duration;
 
 				// 根据滚动百分比和缓动函数计算出滚动目标值
-				const currentScrollTarget = startTarget + easeOutCubic(per) * changeValue;
+				const currentScrollTarget = startTarget + linear(per) * changeValue;
 
 				// 执行滚动
 				el[direction] = Number(currentScrollTarget.toFixed(3));

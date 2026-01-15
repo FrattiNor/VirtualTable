@@ -17,6 +17,8 @@ export type TableCoreColumn<T> = {
 	key: string;
 	// 列标题
 	title: ReactNode;
+	// 列标题【string】用于给列配置提供string版本的title
+	titleStr?: string;
 	// 列单元格渲染
 	render?: TableCoreColumnRender<T>;
 	// 列宽
@@ -45,21 +47,25 @@ export type TableCoreColumn<T> = {
 	onCellStyle?: TableCoreColumnOnCellStyle<T>;
 	// 配置head style
 	headStyle?: CSSProperties;
+	// 启用列排序
+	sorter?: boolean;
 } & {
 	children?: undefined;
 };
 
 // Group的fixed将会覆盖子节点，不论left|right|undefined
-export type TableCoreColumnGroup<T> = Partial2Undefined<Omit<TableCoreColumn<T>, 'key' | 'title' | 'align' | 'children' | 'filter'>> & {
+export type TableCoreColumnGroup<T> = Partial2Undefined<Omit<TableCoreColumn<T>, 'key' | 'title' | 'titleStr' | 'children' | 'filter' | 'fixed'>> & {
 	// 列key
 	key: string;
 	// 列标题
 	title: ReactNode;
-	// 左右对齐
-	align?: TableCoreColumnAlign;
+	// 列标题【string】用于给列配置提供string版本的title
+	titleStr?: string;
 	// 列搜索【外部提供搜索】
 	filter?: ReactNode;
-	//
+	// TODO 列固定【覆盖子类】
+	fixed?: TableCoreColumnFixed;
+	// 列子项
 	children: Array<TableCoreColumn<T> | TableCoreColumnGroup<T>>;
 };
 

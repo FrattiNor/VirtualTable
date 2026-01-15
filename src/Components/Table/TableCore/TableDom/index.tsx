@@ -15,8 +15,8 @@ import { type TableCoreProps } from '../TableTypes/typeProps';
 
 const TableDom = <T,>(coreProps: TableCoreProps<T>) => {
 	const props = useTableInstance(coreProps);
-	const { data, h_scrollbar, theme, bordered } = props;
 	const { pagination, style, loading, className } = coreProps;
+	const { data, h_scrollbar, theme, bordered, resizeFlag } = props;
 
 	const isEmpty = (data ?? []).length === 0;
 	const havePagination = !isEmpty && pagination;
@@ -36,11 +36,13 @@ const TableDom = <T,>(coreProps: TableCoreProps<T>) => {
 			<div
 				className={classNames(styles['table'], {
 					[styles['bordered']]: bordered,
+					[styles['any-resize']]: !!resizeFlag,
 					// bordered为false，但是显示border-bottom的情况，非空，没有横向滚动条
 					[styles['no-bordered-and-show-border-bottom']]: !isEmpty && !bordered && !haveHScrollbar,
 				})}
 			>
 				<TableHead
+					sorter={props.sorter}
 					headRef={props.headRef}
 					bordered={props.bordered}
 					deepLevel={props.deepLevel}

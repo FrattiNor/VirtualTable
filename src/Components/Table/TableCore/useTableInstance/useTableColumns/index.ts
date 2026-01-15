@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 
+import { type TableCoreColumnFixed } from '../../TableTypes/type';
 import { getLeafColumn } from '../../TableUtils';
 
 import type { TableCoreColumn, TableCoreColumnGroup, TableCoreColumns } from '../../TableTypes/typeColumn';
@@ -22,15 +23,16 @@ const useTableColumns = <T>({ coreProps, tableState }: Props<T>) => {
 		let index = 0;
 		const keyIndexMap = new Map<string, number>();
 
-		const getColumnsCore = (c: TableCoreColumns<T>, opt?: { parents: Array<TableCoreColumnGroup<T>> }) => {
+		const getColumnsCore = (c: TableCoreColumns<T>, opt?: { parents: Array<TableCoreColumnGroup<T>>; parentFixed?: TableCoreColumnFixed }) => {
 			const parents = opt?.parents ?? [];
+			const parentFixed = opt?.parentFixed ?? undefined;
 			const splitColumnsArrInner: Array<Array<TableCoreColumn<T> | TableCoreColumnGroup<T>>> = [];
 			c.forEach((column) => {
 				// isGroup
 				if (Array.isArray(column.children)) {
 					if (column.children.length > 0) {
-						const current = { ...(column as TableCoreColumnGroup<T>) };
-						splitColumnsArrInner.push(...getColumnsCore(column.children, { parents: [current, ...parents] }));
+						const current = { ...(column as TableCoreColumnGroup<T>), fixed: parentFixed ?? fixedConf?.[column.key] ?? column.fixed };
+						splitColumnsArrInner.push(...getColumnsCore(column.children, { parents: [current, ...parents], parentFixed: current.fixed }));
 					}
 				}
 				// isColumn
@@ -38,9 +40,9 @@ const useTableColumns = <T>({ coreProps, tableState }: Props<T>) => {
 				else if (visibleConf?.[column.key] ?? true) {
 					const current: TableCoreColumn<T> = {
 						...(column as TableCoreColumn<T>),
-						fixed: fixedConf?.[column.key] ?? column.fixed,
 						width: widthConf?.[column.key] ?? column.width,
 						flexGrow: flexGrowConf?.[column.key] ?? column.flexGrow,
+						fixed: parentFixed ?? fixedConf?.[column.key] ?? column.fixed,
 					};
 					splitColumnsArrInner.push([current, ...parents]);
 					keyIndexMap.set(column.key, index);

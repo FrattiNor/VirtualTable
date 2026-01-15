@@ -1,4 +1,4 @@
-import { useLayoutEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 
 import useItemSizeObserver from './useItemSizeObserver';
 import useSizeCacheMap from './useSizeCacheMap';
@@ -41,7 +41,7 @@ const useVVirtualCore = (props: Props) => {
 	const totalSize = virtualCore.state.totalSize ?? 0;
 	const sizeList = virtualCore.state.sizeList;
 
-	useLayoutEffect(() => {
+	useMemo(() => {
 		if (bodyRef.current && bodyRef.current.scrollTop !== scrollOffset) bodyRef.current.scrollTop = scrollOffset;
 	}, [scrollOffset]);
 

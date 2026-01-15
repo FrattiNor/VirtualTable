@@ -24,6 +24,7 @@ type Props<T> = Pick<
 	| 'getHeadCellColShow'
 	| 'renderHeadPrefix'
 	| 'getColKeys'
+	| 'sorter'
 >;
 
 const TableHead = <T,>(props: Props<T>) => {
@@ -39,6 +40,7 @@ const TableHead = <T,>(props: Props<T>) => {
 						<HeadRow
 							key={rowIndex}
 							rowIndex={rowIndex}
+							sorter={props.sorter}
 							bordered={props.bordered}
 							rowHeight={props.rowHeight}
 							deepLevel={props.deepLevel}

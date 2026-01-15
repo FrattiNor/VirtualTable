@@ -18,6 +18,7 @@ const ResizeHandle = <T,>(props: Props<T>) => {
 
 	return (
 		<div
+			onClick={(e) => e.stopPropagation()}
 			onMouseDown={(e) => startResize({ e, columnKey, colIndexStart, colIndexEnd })}
 			className={classNames(styles['resize-handle'], { [styles['active']]: active })}
 		/>

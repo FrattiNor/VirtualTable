@@ -4,6 +4,7 @@ import classNames from 'classnames';
 
 import styles from './index.module.less';
 import ResizeHandle from './ResizeHandle';
+import SortIcon from './SortIcon';
 import { getCellTitle, getResize, isEmptyRender, isStrNum } from '../../../../TableUtils';
 
 import type { TableCoreColumn, TableCoreColumnGroup } from '../../../../TableTypes/typeColumn';
@@ -20,6 +21,7 @@ type Props<T> = Pick<
 	| 'getHeadCellBg'
 	| 'renderHeadPrefix'
 	| 'getColKeys'
+	| 'sorter'
 > & {
 	rowIndexStart: number;
 	rowIndexEnd: number;
@@ -40,6 +42,7 @@ const HeadCell = <T,>(props: Props<T>) => {
 	const {
 		isLeaf,
 		column,
+		sorter,
 		splitColumnsArr,
 		bordered,
 		rowIndexStart,
@@ -52,6 +55,15 @@ const HeadCell = <T,>(props: Props<T>) => {
 		getHeadCellBg,
 		renderHeadPrefix,
 	} = props;
+
+	// sort的一些参数
+	const sortKey = sorter?.sortKey;
+	const sortValue = sorter?.sortValue;
+	const onSortChange = sorter?.onSortChange;
+	// 是否可以sort
+	const couldSort = isLeaf && column.sorter === true;
+	// 当前cell的sort的值
+	const currentSortValue = sortKey === column.key ? sortValue : undefined;
 	// 是否可以resize
 	const resize = useMemo(() => getResize(splitColumnsArr, colIndexStart, colIndexEnd), [splitColumnsArr, colIndexStart, colIndexEnd]);
 	// 列keys
@@ -70,14 +82,25 @@ const HeadCell = <T,>(props: Props<T>) => {
 	const { stickyStyle, hiddenLeftBorder, leftLastPinged, rightLastPinged } = getHeadStickyStyle({ colKeys });
 	// 当前head配置的style
 	const style = column.headStyle;
-	//  当前head配置的align
-	const align = column.align ?? (isLeaf ? 'left' : 'center');
+	// 当前head配置的align
+	// 叶子节点默认为left
+	// 父节点如果span为1默认为left，否则为center
+	const align = column.align ?? (isLeaf ? 'left' : colIndexStart === colIndexEnd ? 'left' : 'center');
+	// cell 点击触发sort变更
+	const onClick = () => {
+		if (couldSort) {
+			const nextSortValue = currentSortValue === undefined ? 'asc' : currentSortValue === 'asc' ? 'desc' : undefined;
+			if (typeof onSortChange === 'function') onSortChange({ sortKey: column.key, sortValue: nextSortValue });
+		}
+	};
 
 	return (
 		<div
 			title={title}
+			onClick={couldSort ? onClick : undefined}
 			className={classNames(styles['head-cell'], {
 				[styles['bordered']]: bordered,
+				[styles['could-sort']]: couldSort,
 				[styles['first-col']]: colIndexStart === 0,
 				[styles['left-last-pinged']]: leftLastPinged,
 				[styles['right-last-pinged']]: rightLastPinged,
@@ -97,7 +120,7 @@ const HeadCell = <T,>(props: Props<T>) => {
 				// head主要内容
 				const content = (
 					<Fragment>
-						{isLeaf && typeof renderHeadPrefix === 'function' && renderHeadPrefix(column.key)}
+						{isLeaf && typeof renderHeadPrefix === 'function' ? renderHeadPrefix(column.key) : undefined}
 						{!canEllipsis ? (
 							<div className={styles['block-wrapper']}>{renderDom}</div>
 						) : (
@@ -106,10 +129,10 @@ const HeadCell = <T,>(props: Props<T>) => {
 					</Fragment>
 				);
 
-				// 不存在filter
-				if (!filterDom) return content;
+				// 不存在filter 且 不存在sort
+				if (!filterDom && !couldSort) return content;
 
-				// 存在filter
+				// 存在filter 或 操作sort
 				return (
 					<Fragment>
 						<div
@@ -120,7 +143,18 @@ const HeadCell = <T,>(props: Props<T>) => {
 						>
 							{content}
 						</div>
-						<Fragment>{filterDom}</Fragment>
+
+						{couldSort && (
+							<div className={styles['sort-wrapper']}>
+								<SortIcon sortValue={currentSortValue} />
+							</div>
+						)}
+
+						{filterDom && (
+							<div className={styles['filer-wrapper']} onClick={(e) => e.stopPropagation()}>
+								{filterDom}
+							</div>
+						)}
 					</Fragment>
 				);
 			})()}

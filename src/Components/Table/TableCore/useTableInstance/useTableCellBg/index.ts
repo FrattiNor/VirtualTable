@@ -16,6 +16,8 @@ const useTableCellBg = <T>({ tableState, coreProps }: Props<T>) => {
 	const { throttle: throttle1 } = useFrameThrottle();
 	const { throttle: throttle2 } = useFrameThrottle();
 
+	const sortKey = coreProps.sorter?.sortKey;
+	const sortValue = coreProps.sorter?.sortValue;
 	const draggingRowKey = coreProps.rowDraggableProps?.draggingRowKey;
 	const rowSelectedKeyMap = coreProps.rowSelectionProps?.rowSelectedKeyMap;
 	const { rowClick = true, rowHover = true, rowSelect = true } = coreProps.rowBgHighlight ?? {};
@@ -102,18 +104,26 @@ const useTableCellBg = <T>({ tableState, coreProps }: Props<T>) => {
 	const getBodyCellBg = useCallback(
 		({ rowKeys, colKeys, defaultBgLevel }: { rowKeys: string[]; colKeys: undefined | string[]; defaultBgLevel?: number }) => {
 			let bgColorLevel = defaultBgLevel ?? 0;
+			// 正在进行拖拽
 			if (typeof draggingRowKey === 'string' && rowKeys.some((key) => key === draggingRowKey)) bgColorLevel += 2;
+			// 行hover
 			if (rowHover === true && getRowHovered({ rowKeys }) === true) bgColorLevel += 1;
+			// 行选中
 			if (rowSelect === true && getRowSelected({ rowKeys }) === true) bgColorLevel += 2;
+			// 列正在拖拽列宽
 			if (colKeys && getColOnResized({ colKeys, every: false })) bgColorLevel += 2;
+			// 行点击
 			if (rowClick === true && getRowClicked({ rowKeys })) bgColorLevel += 2;
+			// 列进行了列排序
+			if (Array.isArray(colKeys) && colKeys.length === 1 && colKeys[0] === sortKey && sortValue !== undefined) bgColorLevel += 1;
+			// 根据等级来获得cell的背景
 			if (bgColorLevel === 0) return 'var(--table-body-cell-bg)';
 			if (bgColorLevel === 1) return 'var(--table-body-cell-active-bg-L1)';
 			if (bgColorLevel === 2) return 'var(--table-body-cell-active-bg-L2)';
 			if (bgColorLevel >= 3) return 'var(--table-body-cell-active-bg-L3)';
 			return 'var(--table-body-cell-bg)';
 		},
-		[getColOnResized, getRowClicked, getRowHovered, getRowSelected, draggingRowKey],
+		[getColOnResized, getRowClicked, getRowHovered, getRowSelected, draggingRowKey, sortKey, sortValue],
 	);
 
 	// 获取head cell 背景色
@@ -121,12 +131,16 @@ const useTableCellBg = <T>({ tableState, coreProps }: Props<T>) => {
 	const getHeadCellBg = useCallback(
 		({ colKeys }: { colKeys: string[] }) => {
 			let bgColorLevel = 0;
-			if (getColOnResized({ colKeys, every: true })) bgColorLevel++;
+			// 列正在拖拽列宽
+			if (getColOnResized({ colKeys, every: true })) bgColorLevel += 1;
+			// 列进行了列排序
+			if (Array.isArray(colKeys) && colKeys.length === 1 && colKeys[0] === sortKey && sortValue !== undefined) bgColorLevel += 1;
+			// 根据等级来获得cell的背景
 			if (bgColorLevel === 0) return 'var(--table-head-cell-bg)';
-			if (bgColorLevel >= 1) return 'var(--table-head-cell-active-bg)';
+			if (bgColorLevel >= 1) return 'var(--table-head-cell-active-bg-L1)';
 			return 'var(--table-head-cell-bg)';
 		},
-		[getColOnResized],
+		[getColOnResized, sortKey, sortValue],
 	);
 
 	const bodyRowMouseEnter = useMemo(() => {

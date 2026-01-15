@@ -1,0 +1,25 @@
+.sort-icon {
+	display: flex;
+	flex-direction: column;
+
+	.up {
+		position: relative;
+		transition: color 0.2s;
+		color: var(--table-filter-color);
+
+		&.active {
+			color: var(--table-primary-color);
+		}
+	}
+
+	.down {
+		position: relative;
+		margin-top: -0.3em;
+		transition: color 0.2s;
+		color: var(--table-filter-color);
+
+		&.active {
+			color: var(--table-primary-color);
+		}
+	}
+}

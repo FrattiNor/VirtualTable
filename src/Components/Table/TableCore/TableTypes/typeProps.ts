@@ -1,6 +1,6 @@
 import { type ReactNode, type CSSProperties, type RefObject, type FC } from 'react';
 
-import type { TableCoreColumnConf, TableCoreTheme, TableCoreRef, TableRowKey } from './type';
+import type { TableCoreColumnConf, TableCoreTheme, TableCoreRef, TableRowKey, TableCoreSorter } from './type';
 import type { TableCoreColumn, TableCoreColumns } from './typeColumn';
 
 export type TableCoreProps<T> = {
@@ -42,6 +42,8 @@ export type TableCoreProps<T> = {
 	};
 	// empty
 	renderEmpty?: ReactNode;
+	// 排序
+	sorter?: TableCoreSorter;
 
 	// 影响：增加选择列、选中状态行背景色修改
 	// === rowSelectProps ===

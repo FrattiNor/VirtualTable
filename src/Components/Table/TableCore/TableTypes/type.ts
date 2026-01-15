@@ -75,4 +75,15 @@ export type TableColumnConfItem = {
 	hidden: boolean;
 	title: ReactNode;
 	fixed: TableCoreColumnFixed;
+	children?: TableColumnConfItem[];
+};
+
+// Table 排序的值
+export type TableCoreSortValue = 'asc' | 'desc';
+
+// Table 排序配置
+export type TableCoreSorter = {
+	sortKey: string | undefined;
+	sortValue: TableCoreSortValue | undefined;
+	onSortChange?: (params: { sortKey: string | undefined; sortValue: TableCoreSortValue | undefined }) => void;
 };

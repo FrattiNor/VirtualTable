@@ -18,6 +18,7 @@ type Props<T> = Pick<
 	| 'getHeadCellColShow'
 	| 'renderHeadPrefix'
 	| 'getColKeys'
+	| 'sorter'
 > & {
 	rowIndex: number;
 };
@@ -48,6 +49,7 @@ const HeadRow = <T,>(props: Props<T>) => {
 						isLeaf={true}
 						column={leafColumn}
 						key={leafColumn.key}
+						sorter={props.sorter}
 						colIndexEnd={colIndexEnd}
 						rowIndexEnd={rowIndexEnd}
 						bordered={props.bordered}
@@ -97,6 +99,7 @@ const HeadRow = <T,>(props: Props<T>) => {
 						key={key}
 						isLeaf={false}
 						column={column}
+						sorter={props.sorter}
 						colIndexEnd={colIndexEnd}
 						rowIndexEnd={rowIndexEnd}
 						bordered={props.bordered}

@@ -16,6 +16,7 @@ const useTableInnerProps = <T>(props: TableCoreProps<T>) => {
 		data: useMemo(() => props.data ?? [], [props.data]),
 		rowKey: useMemo(() => props.rowKey, [props.rowKey?.toString()]),
 		highlightKeywords: useMemo(() => props.highlightKeywords, [props.highlightKeywords?.toString()]),
+		sorter: useMemo(() => props.sorter, [props.sorter?.sortKey, props.sorter?.sortValue]),
 
 		// TableTree
 		renderHeadPrefix: props.treeExpandProps?.renderHeadPrefix,
