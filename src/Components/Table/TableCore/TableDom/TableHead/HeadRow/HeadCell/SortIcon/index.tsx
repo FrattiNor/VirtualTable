@@ -1,12 +1,12 @@
 import { type FC } from 'react';
 
 import classNames from 'classnames';
-import { type TableSortValue } from 'src/Table/type';
 
 import styles from './index.module.less';
+import { type TableCoreSortValue } from '../../../../../TableTypes/type';
 
 type Props = {
-	sortValue: TableSortValue | undefined;
+	sortValue: TableCoreSortValue | undefined;
 };
 
 const SortIcon: FC<Props> = ({ sortValue }) => {

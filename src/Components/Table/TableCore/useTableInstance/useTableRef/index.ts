@@ -25,8 +25,10 @@ const useTableRef = <T>({ coreProps, tableState, tableDomRef }: Props<T>) => {
 	useImperativeHandle(tableRef, () => {
 		return {
 			scrollTo: ({ top, left, behavior }) => {
-				if (typeof top === 'number') vScrollbarRef.current?.scrollTo({ top, behavior });
-				if (typeof left === 'number') hScrollbarRef.current?.scrollTo({ left, behavior });
+				requestAnimationFrame(() => {
+					if (typeof top === 'number') vScrollbarRef.current?.scrollTo({ top, behavior });
+					if (typeof left === 'number') hScrollbarRef.current?.scrollTo({ left, behavior });
+				});
 			},
 			clearResized: () => {
 				setResized((old) => {

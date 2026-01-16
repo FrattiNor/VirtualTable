@@ -57,11 +57,21 @@ const useTableColumns = <T>({ coreProps, tableState }: Props<T>) => {
 
 		// 增加判断order
 		if (sortConf) {
-			columnsCore = columnsCore.sort((a, b) => {
-				const aIndex = sortConf?.[a[0].key] ?? keyIndexMap.get(a[0].key) ?? Infinity;
-				const bIndex = sortConf?.[b[0].key] ?? keyIndexMap.get(b[0].key) ?? Infinity;
-				return aIndex - bIndex;
-			});
+			// 获取Index
+			const getIndex = (items: (TableCoreColumn<T> | TableCoreColumnGroup<T>)[]) => {
+				// 子节点未获取到Sort配置，则读取父节点Sort配置
+				for (let i = 0; i < items.length; i++) {
+					const sortConfIndex = sortConf?.[items?.[i]?.key];
+					if (typeof sortConfIndex === 'number') return sortConfIndex;
+				}
+				// 未获取到Sort配置，则使用叶子节点的当前Index配置
+				const colIndex = keyIndexMap.get(items?.[0]?.key);
+				if (typeof colIndex === 'number') return colIndex;
+				// 都未获取到，使用Infinity
+				return Infinity;
+			};
+			// 进行排序
+			columnsCore = columnsCore.sort((a, b) => getIndex(a) - getIndex(b));
 		}
 
 		// 增加行选择列
