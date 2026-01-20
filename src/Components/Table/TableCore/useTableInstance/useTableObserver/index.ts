@@ -1,7 +1,7 @@
 import { useEffect, useLayoutEffect } from 'react';
 
 import { useVirtualScroll } from './useScroll';
-import useFrameDebounce from '../../TableHooks/useFrameDebounce';
+import useSetTimeoutDebounce from '../../TableHooks/useSetTimeoutDebounce';
 import { getDisplayNone } from '../../TableUtils';
 import calcBorderWidth from '../../TableUtils/calcBorderWidth';
 
@@ -23,38 +23,40 @@ type Props<T> = {
 const useTableObserver = <T>({ tableState, tableVirtual, tableDomRef }: Props<T>) => {
 	const { headRef, bodyRef, bodyInnerRef, hScrollbarRef, vScrollbarRef } = tableDomRef;
 
-	const { debounce } = useFrameDebounce();
+	const { debounce } = useSetTimeoutDebounce();
 	const { getH_virtualCore, getV_virtualCore } = tableVirtual;
 	const { setV_scrollbar, setH_scrollbar, setTableWidth } = tableState;
 	const scrollByTop = useVirtualScroll('scrollTop', () => vScrollbarRef.current);
 	const scrollByLeft = useVirtualScroll('scrollLeft', () => hScrollbarRef.current);
 
 	useLayoutEffect(() => {
-		if (bodyRef.current && bodyInnerRef.current) {
-			const body = bodyRef.current;
-			const bodyInner = bodyInnerRef.current;
+		const body = bodyRef.current;
+		const bodyInner = bodyInnerRef.current;
+		const bodyWrapper = bodyRef.current?.parentElement;
 
+		if (body && bodyInner && bodyWrapper) {
 			// === ob body content resize ===
 			const calcObserver = (entries?: ResizeObserverEntry[]) => {
 				// display none的情况直接跳过执行
 				if (entries && getDisplayNone(entries[0].contentRect)) return;
 				// TODO BUG 如果display none时缩放导致的resize将导致无法更新scrollbar宽度，对于原生滚动条将会产生影响
 				if (!entries && getDisplayNone(body.getBoundingClientRect())) return;
-
+				// 更新Virtual的ContainerSize
 				getH_virtualCore().updateContainerSize(body.clientWidth);
 				getV_virtualCore().updateContainerSize(body.clientHeight);
-
+				// 获取滚动条是否存在
 				const hScrollbarHave = bodyInner.clientWidth > 0 && body.clientWidth > 0 && bodyInner.clientWidth > body.clientWidth;
 				const vScrollbarHave = bodyInner.clientHeight > 0 && body.clientHeight > 0 && bodyInner.clientHeight > body.clientHeight;
+				// 不存在entries，为直接调用
 				if (!entries) {
+					// 通过插入临时元素计算scrollBarWidth
 					const { calcDom, hScrollbarWidth, vScrollbarWidth } = calcBorderWidth(body);
-					// 保存state
+					setTableWidth(bodyWrapper.clientWidth);
 					setV_scrollbar((old) => {
 						const next = { have: vScrollbarHave, width: vScrollbarWidth };
 						if (next.have !== old.have || next.width !== old.width) {
 							return next;
 						}
-						setTableWidth(next.have ? body.clientWidth + next.width : body.clientWidth);
 						return old;
 					});
 					setH_scrollbar((old) => {
@@ -67,15 +69,15 @@ const useTableObserver = <T>({ tableState, tableVirtual, tableDomRef }: Props<T>
 					// 从DOM中移除临时元素
 					calcDom.parentNode?.removeChild(calcDom);
 				} else {
+					setTableWidth(bodyWrapper.clientWidth);
+					setV_scrollbar((old) => {
+						const next = { ...old, have: vScrollbarHave };
+						if (next.have !== old.have || next.width !== old.width) {
+							return next;
+						}
+						return old;
+					});
 					debounce(() => {
-						setV_scrollbar((old) => {
-							const next = { ...old, have: vScrollbarHave };
-							if (next.have !== old.have || next.width !== old.width) {
-								return next;
-							}
-							setTableWidth(next.have ? body.clientWidth + next.width : body.clientWidth);
-							return old;
-						});
 						setH_scrollbar((old) => {
 							const next = { ...old, have: hScrollbarHave };
 							if (next.have !== old.have || next.width !== old.width) {

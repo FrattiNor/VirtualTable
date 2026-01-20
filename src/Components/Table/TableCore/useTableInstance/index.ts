@@ -15,7 +15,7 @@ import type { TableCoreProps } from '../TableTypes/typeProps';
 const useTableInstance = <T>(coreProps: TableCoreProps<T>) => {
 	const tableDomRef = useTableDomRef();
 	const tableInnerProps = useTableInnerProps(coreProps);
-	const tableState = useTableState({ tableInnerProps });
+	const tableState = useTableState({ coreProps, tableInnerProps });
 	const tableCellBg = useTableCellBg({ coreProps, tableState });
 	const tableColumns = useTableColumns({ coreProps, tableState });
 	const tableSticky = useTableSticky({ tableState, tableColumns });

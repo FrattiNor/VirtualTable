@@ -1,4 +1,4 @@
-import { startTransition, useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { type VirtualProps } from '../../Core/type';
 
@@ -57,9 +57,7 @@ const useSizeCacheMap = ({ getItemKey, getItemSize, count }: Props) => {
 			}
 		});
 		if (changed) {
-			startTransition(() => {
-				setSizeCacheMap(new Map(sizeCacheMap));
-			});
+			setSizeCacheMap(new Map(sizeCacheMap));
 		}
 	}, [datasourceKeyMap, sizeCacheMap]);
 

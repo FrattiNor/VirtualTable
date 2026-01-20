@@ -44,6 +44,11 @@ export type TableCoreProps<T> = {
 	renderEmpty?: ReactNode;
 	// 排序
 	sorter?: TableCoreSorter;
+	// 行点击，使用外部状态
+	rowClick?: {
+		rowClickedMap: Map<string, true>;
+		setRowClickedMap: React.Dispatch<React.SetStateAction<Map<string, true>>>;
+	};
 
 	// 影响：增加选择列、选中状态行背景色修改
 	// === rowSelectProps ===

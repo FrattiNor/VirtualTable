@@ -6,28 +6,28 @@ import { defaultBorderWidth, defaultRowHeight } from '../../TableUtils/configVal
 import type { TableCoreProps } from '../../TableTypes/typeProps';
 
 // 暴露给内部的props
-const useTableInnerProps = <T>(props: TableCoreProps<T>) => {
+const useTableInnerProps = <T>(coreProps: TableCoreProps<T>) => {
 	const requiredProps = {
-		renderEmpty: props.renderEmpty,
-		bordered: props.bordered ?? true,
-		rowHeight: props.rowHeight ?? defaultRowHeight,
-		borderWidth: props.borderWidth ?? defaultBorderWidth,
-		theme: (props.theme === 'dark' ? 'dark' : 'light') as TableCoreTheme,
-		data: useMemo(() => props.data ?? [], [props.data]),
-		rowKey: useMemo(() => props.rowKey, [props.rowKey?.toString()]),
-		highlightKeywords: useMemo(() => props.highlightKeywords, [props.highlightKeywords?.toString()]),
-		sorter: useMemo(() => props.sorter, [props.sorter?.sortKey, props.sorter?.sortValue]),
+		renderEmpty: coreProps.renderEmpty,
+		bordered: coreProps.bordered ?? true,
+		rowHeight: coreProps.rowHeight ?? defaultRowHeight,
+		borderWidth: coreProps.borderWidth ?? defaultBorderWidth,
+		theme: (coreProps.theme === 'dark' ? 'dark' : 'light') as TableCoreTheme,
+		data: useMemo(() => coreProps.data ?? [], [coreProps.data]),
+		rowKey: useMemo(() => coreProps.rowKey, [coreProps.rowKey?.toString()]),
+		highlightKeywords: useMemo(() => coreProps.highlightKeywords, [coreProps.highlightKeywords?.toString()]),
+		sorter: useMemo(() => coreProps.sorter, [coreProps.sorter?.sortKey, coreProps.sorter?.sortValue]),
 
 		// TableTree
-		renderHeadPrefix: props.treeExpandProps?.renderHeadPrefix,
-		renderCellPrefix: props.treeExpandProps?.renderCellPrefix,
+		renderHeadPrefix: coreProps.treeExpandProps?.renderHeadPrefix,
+		renderCellPrefix: coreProps.treeExpandProps?.renderCellPrefix,
 
 		// TableDrag
-		rowDraggableMode: !!props.rowDraggableProps,
-		draggingRowKey: props.rowDraggableProps?.draggingRowKey,
-		draggingRowIndex: props.rowDraggableProps?.draggingRowIndex,
-		RowDraggableWrapper: props.rowDraggableProps?.RowDraggableWrapper,
-		renderWidthDraggableWrapper: props.rowDraggableProps?.renderWidthDraggableWrapper,
+		rowDraggableMode: !!coreProps.rowDraggableProps,
+		draggingRowKey: coreProps.rowDraggableProps?.draggingRowKey,
+		draggingRowIndex: coreProps.rowDraggableProps?.draggingRowIndex,
+		RowDraggableWrapper: coreProps.rowDraggableProps?.RowDraggableWrapper,
+		renderWidthDraggableWrapper: coreProps.rowDraggableProps?.renderWidthDraggableWrapper,
 	};
 
 	return { ...requiredProps };
