@@ -1,17 +1,20 @@
-import { memo, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { memo, useEffect, useState } from 'react';
 
+import ColSizeObserverItem from './ColSizeObserverItem';
+import ExecLayoutEffectCalc from './ExecLayoutEffectCalc';
 import styles from './index.module.less';
-import MeasureItem from './MeasureItem';
 import { FixedTwo, getDisplayNone, getLeafColumn } from '../../../TableUtils';
 import { maxColWidth, minColWidth } from '../../../TableUtils/configValues';
 
 import type { TableInstance } from '../../../useTableInstance';
 
-type Props<T> = Pick<TableInstance<T>, 'columnsCore' | 'setSizeCacheMap' | 'resizeFlag' | 'sizeCacheMap' | 'resized'>;
+type Props<T> = Pick<
+	TableInstance<T>,
+	'columnsCore' | 'setSizeCacheMap' | 'resizeFlag' | 'sizeCacheMap' | 'resized' | 'colSizeObserverRef' | 'columnKeys'
+>;
 
-const MeasureColSizeRow = <T,>(props: Props<T>) => {
-	const ref = useRef<HTMLDivElement | null>(null);
-	const { columnsCore, setSizeCacheMap, resizeFlag, resized } = props;
+const ColSizeObserver = <T,>(props: Props<T>) => {
+	const { columnsCore, setSizeCacheMap, resizeFlag, resized, colSizeObserverRef } = props;
 	const [resizeObserver, setResizeObserver] = useState<ResizeObserver | null>(null);
 
 	const sizeCacheChangeBatch = <B,>(items: Array<B>, getKey: (item: B) => string | null, getSize: (item: B) => number) => {
@@ -32,22 +35,9 @@ const MeasureColSizeRow = <T,>(props: Props<T>) => {
 		});
 	};
 
-	// first calc
-	useLayoutEffect(() => {
-		if (ref.current && resized === false) {
-			const element = ref.current;
-			// 直接执行一次
-			sizeCacheChangeBatch(
-				Array.from(element.children),
-				(node) => node.getAttribute('data-key'),
-				(node) => node.getBoundingClientRect().width,
-			);
-		}
-	}, [resized]);
-
 	// ResizeObserver
 	useEffect(() => {
-		if (!resizeFlag && ref.current) {
+		if (!resizeFlag && colSizeObserverRef.current) {
 			const _observer = new ResizeObserver((entries) => {
 				// display none的情况直接跳过执行
 				if (getDisplayNone(entries[0].contentRect)) return;
@@ -68,17 +58,22 @@ const MeasureColSizeRow = <T,>(props: Props<T>) => {
 	}, [resizeFlag]);
 
 	return (
-		<div ref={ref} data-row="measure-col-size" className={styles['measure-col-size']}>
+		<div ref={colSizeObserverRef} data-row="col-size-observer" className={styles['col-size-observer']}>
+			<ExecLayoutEffectCalc
+				resized={resized}
+				key={props.columnKeys}
+				colSizeObserverRef={colSizeObserverRef}
+				sizeCacheChangeBatch={sizeCacheChangeBatch}
+			/>
 			{columnsCore.map((splitColumns) => {
 				const leafColumn = getLeafColumn(splitColumns);
 				return (
-					<MeasureItem
+					<ColSizeObserverItem
 						key={leafColumn.key}
 						leafColumn={leafColumn}
 						resized={props.resized}
 						resizeObserver={resizeObserver}
 						sizeCacheMap={props.sizeCacheMap}
-						sizeCacheChangeBatch={sizeCacheChangeBatch}
 					/>
 				);
 			})}
@@ -86,4 +81,4 @@ const MeasureColSizeRow = <T,>(props: Props<T>) => {
 	);
 };
 
-export default memo(MeasureColSizeRow) as typeof MeasureColSizeRow;
+export default memo(ColSizeObserver) as typeof ColSizeObserver;

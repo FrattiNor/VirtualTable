@@ -67,6 +67,7 @@ const TableDom = <T,>(coreProps: TableCoreProps<T>) => {
 						resized={props.resized}
 						bordered={props.bordered}
 						rowHeight={props.rowHeight}
+						columnKeys={props.columnKeys}
 						tableWidth={props.tableWidth}
 						resizeFlag={props.resizeFlag}
 						getColKeys={props.getColKeys}
@@ -81,6 +82,7 @@ const TableDom = <T,>(coreProps: TableCoreProps<T>) => {
 						fixedLeftMap={props.fixedLeftMap}
 						setPingedMap={props.setPingedMap}
 						bodyRowClick={props.bodyRowClick}
+						colSizeObserverRef={props.colSizeObserverRef}
 						fixedRightMap={props.fixedRightMap}
 						getBodyCellBg={props.getBodyCellBg}
 						renderBodyDom={props.renderBodyDom}

@@ -1,4 +1,4 @@
-import { memo, useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 
 import styles from './index.module.less';
 
@@ -11,7 +11,7 @@ type Props<T> = Pick<TableInstance<T>, 'setPingedMap' | 'fixedLeftMap' | 'fixedR
 	intersectionObserver: IntersectionObserver | null;
 };
 
-const ObserverItem = <T,>(props: Props<T>) => {
+const StickyObserverItem = <T,>(props: Props<T>) => {
 	const ref = useRef<HTMLDivElement | null>(null);
 	const { leafColumn, intersectionObserver, setPingedMap, fixedLeftMap, fixedRightMap, colIndex } = props;
 
@@ -51,10 +51,10 @@ const ObserverItem = <T,>(props: Props<T>) => {
 			ref={ref}
 			data-key={leafColumn.key}
 			data-fixed={leafColumn.fixed}
-			className={styles['sticky-observer']}
+			className={styles['sticky-observer-item']}
 			style={{ gridRow: `1/2`, gridColumn: `${colIndex + 1}/${colIndex + 2}`, transform: `translate3d(${offsetX}px, 0, 0)` }}
 		/>
 	);
 };
 
-export default memo(ObserverItem) as typeof ObserverItem;
+export default StickyObserverItem;

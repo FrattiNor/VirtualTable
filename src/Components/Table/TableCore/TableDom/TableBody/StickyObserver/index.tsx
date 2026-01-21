@@ -1,7 +1,7 @@
 import { memo, useState, useEffect } from 'react';
 
 import styles from './index.module.less';
-import ObserverItem from './ObserverItem';
+import StickyObserverItem from './StickyObserverItem';
 import useFrameThrottle from '../../../TableHooks/useFrameThrottle';
 import { type TableCoreColumnFixed } from '../../../TableTypes/type';
 import { getLeafColumn } from '../../../TableUtils';
@@ -10,7 +10,7 @@ import type { TableInstance } from '../../../useTableInstance';
 
 type Props<T> = Pick<TableInstance<T>, 'fixedLeftMap' | 'fixedRightMap' | 'splitColumnsArr' | 'bodyRef' | 'setPingedMap' | 'gridTemplateColumns'>;
 
-const ObserverStickyRow = <T,>(props: Props<T>) => {
+const StickyObserver = <T,>(props: Props<T>) => {
 	const { throttle } = useFrameThrottle();
 	const { splitColumnsArr, bodyRef, setPingedMap, gridTemplateColumns } = props;
 	const [intersectionObserver, setIntersectionObserver] = useState<IntersectionObserver | null>(null);
@@ -70,15 +70,15 @@ const ObserverStickyRow = <T,>(props: Props<T>) => {
 
 	return (
 		<div
-			data-row="observer-sticky"
-			className={styles['observer-sticky']}
+			data-row="sticky-observer"
+			className={styles['sticky-observer']}
 			style={{ gridTemplateColumns: gridTemplateColumns + ` minmax(0px, 1fr)` }}
 		>
 			{splitColumnsArr.map((splitColumns, colIndex) => {
 				const leafColumn = getLeafColumn(splitColumns);
 				if (leafColumn.fixed === 'left' || leafColumn.fixed === 'right') {
 					return (
-						<ObserverItem
+						<StickyObserverItem
 							colIndex={colIndex}
 							key={leafColumn.key}
 							leafColumn={leafColumn}
@@ -95,4 +95,4 @@ const ObserverStickyRow = <T,>(props: Props<T>) => {
 	);
 };
 
-export default memo(ObserverStickyRow) as typeof ObserverStickyRow;
+export default memo(StickyObserver) as typeof StickyObserver;

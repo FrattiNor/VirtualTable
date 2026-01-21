@@ -6,8 +6,9 @@ const useTableDomRef = () => {
 	const bodyInnerRef = useRef<HTMLDivElement>(null);
 	const vScrollbarRef = useRef<HTMLDivElement>(null);
 	const hScrollbarRef = useRef<HTMLDivElement>(null);
+	const colSizeObserverRef = useRef<HTMLDivElement>(null);
 
-	return { bodyRef, headRef, bodyInnerRef, vScrollbarRef, hScrollbarRef };
+	return { bodyRef, headRef, bodyInnerRef, vScrollbarRef, hScrollbarRef, colSizeObserverRef };
 };
 
 export default useTableDomRef;

@@ -10,7 +10,7 @@ const BodyEmpty = <T,>({ theme, tableWidth, renderEmpty }: Props<T>) => {
 	const lightEmpty = (
 		<div style={{ padding: '50px 0', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column' }}>
 			<img src={emptyLight} style={{ height: 100 }} />
-			<div>{'暂无数据'}</div>
+			<div style={{ lineHeight: 1 }}>{'暂无数据'}</div>
 		</div>
 	);
 
@@ -30,7 +30,7 @@ const BodyEmpty = <T,>({ theme, tableWidth, renderEmpty }: Props<T>) => {
 					</g>
 				</svg>
 			</div>
-			<div>{'暂无数据'}</div>
+			<div style={{ lineHeight: 1 }}>{'暂无数据'}</div>
 		</div>
 	);
 

@@ -2,9 +2,9 @@ import { memo } from 'react';
 
 import BodyContent from './BodyContent';
 import BodyEmpty from './BodyEmpty';
+import ColSizeObserver from './ColSizeObserver';
 import styles from './index.module.less';
-import MeasureColSizeRow from './MeasureColSizeRow';
-import ObserverStickyRow from './ObserverStickyRow';
+import StickyObserver from './StickyObserver';
 
 import type { TableInstance } from '../../useTableInstance';
 
@@ -52,6 +52,8 @@ type Props<T> = Pick<
 	| 'draggingRowIndex'
 	| 'draggingRowKey'
 	| 'borderWidth'
+	| 'colSizeObserverRef'
+	| 'columnKeys'
 >;
 
 const TableBody = <T,>(props: Props<T>) => {
@@ -60,14 +62,16 @@ const TableBody = <T,>(props: Props<T>) => {
 
 	return (
 		<div ref={bodyRef} className={styles['body']}>
-			<MeasureColSizeRow
+			<ColSizeObserver
 				resized={props.resized}
+				columnKeys={props.columnKeys}
 				resizeFlag={props.resizeFlag}
+				columnsCore={props.columnsCore}
 				sizeCacheMap={props.sizeCacheMap}
 				setSizeCacheMap={props.setSizeCacheMap}
-				columnsCore={props.columnsCore}
+				colSizeObserverRef={props.colSizeObserverRef}
 			/>
-			<ObserverStickyRow
+			<StickyObserver
 				bodyRef={props.bodyRef}
 				setPingedMap={props.setPingedMap}
 				fixedLeftMap={props.fixedLeftMap}
