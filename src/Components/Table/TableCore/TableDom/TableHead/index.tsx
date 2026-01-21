@@ -11,7 +11,7 @@ import type { TableInstance } from '../../useTableInstance';
 type Props<T> = Pick<
 	TableInstance<T>,
 	| 'deepLevel'
-	| 'splitColumnsArr'
+	| 'finalColumnsArr'
 	| 'bordered'
 	| 'headRef'
 	| 'gridTemplateColumns'
@@ -48,7 +48,7 @@ const TableHead = <T,>(props: Props<T>) => {
 							getColKeys={props.getColKeys}
 							startResize={props.startResize}
 							getHeadCellBg={props.getHeadCellBg}
-							splitColumnsArr={props.splitColumnsArr}
+							finalColumnsArr={props.finalColumnsArr}
 							renderHeadPrefix={props.renderHeadPrefix}
 							getHeadCellColShow={props.getHeadCellColShow}
 							getHeadStickyStyle={props.getHeadStickyStyle}
@@ -60,7 +60,7 @@ const TableHead = <T,>(props: Props<T>) => {
 					rowIndexEnd={deepLevel}
 					bordered={props.bordered}
 					rowHeight={props.rowHeight}
-					splitColumnsArr={props.splitColumnsArr}
+					finalColumnsArr={props.finalColumnsArr}
 				/>
 			</div>
 		</div>

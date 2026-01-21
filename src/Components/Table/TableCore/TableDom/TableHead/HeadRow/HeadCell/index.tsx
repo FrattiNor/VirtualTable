@@ -12,7 +12,7 @@ import type { TableInstance } from '../../../../useTableInstance';
 
 type Props<T> = Pick<
 	TableInstance<T>,
-	| 'splitColumnsArr'
+	| 'finalColumnsArr'
 	| 'bordered'
 	| 'rowHeight'
 	| 'getHeadStickyStyle'
@@ -43,7 +43,7 @@ const HeadCell = <T,>(props: Props<T>) => {
 		isLeaf,
 		column,
 		sorter,
-		splitColumnsArr,
+		finalColumnsArr,
 		bordered,
 		rowIndexStart,
 		rowIndexEnd,
@@ -65,7 +65,7 @@ const HeadCell = <T,>(props: Props<T>) => {
 	// 当前cell的sort的值
 	const currentSortValue = sortKey === column.key ? sortValue : undefined;
 	// 是否可以resize
-	const resize = useMemo(() => getResize(splitColumnsArr, colIndexStart, colIndexEnd), [splitColumnsArr, colIndexStart, colIndexEnd]);
+	const resize = useMemo(() => getResize(finalColumnsArr, colIndexStart, colIndexEnd), [finalColumnsArr, colIndexStart, colIndexEnd]);
 	// 列keys
 	const colKeys = useMemo(() => getColKeys(colIndexStart, colIndexEnd), [colIndexStart, colIndexEnd]);
 	// 最终渲染结果

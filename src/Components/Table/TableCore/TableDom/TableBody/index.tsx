@@ -2,6 +2,7 @@ import { memo } from 'react';
 
 import BodyContent from './BodyContent';
 import BodyEmpty from './BodyEmpty';
+import ColSizeMeasure from './ColSizeMeasure';
 import ColSizeObserver from './ColSizeObserver';
 import styles from './index.module.less';
 import StickyObserver from './StickyObserver';
@@ -10,7 +11,7 @@ import type { TableInstance } from '../../useTableInstance';
 
 type Props<T> = Pick<
 	TableInstance<T>,
-	| 'splitColumnsArr'
+	| 'finalColumnsArr'
 	| 'columnsCore'
 	| 'bordered'
 	| 'data'
@@ -53,21 +54,26 @@ type Props<T> = Pick<
 	| 'draggingRowKey'
 	| 'borderWidth'
 	| 'colSizeObserverRef'
-	| 'columnKeys'
+	| 'columnsKeys'
 >;
 
 const TableBody = <T,>(props: Props<T>) => {
 	const isEmpty = (props.data ?? []).length === 0;
-	const { bodyRef, bodyInnerRef, v_totalSize } = props;
+	const { bodyRef, bodyInnerRef, v_totalSize, columnsKeys } = props;
 
 	return (
 		<div ref={bodyRef} className={styles['body']}>
 			<ColSizeObserver
 				resized={props.resized}
-				columnKeys={props.columnKeys}
 				resizeFlag={props.resizeFlag}
 				columnsCore={props.columnsCore}
 				sizeCacheMap={props.sizeCacheMap}
+				setSizeCacheMap={props.setSizeCacheMap}
+				colSizeObserverRef={props.colSizeObserverRef}
+			/>
+			<ColSizeMeasure
+				key={columnsKeys}
+				resized={props.resized}
 				setSizeCacheMap={props.setSizeCacheMap}
 				colSizeObserverRef={props.colSizeObserverRef}
 			/>
@@ -76,7 +82,7 @@ const TableBody = <T,>(props: Props<T>) => {
 				setPingedMap={props.setPingedMap}
 				fixedLeftMap={props.fixedLeftMap}
 				fixedRightMap={props.fixedRightMap}
-				splitColumnsArr={props.splitColumnsArr}
+				finalColumnsArr={props.finalColumnsArr}
 				gridTemplateColumns={props.gridTemplateColumns}
 			/>
 			<div ref={bodyInnerRef} className={styles['body-inner']} style={{ minHeight: v_totalSize }}>
@@ -93,7 +99,7 @@ const TableBody = <T,>(props: Props<T>) => {
 					getBodyCellBg={props.getBodyCellBg}
 					renderBodyDom={props.renderBodyDom}
 					draggingRowKey={props.draggingRowKey}
-					splitColumnsArr={props.splitColumnsArr}
+					finalColumnsArr={props.finalColumnsArr}
 					renderCellPrefix={props.renderCellPrefix}
 					draggingRowIndex={props.draggingRowIndex}
 					rowDraggableMode={props.rowDraggableMode}

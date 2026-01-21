@@ -11,12 +11,12 @@ export const getRowKey = <T>(rowKey: TableCoreProps<T>['rowKey'], item: T) => {
 
 // 根据span获取resize，如果是group，只要有一个子节点不能resize就不支持resize
 export const getResize = <T>(
-	splitColumnsArr: Array<Array<TableCoreColumn<T> | TableCoreColumnGroup<T>>>,
+	finalColumnsArr: Array<Array<TableCoreColumn<T> | TableCoreColumnGroup<T>>>,
 	colIndexStart: number,
 	colIndexEnd: number,
 ) => {
 	for (let i = colIndexStart; i <= colIndexEnd; i++) {
-		const splitColumns = splitColumnsArr[i];
+		const splitColumns = finalColumnsArr[i];
 		if (splitColumns) {
 			const leafColumn = getLeafColumn(splitColumns);
 			if (leafColumn.resize === false) return false;

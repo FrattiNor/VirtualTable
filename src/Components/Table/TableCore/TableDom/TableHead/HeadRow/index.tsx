@@ -7,7 +7,7 @@ import type { TableInstance } from '../../../useTableInstance';
 
 type Props<T> = Pick<
 	TableInstance<T>,
-	| 'splitColumnsArr'
+	| 'finalColumnsArr'
 	| 'deepLevel'
 	| 'bordered'
 	| 'rowHeight'
@@ -24,7 +24,7 @@ type Props<T> = Pick<
 };
 
 const HeadRow = <T,>(props: Props<T>) => {
-	const { rowIndex, splitColumnsArr, deepLevel, getHeadCellColShow } = props;
+	const { rowIndex, finalColumnsArr, deepLevel, getHeadCellColShow } = props;
 
 	// 是否是叶子节点
 	const isLeaf = rowIndex === deepLevel;
@@ -32,7 +32,7 @@ const HeadRow = <T,>(props: Props<T>) => {
 	const renderRow = () => {
 		let colSameCount = 0;
 		let colNoRenderKey = '';
-		return splitColumnsArr.map((splitColumns, colIndex) => {
+		return finalColumnsArr.map((splitColumns, colIndex) => {
 			const leafColumn = getLeafColumn(splitColumns);
 			if (isLeaf) {
 				// 不存在column
@@ -59,7 +59,7 @@ const HeadRow = <T,>(props: Props<T>) => {
 						rowIndexStart={rowIndexStart}
 						getColKeys={props.getColKeys}
 						startResize={props.startResize}
-						splitColumnsArr={splitColumnsArr}
+						finalColumnsArr={finalColumnsArr}
 						getHeadCellBg={props.getHeadCellBg}
 						renderHeadPrefix={props.renderHeadPrefix}
 						getHeadStickyStyle={props.getHeadStickyStyle}
@@ -71,11 +71,11 @@ const HeadRow = <T,>(props: Props<T>) => {
 				// 不存在column
 				if (!column) return null;
 				// 存在下一列
-				if (splitColumnsArr[colIndex + 1] !== undefined) {
+				if (finalColumnsArr[colIndex + 1] !== undefined) {
 					// 同行下一列column
-					const nextColumn = getNotLeafColumnByIndex(splitColumnsArr[colIndex + 1], rowIndex);
+					const nextColumn = getNotLeafColumnByIndex(finalColumnsArr[colIndex + 1], rowIndex);
 					// 同行下一列叶子节点
-					const nextLeafColumn = getLeafColumn(splitColumnsArr[colIndex + 1]);
+					const nextLeafColumn = getLeafColumn(finalColumnsArr[colIndex + 1]);
 					// 同行下一列和当前列相同【key和fixed都相同】，跳过当前渲染
 					if (column.key === nextColumn?.key && leafColumn.fixed === nextLeafColumn?.fixed) {
 						colSameCount++;
@@ -109,7 +109,7 @@ const HeadRow = <T,>(props: Props<T>) => {
 						rowIndexStart={rowIndexStart}
 						getColKeys={props.getColKeys}
 						startResize={props.startResize}
-						splitColumnsArr={splitColumnsArr}
+						finalColumnsArr={finalColumnsArr}
 						getHeadCellBg={props.getHeadCellBg}
 						renderHeadPrefix={props.renderHeadPrefix}
 						getHeadStickyStyle={props.getHeadStickyStyle}

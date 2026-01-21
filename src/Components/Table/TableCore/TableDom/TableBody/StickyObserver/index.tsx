@@ -8,11 +8,11 @@ import { getLeafColumn } from '../../../TableUtils';
 
 import type { TableInstance } from '../../../useTableInstance';
 
-type Props<T> = Pick<TableInstance<T>, 'fixedLeftMap' | 'fixedRightMap' | 'splitColumnsArr' | 'bodyRef' | 'setPingedMap' | 'gridTemplateColumns'>;
+type Props<T> = Pick<TableInstance<T>, 'fixedLeftMap' | 'fixedRightMap' | 'finalColumnsArr' | 'bodyRef' | 'setPingedMap' | 'gridTemplateColumns'>;
 
 const StickyObserver = <T,>(props: Props<T>) => {
 	const { throttle } = useFrameThrottle();
-	const { splitColumnsArr, bodyRef, setPingedMap, gridTemplateColumns } = props;
+	const { finalColumnsArr, bodyRef, setPingedMap, gridTemplateColumns } = props;
 	const [intersectionObserver, setIntersectionObserver] = useState<IntersectionObserver | null>(null);
 
 	// IntersectionObserver
@@ -74,7 +74,7 @@ const StickyObserver = <T,>(props: Props<T>) => {
 			className={styles['sticky-observer']}
 			style={{ gridTemplateColumns: gridTemplateColumns + ` minmax(0px, 1fr)` }}
 		>
-			{splitColumnsArr.map((splitColumns, colIndex) => {
+			{finalColumnsArr.map((splitColumns, colIndex) => {
 				const leafColumn = getLeafColumn(splitColumns);
 				if (leafColumn.fixed === 'left' || leafColumn.fixed === 'right') {
 					return (

@@ -17,13 +17,13 @@ type Props<T> = {
 
 const useHTableVirtual = <T>({ tableColumns, tableState, tableDomRef }: Props<T>) => {
 	const { sizeCacheMap } = tableState;
-	const { splitColumnsArr, columnKeys, colBodyForceRenderMap, colHeadForceRenderMap, fixedLeftMap, fixedRightMap } = tableColumns;
-	const getH_ItemKey = useCallback((index: number) => getLeafColumn(splitColumnsArr[index]).key, [columnKeys]);
+	const { finalColumnsArr, finalColumnsArrKeys, colBodyForceRenderMap, colHeadForceRenderMap, fixedLeftMap, fixedRightMap } = tableColumns;
+	const getH_ItemKey = useCallback((index: number) => getLeafColumn(finalColumnsArr[index]).key, [finalColumnsArrKeys]);
 
 	const h_virtual = useHVirtualCore({
 		bodyRef: tableDomRef.bodyRef,
 		headRef: tableDomRef.headRef,
-		count: splitColumnsArr.length,
+		count: finalColumnsArr.length,
 		getItemKey: getH_ItemKey,
 		getItemSize: useCallback((index: number) => sizeCacheMap.get(getH_ItemKey(index)) ?? defaultColWidth, [sizeCacheMap, getH_ItemKey]),
 	});
@@ -38,7 +38,7 @@ const useHTableVirtual = <T>({ tableColumns, tableState, tableDomRef }: Props<T>
 		({ colIndexStart, colIndexEnd }: { colIndexStart: number; colIndexEnd: number }) => {
 			if (typeof h_rangeEnd === 'number' && typeof h_rangeStart === 'number') {
 				for (let i = colIndexStart; i <= colIndexEnd; i++) {
-					const key = getLeafColumn(splitColumnsArr[i]).key;
+					const key = getLeafColumn(finalColumnsArr[i]).key;
 					if (colHeadForceRenderMap.get(key) === true) return true;
 					if (fixedLeftMap.get(key) !== undefined || fixedRightMap.get(key) !== undefined) return true;
 					if (i <= h_rangeEnd && i >= h_rangeStart) return true;
@@ -46,7 +46,7 @@ const useHTableVirtual = <T>({ tableColumns, tableState, tableDomRef }: Props<T>
 			}
 			return false;
 		},
-		[h_rangeStart, h_rangeEnd, splitColumnsArr, colHeadForceRenderMap, fixedLeftMap, fixedRightMap],
+		[h_rangeStart, h_rangeEnd, finalColumnsArr, colHeadForceRenderMap, fixedLeftMap, fixedRightMap],
 	);
 
 	// 获取body的col的显示情况
@@ -54,7 +54,7 @@ const useHTableVirtual = <T>({ tableColumns, tableState, tableDomRef }: Props<T>
 		({ colIndexStart, colIndexEnd }: { colIndexStart: number; colIndexEnd: number }) => {
 			if (typeof h_rangeEnd === 'number' && typeof h_rangeStart === 'number') {
 				for (let i = colIndexStart; i <= colIndexEnd; i++) {
-					const key = getLeafColumn(splitColumnsArr[i]).key;
+					const key = getLeafColumn(finalColumnsArr[i]).key;
 					if (colBodyForceRenderMap.get(key) === true) return true;
 					if (fixedLeftMap.get(key) !== undefined || fixedRightMap.get(key) !== undefined) return true;
 					if (i <= h_rangeEnd && i >= h_rangeStart) return true;
@@ -62,19 +62,19 @@ const useHTableVirtual = <T>({ tableColumns, tableState, tableDomRef }: Props<T>
 			}
 			return false;
 		},
-		[h_rangeStart, h_rangeEnd, splitColumnsArr, colBodyForceRenderMap, fixedLeftMap, fixedRightMap],
+		[h_rangeStart, h_rangeEnd, finalColumnsArr, colBodyForceRenderMap, fixedLeftMap, fixedRightMap],
 	);
 
 	// 获取body的col的强制显示情况
 	const getBodyCellColForceShow = useCallback(
 		({ colIndexStart, colIndexEnd }: { colIndexStart: number; colIndexEnd: number }) => {
 			for (let i = colIndexStart; i <= colIndexEnd; i++) {
-				const key = getLeafColumn(splitColumnsArr[i]).key;
+				const key = getLeafColumn(finalColumnsArr[i]).key;
 				if (colBodyForceRenderMap.get(key) === true) return true;
 			}
 			return false;
 		},
-		[splitColumnsArr, colBodyForceRenderMap],
+		[finalColumnsArr, colBodyForceRenderMap],
 	);
 
 	return {

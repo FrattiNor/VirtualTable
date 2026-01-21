@@ -26,13 +26,13 @@ const useTableColumns = <T>({ coreProps, tableState }: Props<T>) => {
 		const getColumnsCore = (c: TableCoreColumns<T>, opt?: { parents: Array<TableCoreColumnGroup<T>>; parentFixed?: TableCoreColumnFixed }) => {
 			const parents = opt?.parents ?? [];
 			const parentFixed = opt?.parentFixed ?? undefined;
-			const splitColumnsArrInner: Array<Array<TableCoreColumn<T> | TableCoreColumnGroup<T>>> = [];
+			const columnsArr: Array<Array<TableCoreColumn<T> | TableCoreColumnGroup<T>>> = [];
 			c.forEach((column) => {
 				// isGroup
 				if (Array.isArray(column.children)) {
 					if (column.children.length > 0) {
 						const current = { ...(column as TableCoreColumnGroup<T>), fixed: parentFixed ?? fixedConf?.[column.key] ?? column.fixed };
-						splitColumnsArrInner.push(...getColumnsCore(column.children, { parents: [current, ...parents], parentFixed: current.fixed }));
+						columnsArr.push(...getColumnsCore(column.children, { parents: [current, ...parents], parentFixed: current.fixed }));
 					}
 				}
 				// isColumn
@@ -44,12 +44,12 @@ const useTableColumns = <T>({ coreProps, tableState }: Props<T>) => {
 						flexGrow: flexGrowConf?.[column.key] ?? column.flexGrow,
 						fixed: parentFixed ?? fixedConf?.[column.key] ?? column.fixed,
 					};
-					splitColumnsArrInner.push([current, ...parents]);
+					columnsArr.push([current, ...parents]);
 					keyIndexMap.set(column.key, index);
 					index++;
 				}
 			});
-			return splitColumnsArrInner;
+			return columnsArr;
 		};
 
 		// 获取columnsCore
@@ -89,10 +89,10 @@ const useTableColumns = <T>({ coreProps, tableState }: Props<T>) => {
 
 	// ======================================== part2 ========================================
 	const colHandleRes = useMemo(() => {
+		// 完整columns的key的合集，用于判断一些Memo
+		let columnsKeys = '';
 		// 存在onCellSpan
 		let existOnCellSpan = false;
-		// col的key的合集，用于判断一些Memo
-		let columnKeys = '';
 		// gridTemplateColumns
 		let gridTemplateColumns = '';
 		// headForceRender
@@ -103,7 +103,9 @@ const useTableColumns = <T>({ coreProps, tableState }: Props<T>) => {
 		const colKey2Index = new Map<string, number>();
 		const colIndex2Key = new Map<number, string>();
 		// 最终columns
-		const splitColumnsArr: Array<Array<TableCoreColumnGroup<T> | TableCoreColumn<T>>> = [];
+		const finalColumnsArr: Array<Array<TableCoreColumnGroup<T> | TableCoreColumn<T>>> = [];
+		// 最终columns的key的合集，用于判断一些Memo
+		let finalColumnsArrKeys = '';
 		// index，当前column所在index
 		// size，当前column的宽度
 		// stickySize，sticky时left，right的数值
@@ -123,9 +125,11 @@ const useTableColumns = <T>({ coreProps, tableState }: Props<T>) => {
 		columnsCore.forEach((splitColumns) => {
 			const leafColumn = getLeafColumn(splitColumns);
 			const sizeCache = sizeCacheMap.get(leafColumn.key);
+			// 计算columnsKeys
+			columnsKeys += `_${leafColumn.key}_`;
 			// col存在测量的size
 			if (typeof sizeCache === 'number') {
-				splitColumnsArr.push(splitColumns);
+				finalColumnsArr.push(splitColumns);
 				// haveOnCellSpan
 				if (typeof leafColumn.onCellSpan === 'function') existOnCellSpan = true;
 				// 计算deepLevel【col的group层数】
@@ -133,8 +137,8 @@ const useTableColumns = <T>({ coreProps, tableState }: Props<T>) => {
 				if (colLevel > deepLevel) deepLevel = colLevel;
 				// 计算totalSize
 				totalSize += sizeCache;
-				// 计算columnKeys
-				columnKeys += `_${leafColumn.key}_`;
+				// 计算finalColumnsArrKeys
+				finalColumnsArrKeys += `_${leafColumn.key}_`;
 				// 计算gridTemplateColumns
 				gridTemplateColumns += gridTemplateColumns === '' ? `${sizeCache}px` : ` ${sizeCache}px`;
 				// 计算colHeadForceRenderObj
@@ -193,11 +197,12 @@ const useTableColumns = <T>({ coreProps, tableState }: Props<T>) => {
 			existOnCellSpan,
 			colKey2Index, // columns对应的key-index
 			colIndex2Key, // columns对应的index-key
-			columnKeys, // 渲染的columns的key组合string，用于判断某些地方的Memo
+			columnsKeys, // 完整的columns的key组合string，用于判断某些地方的Memo
+			finalColumnsArrKeys, // 最终的columns的key组合string，用于判断某些地方的Memo
 
 			fixedLeftMap, // 左固定的map
 			fixedRightMap, // 右固定的map
-			splitColumnsArr, // 渲染的columns
+			finalColumnsArr, // 渲染的columns
 			gridTemplateColumns, // columns的grid的宽度css
 			colBodyForceRenderMap, // colBody强制渲染
 			colHeadForceRenderMap, // colHead强制渲染

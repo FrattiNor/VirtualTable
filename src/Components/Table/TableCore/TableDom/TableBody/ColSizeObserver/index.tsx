@@ -1,20 +1,16 @@
 import { memo, useEffect, useState } from 'react';
 
 import ColSizeObserverItem from './ColSizeObserverItem';
-import ExecLayoutEffectCalc from './ExecLayoutEffectCalc';
 import styles from './index.module.less';
 import { FixedTwo, getDisplayNone, getLeafColumn } from '../../../TableUtils';
 import { maxColWidth, minColWidth } from '../../../TableUtils/configValues';
 
 import type { TableInstance } from '../../../useTableInstance';
 
-type Props<T> = Pick<
-	TableInstance<T>,
-	'columnsCore' | 'setSizeCacheMap' | 'resizeFlag' | 'sizeCacheMap' | 'resized' | 'colSizeObserverRef' | 'columnKeys'
->;
+type Props<T> = Pick<TableInstance<T>, 'columnsCore' | 'setSizeCacheMap' | 'resizeFlag' | 'sizeCacheMap' | 'resized' | 'colSizeObserverRef'>;
 
 const ColSizeObserver = <T,>(props: Props<T>) => {
-	const { columnsCore, setSizeCacheMap, resizeFlag, resized, colSizeObserverRef } = props;
+	const { columnsCore, setSizeCacheMap, resizeFlag, colSizeObserverRef } = props;
 	const [resizeObserver, setResizeObserver] = useState<ResizeObserver | null>(null);
 
 	const sizeCacheChangeBatch = <B,>(items: Array<B>, getKey: (item: B) => string | null, getSize: (item: B) => number) => {
@@ -59,12 +55,6 @@ const ColSizeObserver = <T,>(props: Props<T>) => {
 
 	return (
 		<div ref={colSizeObserverRef} data-row="col-size-observer" className={styles['col-size-observer']}>
-			<ExecLayoutEffectCalc
-				resized={resized}
-				key={props.columnKeys}
-				colSizeObserverRef={colSizeObserverRef}
-				sizeCacheChangeBatch={sizeCacheChangeBatch}
-			/>
 			{columnsCore.map((splitColumns) => {
 				const leafColumn = getLeafColumn(splitColumns);
 				return (

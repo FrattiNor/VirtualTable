@@ -8,7 +8,7 @@ import type { TableInstance } from '../../../useTableInstance';
 
 type Props<T> = Pick<
 	TableInstance<T>,
-	| 'splitColumnsArr'
+	| 'finalColumnsArr'
 	| 'bordered'
 	| 'data'
 	| 'rowKey'
@@ -75,7 +75,7 @@ const BodyContent = <T,>(props: Props<T>) => {
 				bodyRowClick={props.bodyRowClick}
 				getBodyCellBg={props.getBodyCellBg}
 				getBodyCellColShow={getBodyCellColShow}
-				splitColumnsArr={props.splitColumnsArr}
+				finalColumnsArr={props.finalColumnsArr}
 				rowDraggableMode={props.rowDraggableMode}
 				renderCellPrefix={props.renderCellPrefix}
 				highlightKeywords={props.highlightKeywords}

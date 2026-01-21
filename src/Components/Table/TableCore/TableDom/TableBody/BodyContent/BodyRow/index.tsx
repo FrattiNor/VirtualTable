@@ -12,7 +12,7 @@ import type { TableInstance } from '../../../../useTableInstance';
 
 type Props<T> = Pick<
 	TableInstance<T>,
-	| 'splitColumnsArr'
+	| 'finalColumnsArr'
 	| 'bordered'
 	| 'rowHeight'
 	| 'getBodyStickyStyle'
@@ -49,7 +49,7 @@ const BodyRow = <T,>(props: Props<T>) => {
 		itemRowKey,
 		isPlaceholder,
 		draggableProps,
-		splitColumnsArr,
+		finalColumnsArr,
 		rowDraggableMode,
 		getBodyCellColShow,
 		draggableSetNodeRef,
@@ -69,7 +69,7 @@ const BodyRow = <T,>(props: Props<T>) => {
 				[styles['draggable-mode-row']]: rowDraggableMode,
 			})}
 		>
-			{splitColumnsArr.map((splitColumns, colIndex) => {
+			{finalColumnsArr.map((splitColumns, colIndex) => {
 				const leafColumn = getLeafColumn(splitColumns);
 				const { rowSpan = 1, colSpan = 1 } = leafColumn.onCellSpan ? leafColumn.onCellSpan(itemData, rowIndex) : {};
 				// span为0，不渲染
@@ -112,7 +112,7 @@ const BodyRow = <T,>(props: Props<T>) => {
 				borderWidth={props.borderWidth}
 				bodyRowClick={props.bodyRowClick}
 				getBodyCellBg={props.getBodyCellBg}
-				colIndex={props.splitColumnsArr.length}
+				colIndex={props.finalColumnsArr.length}
 				v_measureItemSize={props.v_measureItemSize}
 				bodyRowMouseEnter={props.bodyRowMouseEnter}
 				bodyRowMouseLeave={props.bodyRowMouseLeave}

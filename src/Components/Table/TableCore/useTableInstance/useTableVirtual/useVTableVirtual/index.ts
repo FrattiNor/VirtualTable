@@ -17,7 +17,7 @@ type Props<T> = {
 };
 
 const useTableVirtual = <T>({ coreProps, tableColumns, tableInnerProps, tableDomRef }: Props<T>) => {
-	const { splitColumnsArr, existOnCellSpan } = tableColumns;
+	const { finalColumnsArr, existOnCellSpan } = tableColumns;
 	const { data, rowKey, rowHeight, borderWidth, rowDraggableMode } = tableInnerProps;
 	const draggingRowIndex = coreProps.rowDraggableProps?.draggingRowIndex;
 
@@ -57,8 +57,8 @@ const useTableVirtual = <T>({ coreProps, tableColumns, tableInnerProps, tableDom
 
 			// 遍历重新计算v_rangeStart，v_rangeEnd
 			data?.forEach((itemData, rowIndex) => {
-				for (let i = 0; i < splitColumnsArr.length; i++) {
-					const splitColumns = splitColumnsArr[i];
+				for (let i = 0; i < finalColumnsArr.length; i++) {
+					const splitColumns = finalColumnsArr[i];
 					const leafColumn = getLeafColumn(splitColumns);
 					const { rowSpan = 1, colSpan = 1 } = leafColumn.onCellSpan ? leafColumn.onCellSpan(itemData, rowIndex) : {};
 					if (rowSpan <= 0 || colSpan <= 0) continue;
@@ -74,7 +74,7 @@ const useTableVirtual = <T>({ coreProps, tableColumns, tableInnerProps, tableDom
 		}
 
 		return { v_rangeStart: v_rangeStart_origin, v_rangeEnd: v_rangeEnd_origin };
-	}, [v_rangeStart_origin, v_rangeEnd_origin, data, splitColumnsArr, existOnCellSpan, rowDraggableMode]);
+	}, [v_rangeStart_origin, v_rangeEnd_origin, data, finalColumnsArr, existOnCellSpan, rowDraggableMode]);
 
 	const v_offsetTop = useMemo(() => v_sizeList?.[v_rangeStart ?? -1]?.start ?? 0, [v_sizeList, v_rangeStart]);
 

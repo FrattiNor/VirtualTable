@@ -12,7 +12,7 @@ type Props<T> = {
 
 const useTableUtils = <T>({ tableColumns, tableInnerProps }: Props<T>) => {
 	const { data, rowKey } = tableInnerProps;
-	const { splitColumnsArr } = tableColumns;
+	const { finalColumnsArr } = tableColumns;
 
 	const getRowKeys = useCallback(
 		(rowIndexStart: number, rowIndexEnd: number) => {
@@ -35,7 +35,7 @@ const useTableUtils = <T>({ tableColumns, tableInnerProps }: Props<T>) => {
 		(colIndexStart: number, colIndexEnd: number) => {
 			const colKeys: string[] = [];
 			for (let i = colIndexStart; i <= colIndexEnd; i++) {
-				const splitColumns = splitColumnsArr[i];
+				const splitColumns = finalColumnsArr[i];
 				if (splitColumns) {
 					const leafColumn = getLeafColumn(splitColumns);
 					colKeys.push(leafColumn.key);
@@ -43,7 +43,7 @@ const useTableUtils = <T>({ tableColumns, tableInnerProps }: Props<T>) => {
 			}
 			return colKeys;
 		},
-		[splitColumnsArr],
+		[finalColumnsArr],
 	);
 
 	return { getRowKeys, getColKeys };

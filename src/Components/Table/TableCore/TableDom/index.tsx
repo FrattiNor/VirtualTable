@@ -52,7 +52,7 @@ const TableDom = <T,>(coreProps: TableCoreProps<T>) => {
 					v_scrollbar={props.v_scrollbar}
 					startResize={props.startResize}
 					getHeadCellBg={props.getHeadCellBg}
-					splitColumnsArr={props.splitColumnsArr}
+					finalColumnsArr={props.finalColumnsArr}
 					renderHeadPrefix={props.renderHeadPrefix}
 					getHeadCellColShow={props.getHeadCellColShow}
 					getHeadStickyStyle={props.getHeadStickyStyle}
@@ -67,11 +67,11 @@ const TableDom = <T,>(coreProps: TableCoreProps<T>) => {
 						resized={props.resized}
 						bordered={props.bordered}
 						rowHeight={props.rowHeight}
-						columnKeys={props.columnKeys}
 						tableWidth={props.tableWidth}
 						resizeFlag={props.resizeFlag}
 						getColKeys={props.getColKeys}
 						getRowKeys={props.getRowKeys}
+						columnsKeys={props.columnsKeys}
 						renderEmpty={props.renderEmpty}
 						v_offsetTop={props.v_offsetTop}
 						columnsCore={props.columnsCore}
@@ -82,13 +82,12 @@ const TableDom = <T,>(coreProps: TableCoreProps<T>) => {
 						fixedLeftMap={props.fixedLeftMap}
 						setPingedMap={props.setPingedMap}
 						bodyRowClick={props.bodyRowClick}
-						colSizeObserverRef={props.colSizeObserverRef}
 						fixedRightMap={props.fixedRightMap}
 						getBodyCellBg={props.getBodyCellBg}
 						renderBodyDom={props.renderBodyDom}
 						draggingRowKey={props.draggingRowKey}
 						setSizeCacheMap={props.setSizeCacheMap}
-						splitColumnsArr={props.splitColumnsArr}
+						finalColumnsArr={props.finalColumnsArr}
 						draggingRowIndex={props.draggingRowIndex}
 						rowDraggableMode={props.rowDraggableMode}
 						renderCellPrefix={props.renderCellPrefix}
@@ -98,6 +97,7 @@ const TableDom = <T,>(coreProps: TableCoreProps<T>) => {
 						bodyRowMouseLeave={props.bodyRowMouseLeave}
 						getBodyCellColShow={props.getBodyCellColShow}
 						getBodyStickyStyle={props.getBodyStickyStyle}
+						colSizeObserverRef={props.colSizeObserverRef}
 						draggingRow_notShow={props.draggingRow_notShow}
 						gridTemplateColumns={props.gridTemplateColumns}
 						RowDraggableWrapper={props.RowDraggableWrapper}

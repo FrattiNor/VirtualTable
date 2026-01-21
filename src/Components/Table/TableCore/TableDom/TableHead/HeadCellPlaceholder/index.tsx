@@ -6,14 +6,14 @@ import styles from './index.module.less';
 
 import type { TableInstance } from '../../../useTableInstance';
 
-type Props<T> = Pick<TableInstance<T>, 'bordered' | 'rowHeight' | 'splitColumnsArr'> & {
+type Props<T> = Pick<TableInstance<T>, 'bordered' | 'rowHeight' | 'finalColumnsArr'> & {
 	rowIndexStart: number;
 	rowIndexEnd: number;
 };
 
 const HeadCellPlaceholder = <T,>(props: Props<T>) => {
-	const { bordered, rowIndexStart, rowIndexEnd, splitColumnsArr, rowHeight } = props;
-	const colIndex = splitColumnsArr.length;
+	const { bordered, rowIndexStart, rowIndexEnd, finalColumnsArr, rowHeight } = props;
+	const colIndex = finalColumnsArr.length;
 
 	return (
 		<div
