@@ -1,9 +1,12 @@
 import { type ReactNode, type CSSProperties, type RefObject, type FC } from 'react';
 
-import type { TableCoreColumnConf, TableCoreTheme, TableCoreRef, TableRowKey, TableCoreSorter } from './type';
+import type { TableCoreColumnConf, TableCoreTheme, TableCoreRef, TableRowKey, TableCoreSorter, RowKeyType } from './type';
 import type { TableCoreColumn, TableCoreColumns } from './typeColumn';
 
-export type TableCoreProps<T> = {
+// T 数据源
+// K 数据源的行key
+// S 总结栏数据源
+export type TableCoreProps<T, K = RowKeyType, S = any> = {
 	// 对外暴露api
 	tableRef?: RefObject<TableCoreRef>;
 	// 主题
@@ -14,12 +17,14 @@ export type TableCoreProps<T> = {
 	style?: CSSProperties;
 	// 数据源
 	data: Array<T> | undefined;
+	// 总结栏数据源
+	summaryData?: Array<S> | undefined;
 	// 列配置
 	columns: TableCoreColumns<T>;
 	// 列配置【覆盖】
 	columnConf?: TableCoreColumnConf;
 	// 行key
-	rowKey: TableRowKey<T>;
+	rowKey: TableRowKey<T, K>;
 	// 边框样式
 	bordered?: boolean;
 	// 最小行高
@@ -46,9 +51,11 @@ export type TableCoreProps<T> = {
 	sorter?: TableCoreSorter;
 	// 行点击，使用外部状态
 	rowClick?: {
-		rowClickedMap: Map<string, true>;
-		setRowClickedMap: React.Dispatch<React.SetStateAction<Map<string, true>>>;
+		rowClickedMap: Map<K, true>;
+		setRowClickedMap: React.Dispatch<React.SetStateAction<Map<K, true>>>;
 	};
+	// 启用阻止滚动冒泡【使用overscroll-behavior实现】
+	enableScrollStopPropagation?: boolean;
 
 	// 影响：增加选择列、选中状态行背景色修改
 	// === rowSelectProps ===
@@ -56,7 +63,7 @@ export type TableCoreProps<T> = {
 		// 行选择列配置
 		rowSelectionColum: TableCoreColumn<T>;
 		// 行选中状态
-		rowSelectedKeyMap: Map<string, boolean>;
+		rowSelectedKeyMap: Map<K, boolean>;
 	};
 
 	// 影响：head和body的cell之前渲染额外内容
@@ -74,13 +81,13 @@ export type TableCoreProps<T> = {
 	// === rowDraggableProps ===
 	rowDraggableProps?: {
 		// 正在行拖拽的key 【行高亮使用】
-		draggingRowKey?: string;
+		draggingRowKey?: K;
 		// 正在行拖拽的key 【虚拟渲染使用】
 		draggingRowIndex?: number;
 		// 行拖拽列配置
 		rowDraggableColum: TableCoreColumn<T>;
 		// 配置每行的外壳，注入参数
-		RowDraggableWrapper: FC<{ rowKey: string; rowIndex: number; children: JSX.Element }>;
+		RowDraggableWrapper: FC<{ rowKey: K; rowIndex: number; children: JSX.Element }>;
 		// 渲染DraggableContext外壳
 		renderWidthDraggableWrapper: (children: ReactNode) => JSX.Element;
 	};

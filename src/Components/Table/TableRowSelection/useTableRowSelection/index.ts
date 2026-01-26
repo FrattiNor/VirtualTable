@@ -5,6 +5,7 @@ import { type TableCoreProps } from '../../TableCore/TableTypes/typeProps';
 import { type TableRowSelection } from '../type';
 import useRowParams from './useRowParams';
 import useSelectionColTitle from './useSelectionColTitle';
+import { type RowKeyType } from '../../TableCore/TableTypes/type';
 
 type Props<T> = {
 	data: TableCoreProps<T>['data'];
@@ -27,7 +28,7 @@ const useTableRowSelection = <T>({ data, rowKey, rowSelection }: Props<T>) => {
 	// 可选中的key变更，清除不存在的key
 	useEffect(() => {
 		setSelectedKeys((oldKeys) => {
-			const newKeys: string[] = [];
+			const newKeys: RowKeyType[] = [];
 			oldKeys.forEach((key) => {
 				if (allCouldSelectedKeyMap.get(key)) newKeys.push(key);
 			});

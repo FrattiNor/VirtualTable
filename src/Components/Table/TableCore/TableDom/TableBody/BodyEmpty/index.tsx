@@ -1,22 +1,26 @@
 import { memo } from 'react';
 
 import emptyLight from './emptyLight.png';
+import styles from './index.module.less';
 
 import type { TableInstance } from '../../../useTableInstance';
+
+const imageHeight = 100;
+const textLineHeight = 1;
 
 type Props<T> = Pick<TableInstance<T>, 'tableWidth' | 'theme' | 'renderEmpty'>;
 
 const BodyEmpty = <T,>({ theme, tableWidth, renderEmpty }: Props<T>) => {
 	const lightEmpty = (
-		<div style={{ padding: '50px 0', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column' }}>
-			<img src={emptyLight} style={{ height: 100 }} />
-			<div style={{ lineHeight: 1 }}>{'暂无数据'}</div>
+		<div className={styles['empty-inner']}>
+			<img src={emptyLight} style={{ height: imageHeight }} />
+			<div style={{ lineHeight: textLineHeight }}>{'暂无数据'}</div>
 		</div>
 	);
 
 	const darkEmpty = (
-		<div style={{ padding: '50px 0', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column' }}>
-			<div style={{ height: 100, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+		<div className={styles['empty-inner']}>
+			<div style={{ height: imageHeight, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
 				<svg width="96" height="61.5" viewBox="0 0 64 41" xmlns="http://www.w3.org/2000/svg">
 					<g transform="translate(0 1)" fill="none" fillRule="evenodd">
 						<ellipse fill="rgba(255, 255, 255, 0.1)" cx="32" cy="33" rx="32" ry="7"></ellipse>
@@ -30,13 +34,17 @@ const BodyEmpty = <T,>({ theme, tableWidth, renderEmpty }: Props<T>) => {
 					</g>
 				</svg>
 			</div>
-			<div style={{ lineHeight: 1 }}>{'暂无数据'}</div>
+			<div style={{ lineHeight: textLineHeight }}>{'暂无数据'}</div>
 		</div>
 	);
 
 	const empty = theme === 'light' ? lightEmpty : darkEmpty;
 
-	return <div style={{ left: 0, minWidth: '100%', width: tableWidth, position: 'sticky' }}>{renderEmpty ?? empty}</div>;
+	return (
+		<div className={styles['empty-wrapper']} style={{ width: tableWidth }}>
+			{renderEmpty ?? empty}
+		</div>
+	);
 };
 
 export default memo(BodyEmpty) as typeof BodyEmpty;

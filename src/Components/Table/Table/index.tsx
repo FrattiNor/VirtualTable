@@ -2,7 +2,7 @@ import { memo } from 'react';
 
 import TableCore from '../TableCore';
 import { _dragHooksProps } from '../TableRowDrag';
-import { type TableProps } from './type';
+import { type TableComponent, type TableProps } from './type';
 import useRowDraggable from '../TableRowDrag/useRowDraggable';
 import { _selectionHooksProps } from '../TableRowSelection';
 import useTableRowSelection from '../TableRowSelection/useTableRowSelection';
@@ -49,4 +49,4 @@ const Table = <T extends Record<string, unknown>>(props: TableProps<T>) => {
 	return <TableCore {...tableDomProps} />;
 };
 
-export default memo(Table) as typeof Table;
+export default memo(Table) as TableComponent;

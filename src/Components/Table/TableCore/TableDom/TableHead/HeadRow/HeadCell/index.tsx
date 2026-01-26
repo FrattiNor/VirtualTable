@@ -130,7 +130,7 @@ const HeadCell = <T,>(props: Props<T>) => {
 				);
 
 				// 不存在filter 且 不存在sort
-				if (!filterDom && !couldSort) return content;
+				if (!filterDom && !couldSort && !renderHeadPrefix) return content;
 
 				// 存在filter 或 操作sort
 				return (

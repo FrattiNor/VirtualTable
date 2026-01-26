@@ -1,18 +1,18 @@
 import { useCallback, useMemo, type CSSProperties } from 'react';
 
-import { type TableCoreColumnFixed } from '../../TableTypes/type';
+import { type RowKeyType, type TableCoreColumnFixed } from '../../TableTypes/type';
 import { transformWidthArrToStr } from '../../TableUtils';
 
 import type useTableColumns from '../useTableColumns';
 import type useTableState from '../useTableState';
 
-type Props<T> = {
-	tableState: ReturnType<typeof useTableState>;
-	tableColumns: ReturnType<typeof useTableColumns<T>>;
+type Props<T, K, S> = {
+	tableState: ReturnType<typeof useTableState<T, K, S>>;
+	tableColumns: ReturnType<typeof useTableColumns<T, K, S>>;
 };
 
 // 表格左右固定
-const useTableSticky = <T>({ tableColumns, tableState }: Props<T>) => {
+const useTableSticky = <T, K = RowKeyType, S = any>({ tableColumns, tableState }: Props<T, K, S>) => {
 	const { v_scrollbar, pingedMap } = tableState;
 	const { fixedLeftMap, fixedRightMap, colKey2Index, colIndex2Key } = tableColumns;
 

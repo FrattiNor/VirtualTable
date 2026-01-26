@@ -1,3 +1,6 @@
+import { type ReactNode } from 'react';
+
+import { type RowKeyType } from '../TableCore/TableTypes/type';
 import { type TableCoreProps } from '../TableCore/TableTypes/typeProps';
 
 // Tree参数
@@ -15,7 +18,11 @@ export type TableTreeExpand<T> = {
 	defaultExpandAll?: boolean;
 };
 
-export type TableTreeProps<T> = TableCoreProps<T> & {
+export type TableTreeProps<T, K = RowKeyType, S = any> = TableCoreProps<T, K, S> & {
 	// 树形展开
 	treeExpand: TableTreeExpand<T>;
 };
+
+export type TableTreeComponent = <T extends Record<string, unknown>, K extends RowKeyType, S extends Record<string, unknown>>(
+	props: TableTreeProps<T, K, S>,
+) => ReactNode;

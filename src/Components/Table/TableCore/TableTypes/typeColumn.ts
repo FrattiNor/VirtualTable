@@ -7,12 +7,14 @@ import type {
 	TableCoreColumnOnCellStyle,
 	TableCoreColumnOnCellTitle,
 	TableCoreColumnRender,
+	TableCoreColumnSummaryRender,
 	TableCoreColumnWidth,
 } from './type';
 import type { Partial2Undefined } from './typeUtil';
 
+// 对内的完整类型
 // onCell 的 colSpan 和 fixed 存在冲突
-export type TableCoreColumn<T> = {
+type _TableCoreColumn<T, S = any> = {
 	// 列key
 	key: string;
 	// 列标题
@@ -21,6 +23,8 @@ export type TableCoreColumn<T> = {
 	titleStr?: string;
 	// 列单元格渲染
 	render?: TableCoreColumnRender<T>;
+	// 总结栏列单元格渲染
+	summaryRender?: TableCoreColumnSummaryRender<S>;
 	// 列宽
 	width?: TableCoreColumnWidth;
 	// 未resize的情况下，自动填充【默认1】
@@ -35,6 +39,8 @@ export type TableCoreColumn<T> = {
 	colBodyForceRender?: boolean;
 	// 强制渲染列【fixed会默认forceRender】【用于处理不定高】
 	colHeadForceRender?: boolean;
+	// 强制渲染列【fixed会默认forceRender】【用于处理不定高】
+	colSummaryForceRender?: boolean;
 	// 列搜索【外部提供搜索】
 	filter?: ReactNode;
 	// 高亮关键字
@@ -53,8 +59,21 @@ export type TableCoreColumn<T> = {
 	children?: undefined;
 };
 
+// 对外的类型【有render时，key为任意string，无render时，key必须为keyof T】
+export type TableCoreColumn<T, S = any> =
+	| (Omit<_TableCoreColumn<T, S>, 'key' | 'render'> & {
+			key: string;
+			render: TableCoreColumnRender<T>;
+	  })
+	| (Omit<_TableCoreColumn<T, S>, 'key' | 'render'> & {
+			key: keyof T & string;
+			render?: undefined;
+	  });
+
 // Group的fixed将会覆盖子节点，不论left|right|undefined
-export type TableCoreColumnGroup<T> = Partial2Undefined<Omit<TableCoreColumn<T>, 'key' | 'title' | 'titleStr' | 'children' | 'filter' | 'fixed'>> & {
+export type TableCoreColumnGroup<T, S = any> = Partial2Undefined<
+	Omit<TableCoreColumn<T, S>, 'key' | 'title' | 'titleStr' | 'children' | 'filter' | 'fixed'>
+> & {
 	// 列key
 	key: string;
 	// 列标题
@@ -66,7 +85,7 @@ export type TableCoreColumnGroup<T> = Partial2Undefined<Omit<TableCoreColumn<T>,
 	// TODO 列固定【覆盖子类】
 	fixed?: TableCoreColumnFixed;
 	// 列子项
-	children: Array<TableCoreColumn<T> | TableCoreColumnGroup<T>>;
+	children: TableCoreColumns<T, S>;
 };
 
-export type TableCoreColumns<T> = Array<TableCoreColumn<T> | TableCoreColumnGroup<T>>;
+export type TableCoreColumns<T, S = any> = Array<TableCoreColumn<T, S> | TableCoreColumnGroup<T, S>>;

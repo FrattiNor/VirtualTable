@@ -1,10 +1,11 @@
 import { useMemo } from 'react';
 
+import { type RowKeyType } from '../../TableCore/TableTypes/type';
 import { type TableRowSelection } from '../type';
 
 type Props<T> = {
-	allSelectedKeyMap: Map<string, true>;
-	allCouldSelectedKeyMap: Map<string, true>;
+	allSelectedKeyMap: Map<RowKeyType, true>;
+	allCouldSelectedKeyMap: Map<RowKeyType, true>;
 	rowSelection: TableRowSelection<T>;
 };
 

@@ -29,20 +29,16 @@ export const useVirtualScroll = (direction: 'scrollTop' | 'scrollLeft', getEleme
 			// 开始值
 			const startTarget = el[direction];
 
-			// 【真·目标值】
-			let target = getTrueTarget(startTarget + offset);
-
-			// 之前的【真·目标值】和当前的【真·目标值】一致【按之前滚动执行，当前滚动不执行】
-			if (beforeRef.current && beforeRef.current.target === target) return;
+			// 目标值
+			let target = startTarget + offset;
 
 			// 和之前的滚动方向一致，之前的目标未完成、则继承之前未完成的滚动距离
 			if (beforeRef.current && beforeRef.current.isAdd === isAdd) {
-				const _target = isAdd ? Math.max(beforeRef.current.target + offset, target) : Math.min(beforeRef.current.target + offset, target);
-				target = getTrueTarget(_target);
+				target = isAdd ? Math.max(beforeRef.current.target + offset, target) : Math.min(beforeRef.current.target + offset, target);
 			}
 
 			// 开始值和【真·目标值】一致
-			if (startTarget === target) return;
+			if (startTarget === getTrueTarget(target)) return;
 
 			// 记录当前的滚动记录
 			beforeRef.current = { isAdd, target };
@@ -55,17 +51,20 @@ export const useVirtualScroll = (direction: 'scrollTop' | 'scrollLeft', getEleme
 				// 滚动百分比
 				const per = (performance.now() - dateValueRef.current) / duration;
 
-				// 根据滚动百分比和缓动函数计算出滚动目标值
-				const currentScrollTarget = startTarget + linear(per) * changeValue;
+				// 【真·滚动百分比】
+				const truePer = Math.min(1, Math.max(0, per));
+
+				// 根据【真·滚动百分比】和缓动函数计算出滚动目标值
+				const scrollTarget = startTarget + linear(truePer) * changeValue;
 
 				// 执行滚动
-				el[direction] = Number(currentScrollTarget.toFixed(3));
+				el[direction] = Number(scrollTarget.toFixed(3));
 
 				// 如果当前滚动百分比未超过1，滚动目标值还在范围内
-				if (per <= 1 && currentScrollTarget >= minTarget && currentScrollTarget <= maxTarget) {
+				if (per <= 1 && scrollTarget >= minTarget && scrollTarget <= maxTarget) {
 					requestIdRef.current = requestAnimationFrame(animateScroll);
-				} else if (requestIdRef.current) {
-					cancelAnimationFrame(requestIdRef.current);
+				} else {
+					if (requestIdRef.current) cancelAnimationFrame(requestIdRef.current);
 					requestIdRef.current = null;
 					beforeRef.current = null;
 				}

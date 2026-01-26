@@ -1,17 +1,17 @@
 import { useDeferredValue, useMemo, useState } from 'react';
 
-import { type TableCoreColumnFixed, type TableCoreResizeFlag, type TableCoreScrollbarState } from '../../TableTypes/type';
+import { type RowKeyType, type TableCoreColumnFixed, type TableCoreResizeFlag, type TableCoreScrollbarState } from '../../TableTypes/type';
 import { type TableCoreProps } from '../../TableTypes/typeProps';
 import { transformWidthArrToStr } from '../../TableUtils';
 
 import type useTableInnerProps from '../useTableInnerProps';
 
-type Props<T> = {
-	coreProps: TableCoreProps<T>;
-	tableInnerProps: ReturnType<typeof useTableInnerProps<T>>;
+type Props<T, K, S> = {
+	coreProps: TableCoreProps<T, K, S>;
+	tableInnerProps: ReturnType<typeof useTableInnerProps<T, K, S>>;
 };
 
-const useTableState = <T>({ tableInnerProps, coreProps }: Props<T>) => {
+const useTableState = <T, K = RowKeyType, S = any>({ tableInnerProps, coreProps }: Props<T, K, S>) => {
 	const { bordered } = tableInnerProps;
 
 	// body宽度
@@ -21,11 +21,11 @@ const useTableState = <T>({ tableInnerProps, coreProps }: Props<T>) => {
 	// 拖拽修改列宽标记
 	const [resizeFlag, setResizeFlag] = useState<TableCoreResizeFlag | null>(() => null);
 	// 行click { [key]: true }
-	const [_rowClickedMap, _setRowClickedMap] = useState<Map<string, true>>(() => new Map());
+	const [_rowClickedMap, _setRowClickedMap] = useState<Map<K, true>>(() => new Map());
 	const rowClickedMap = coreProps?.rowClick?.rowClickedMap ?? _rowClickedMap;
 	const setRowClickedMap = coreProps?.rowClick?.setRowClickedMap ?? _setRowClickedMap;
 	// 行hover { [key]: true }
-	const [rowHoveredMap, setRowHoveredMap] = useState<Map<string, true>>(() => new Map());
+	const [rowHoveredMap, setRowHoveredMap] = useState<Map<K, true>>(() => new Map());
 	// 列宽state  { [key]: number }
 	const [sizeCacheMap, setSizeCacheMap] = useState<Map<string, number>>(() => new Map());
 	// 纵向滚动条

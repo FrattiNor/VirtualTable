@@ -2,6 +2,7 @@ import { useCallback, useMemo } from 'react';
 
 import useVVirtualCore from './useVVirtualCore';
 import useRefValue from '../../../TableHooks/useRefValue';
+import { type RowKeyType } from '../../../TableTypes/type';
 import { type TableCoreProps } from '../../../TableTypes/typeProps';
 import { getLeafColumn, getRowKey } from '../../../TableUtils';
 
@@ -9,14 +10,14 @@ import type useTableColumns from '../../useTableColumns';
 import type useTableDomRef from '../../useTableDomRef';
 import type useTableInnerProps from '../../useTableInnerProps';
 
-type Props<T> = {
-	coreProps: TableCoreProps<T>;
+type Props<T, K, S> = {
+	coreProps: TableCoreProps<T, K, S>;
 	tableDomRef: ReturnType<typeof useTableDomRef>;
-	tableColumns: ReturnType<typeof useTableColumns<T>>;
-	tableInnerProps: ReturnType<typeof useTableInnerProps<T>>;
+	tableColumns: ReturnType<typeof useTableColumns<T, K, S>>;
+	tableInnerProps: ReturnType<typeof useTableInnerProps<T, K, S>>;
 };
 
-const useTableVirtual = <T>({ coreProps, tableColumns, tableInnerProps, tableDomRef }: Props<T>) => {
+const useTableVirtual = <T, K = RowKeyType, S = any>({ coreProps, tableColumns, tableInnerProps, tableDomRef }: Props<T, K, S>) => {
 	const { finalColumnsArr, existOnCellSpan } = tableColumns;
 	const { data, rowKey, rowHeight, borderWidth, rowDraggableMode } = tableInnerProps;
 	const draggingRowIndex = coreProps.rowDraggableProps?.draggingRowIndex;
@@ -24,7 +25,7 @@ const useTableVirtual = <T>({ coreProps, tableColumns, tableInnerProps, tableDom
 	const v_virtual = useVVirtualCore({
 		count: data?.length ?? 0,
 		bodyRef: tableDomRef.bodyRef,
-		getItemKey: useCallback((index: number) => getRowKey(rowKey, data?.[index] as T), [rowKey, data]),
+		getItemKey: useCallback((index: number) => getRowKey(rowKey, data?.[index]) as RowKeyType, [rowKey, data]),
 		getItemSize: useCallback((index: number) => (index === 0 ? rowHeight - borderWidth : rowHeight), [rowHeight, borderWidth]),
 	});
 

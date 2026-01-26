@@ -6,6 +6,7 @@ import BodyCell from './BodyCell';
 import BodyCellPlaceholder from './BodyCellPlaceholder';
 import styles from './index.module.less';
 import useRefCallback from '../../../../TableHooks/useRefCallback';
+import { type RowKeyType } from '../../../../TableTypes/type';
 import { getLeafColumn } from '../../../../TableUtils';
 
 import type { TableInstance } from '../../../../useTableInstance';
@@ -32,7 +33,7 @@ type Props<T> = Pick<
 > & {
 	itemData: T;
 	rowIndex: number;
-	itemRowKey: string;
+	itemRowKey: RowKeyType;
 	isPlaceholder: boolean;
 	// ==== 给RowDraggableWrapper组件注入使用 ====
 	style?: CSSProperties;

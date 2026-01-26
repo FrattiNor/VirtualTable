@@ -3,6 +3,7 @@ import { useMemo, type PropsWithChildren } from 'react';
 import { DndContext, type DragStartEvent, type DragEndEvent } from '@dnd-kit/core';
 import { arrayMove, SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 
+import { type RowKeyType } from '../../TableCore/TableTypes/type';
 import { type TableCoreProps } from '../../TableCore/TableTypes/typeProps';
 import { getRowKey } from '../../TableCore/TableUtils';
 import { type TableRowDraggable } from '../type';
@@ -11,7 +12,7 @@ type Props<T> = PropsWithChildren<{
 	data: TableCoreProps<T>['data'];
 	rowKey: TableCoreProps<T>['rowKey'];
 	rowDraggable: TableRowDraggable;
-	setDragActive: React.Dispatch<React.SetStateAction<{ rowKey: string; rowIndex: number } | null>>;
+	setDragActive: React.Dispatch<React.SetStateAction<{ rowKey: RowKeyType; rowIndex: number } | null>>;
 }>;
 
 const DraggableWrapper = <T,>({ data, rowKey, rowDraggable, children, setDragActive }: Props<T>) => {

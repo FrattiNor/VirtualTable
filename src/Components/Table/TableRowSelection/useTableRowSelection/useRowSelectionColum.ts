@@ -1,5 +1,6 @@
 import { type ReactNode } from 'react';
 
+import { type RowKeyType } from '../../TableCore/TableTypes/type';
 import { type TableCoreColumn } from '../../TableCore/TableTypes/typeColumn';
 import { type TableCoreProps } from '../../TableCore/TableTypes/typeProps';
 import { getRowKey } from '../../TableCore/TableUtils';
@@ -8,8 +9,8 @@ import { type TableRowSelection } from '../type';
 type Props<T> = {
 	title: ReactNode;
 	rowKey: TableCoreProps<T>['rowKey'];
-	disabledMap: Map<string, boolean>;
-	allSelectedKeyMap: Map<string, true>;
+	disabledMap: Map<RowKeyType, boolean>;
+	allSelectedKeyMap: Map<RowKeyType, true>;
 	rowSelection: TableRowSelection<T>;
 };
 

@@ -1,22 +1,23 @@
 import { useCallback } from 'react';
 
 import { getLeafColumn, getRowKey } from '../../../TableCore/TableUtils';
+import { type RowKeyType } from '../../TableTypes/type';
 
 import type useTableColumns from '../useTableColumns';
 import type useTableInnerProps from '../useTableInnerProps';
 
-type Props<T> = {
-	tableColumns: ReturnType<typeof useTableColumns<T>>;
-	tableInnerProps: ReturnType<typeof useTableInnerProps<T>>;
+type Props<T, K, S> = {
+	tableColumns: ReturnType<typeof useTableColumns<T, K, S>>;
+	tableInnerProps: ReturnType<typeof useTableInnerProps<T, K, S>>;
 };
 
-const useTableUtils = <T>({ tableColumns, tableInnerProps }: Props<T>) => {
+const useTableUtils = <T, K = RowKeyType, S = any>({ tableColumns, tableInnerProps }: Props<T, K, S>) => {
 	const { data, rowKey } = tableInnerProps;
 	const { finalColumnsArr } = tableColumns;
 
 	const getRowKeys = useCallback(
 		(rowIndexStart: number, rowIndexEnd: number) => {
-			const rowKeys: string[] = [];
+			const rowKeys: K[] = [];
 			if (Array.isArray(data)) {
 				for (let i = rowIndexStart; i <= rowIndexEnd; i++) {
 					const itemData = data[i];

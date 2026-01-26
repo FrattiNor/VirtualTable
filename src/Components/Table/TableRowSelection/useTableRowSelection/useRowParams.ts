@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 
+import { type RowKeyType } from '../../TableCore/TableTypes/type';
 import { type TableCoreProps } from '../../TableCore/TableTypes/typeProps';
 import { getRowKey } from '../../TableCore/TableUtils';
 import { type TableRowSelection } from '../type';
@@ -15,14 +16,14 @@ const useRowParams = <T>({ rowSelection, data, rowKey }: Props<T>) => {
 	const { getDisabled, selectedKeys } = rowSelection;
 
 	const allSelectedKeyMap = useMemo(() => {
-		const keyMap = new Map<string, true>();
+		const keyMap = new Map<RowKeyType, true>();
 		selectedKeys.forEach((key) => keyMap.set(key, true));
 		return keyMap;
 	}, [selectedKeys]);
 
 	const { allCouldSelectedKeyMap, disabledMap } = useMemo(() => {
-		const disabledMap = new Map<string, boolean>();
-		const allCouldSelectedKeyMap = new Map<string, true>();
+		const disabledMap = new Map<RowKeyType, boolean>();
+		const allCouldSelectedKeyMap = new Map<RowKeyType, true>();
 		data?.forEach((itemData) => {
 			const key = getRowKey(rowKey, itemData);
 			const disabled = typeof getDisabled === 'function' ? getDisabled(itemData) : false;

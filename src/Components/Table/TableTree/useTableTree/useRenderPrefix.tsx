@@ -1,5 +1,6 @@
 import { useCallback } from 'react';
 
+import { type RowKeyType } from '../../TableCore/TableTypes/type';
 import { type TableCoreProps } from '../../TableCore/TableTypes/typeProps';
 import { getRowKey } from '../../TableCore/TableUtils';
 import ExpandableIcon from '../ExpandableIcon';
@@ -10,10 +11,10 @@ type Props<T> = {
 	rowKey: TableCoreProps<T>['rowKey'];
 	columns: TableCoreProps<T>['columns'];
 	treeExpand: TableTreeExpand<T>;
-	allCouldExpandKeyMap: Map<string, true>;
-	levelMap: Map<string, number>;
-	allExpandedKeyMap: Map<string, true>;
-	setExpandKeys: React.Dispatch<React.SetStateAction<string[] | null>>;
+	allCouldExpandKeyMap: Map<RowKeyType, true>;
+	levelMap: Map<RowKeyType, number>;
+	allExpandedKeyMap: Map<RowKeyType, true>;
+	setExpandKeys: React.Dispatch<React.SetStateAction<RowKeyType[] | null>>;
 };
 
 const useRenderPrefix = <T,>(props: Props<T>) => {

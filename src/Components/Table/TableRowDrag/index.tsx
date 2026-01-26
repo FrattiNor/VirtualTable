@@ -2,7 +2,7 @@
 import { memo } from 'react';
 
 import TableCore from '../TableCore';
-import { type TableRowDragProps } from './type';
+import { type TableRowDragComponent, type TableRowDragProps } from './type';
 import useRowDraggable from './useRowDraggable';
 
 export const _dragHooksProps: Parameters<typeof useRowDraggable<any>>[0] = {
@@ -18,7 +18,7 @@ const TableRowDrag = <T extends Record<string, unknown>>(props: TableRowDragProp
 
 	const dragHooksProps: Parameters<typeof useRowDraggable<T>>[0] = { data: coreProps.data, rowKey: coreProps.rowKey, rowDraggable };
 
-	const rowDraggableProps = useRowDraggable(enabled ? dragHooksProps : _dragHooksProps);
+	const rowDraggableProps = useRowDraggable<T>(enabled ? dragHooksProps : _dragHooksProps);
 
 	const tableDomProps = {
 		...coreProps,
@@ -28,4 +28,4 @@ const TableRowDrag = <T extends Record<string, unknown>>(props: TableRowDragProp
 	return <TableCore {...tableDomProps} />;
 };
 
-export default memo(TableRowDrag) as typeof TableRowDrag;
+export default memo(TableRowDrag) as TableRowDragComponent;

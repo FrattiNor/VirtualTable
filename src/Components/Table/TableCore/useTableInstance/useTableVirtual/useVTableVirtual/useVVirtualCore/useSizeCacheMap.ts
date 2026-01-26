@@ -1,12 +1,13 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
+import { type RowKeyType } from '../../../../TableTypes/type';
 import { type VirtualProps } from '../../Core/type';
 
 type Props = Omit<VirtualProps, 'onChange'>;
 
 const useSizeCacheMap = ({ getItemKey, getItemSize, count }: Props) => {
 	// itemSize缓存
-	const [sizeCacheMap, setSizeCacheMap] = useState(() => new Map<string, number>());
+	const [sizeCacheMap, setSizeCacheMap] = useState(() => new Map<RowKeyType, number>());
 
 	// 重写getItemSize，优先使用size缓存
 	const getItemSizeCover = useCallback(
@@ -40,7 +41,7 @@ const useSizeCacheMap = ({ getItemKey, getItemSize, count }: Props) => {
 
 	// 数据源keyMap
 	const datasourceKeyMap = useMemo(() => {
-		const keyMap = new Map<string, true>();
+		const keyMap = new Map<RowKeyType, true>();
 		for (let i = 0; i < count; i++) {
 			keyMap.set(getItemKey(i), true);
 		}

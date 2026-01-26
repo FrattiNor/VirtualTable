@@ -2,7 +2,7 @@
 import { memo } from 'react';
 
 import TableCore from '../TableCore';
-import { type TableTreeProps } from './type';
+import { type TableTreeComponent, type TableTreeProps } from './type';
 import useTableTree from './useTableTree';
 
 export const _treeHookProps: Parameters<typeof useTableTree<any>>[0] = {
@@ -35,4 +35,4 @@ const TableTree = <T extends Record<string, unknown>>(props: TableTreeProps<T>) 
 	return <TableCore {...tableDomProps} />;
 };
 
-export default memo(TableTree) as typeof TableTree;
+export default memo(TableTree) as TableTreeComponent;

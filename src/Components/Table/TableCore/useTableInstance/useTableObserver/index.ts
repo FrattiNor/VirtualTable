@@ -1,10 +1,12 @@
 import { useEffect, useLayoutEffect } from 'react';
 
 import { useVirtualScroll } from './useScroll';
+import { type RowKeyType } from '../../TableTypes/type';
 import { getDisplayNone } from '../../TableUtils';
 import calcBorderWidth from '../../TableUtils/calcBorderWidth';
 
 import type useTableDomRef from '../useTableDomRef';
+import type useTableInnerProps from '../useTableInnerProps';
 import type useTableState from '../useTableState';
 import type useTableVirtual from '../useTableVirtual';
 
@@ -13,14 +15,16 @@ const _scrollDuration = 167;
 // 滚动距离
 const _scrollDistance = 167;
 
-type Props<T> = {
-	tableState: ReturnType<typeof useTableState>;
+type Props<T, K, S> = {
 	tableDomRef: ReturnType<typeof useTableDomRef>;
-	tableVirtual: ReturnType<typeof useTableVirtual<T>>;
+	tableState: ReturnType<typeof useTableState<T, K, S>>;
+	tableVirtual: ReturnType<typeof useTableVirtual<T, K, S>>;
+	tableInnerProps: ReturnType<typeof useTableInnerProps<T, K, S>>;
 };
 
-const useTableObserver = <T>({ tableState, tableVirtual, tableDomRef }: Props<T>) => {
-	const { headRef, bodyRef, bodyInnerRef, hScrollbarRef, vScrollbarRef, colSizeObserverRef } = tableDomRef;
+const useTableObserver = <T, K = RowKeyType, S = any>({ tableState, tableVirtual, tableDomRef, tableInnerProps }: Props<T, K, S>) => {
+	const { showSummary } = tableInnerProps;
+	const { headRef, bodyRef, bodyInnerRef, summaryRef, hScrollbarRef, vScrollbarRef, colSizeObserverRef } = tableDomRef;
 
 	const { getH_virtualCore, getV_virtualCore } = tableVirtual;
 	const { setV_scrollbar, setH_scrollbar, setTableWidth } = tableState;
@@ -132,12 +136,14 @@ const useTableObserver = <T>({ tableState, tableVirtual, tableDomRef }: Props<T>
 		if (bodyRef.current) {
 			const body = bodyRef.current;
 			const handleWheel = (e: WheelEvent) => {
-				const scrollCoefficient = -(((e as any).wheelDeltaY as number) ?? -e.deltaY) > 0 ? 1 : -1;
-				const scrollDistance = scrollCoefficient * _scrollDistance;
-				if (e.shiftKey === true) {
-					scrollByLeft({ offset: scrollDistance, duration: _scrollDuration });
-				} else {
-					scrollByTop({ offset: scrollDistance, duration: _scrollDuration });
+				if (e.ctrlKey !== true) {
+					const scrollCoefficient = -(((e as any).wheelDeltaY as number) ?? -e.deltaY) > 0 ? 1 : -1;
+					const scrollDistance = scrollCoefficient * _scrollDistance;
+					if (e.shiftKey === true) {
+						scrollByLeft({ offset: scrollDistance, duration: _scrollDuration });
+					} else {
+						scrollByTop({ offset: scrollDistance, duration: _scrollDuration });
+					}
 				}
 			};
 			body.addEventListener('wheel', handleWheel, { passive: true });
@@ -153,12 +159,12 @@ const useTableObserver = <T>({ tableState, tableVirtual, tableDomRef }: Props<T>
 		if (headRef.current) {
 			const head = headRef.current;
 			const handleWheel = (e: WheelEvent) => {
-				const scrollCoefficient = -(((e as any).wheelDeltaY as number) ?? -e.deltaY) > 0 ? 1 : -1;
-				const scrollDistance = scrollCoefficient * _scrollDistance;
-				if (e.shiftKey === true) {
-					scrollByLeft({ offset: scrollDistance, duration: _scrollDuration });
-				} else {
-					scrollByTop({ offset: scrollDistance, duration: _scrollDuration });
+				if (e.ctrlKey !== true) {
+					const scrollCoefficient = -(((e as any).wheelDeltaY as number) ?? -e.deltaY) > 0 ? 1 : -1;
+					const scrollDistance = scrollCoefficient * _scrollDistance;
+					if (e.shiftKey === true) {
+						scrollByLeft({ offset: scrollDistance, duration: _scrollDuration });
+					}
 				}
 			};
 			head.addEventListener('wheel', handleWheel, { passive: true });
@@ -168,6 +174,28 @@ const useTableObserver = <T>({ tableState, tableVirtual, tableDomRef }: Props<T>
 			};
 		}
 	}, []);
+
+	// 增加summary wheel滚动
+	useEffect(() => {
+		if (showSummary && summaryRef.current) {
+			console.log('summaryRef', summaryRef);
+			const summary = summaryRef.current;
+			const handleWheel = (e: WheelEvent) => {
+				if (e.ctrlKey !== true) {
+					const scrollCoefficient = -(((e as any).wheelDeltaY as number) ?? -e.deltaY) > 0 ? 1 : -1;
+					const scrollDistance = scrollCoefficient * _scrollDistance;
+					if (e.shiftKey === true) {
+						scrollByLeft({ offset: scrollDistance, duration: _scrollDuration });
+					}
+				}
+			};
+			summary.addEventListener('wheel', handleWheel, { passive: true });
+
+			return () => {
+				summary.removeEventListener('wheel', handleWheel);
+			};
+		}
+	}, [showSummary]);
 };
 
 export default useTableObserver;

@@ -1,18 +1,18 @@
 import { useMemo } from 'react';
 
-import { type TableCoreColumnFixed } from '../../TableTypes/type';
+import { type RowKeyType, type TableCoreColumnFixed } from '../../TableTypes/type';
 import { getLeafColumn } from '../../TableUtils';
 
 import type { TableCoreColumn, TableCoreColumnGroup, TableCoreColumns } from '../../TableTypes/typeColumn';
 import type { TableCoreProps } from '../../TableTypes/typeProps';
 import type useTableState from '../useTableState';
 
-type Props<T> = {
-	coreProps: TableCoreProps<T>;
-	tableState: ReturnType<typeof useTableState>;
+type Props<T, K, S> = {
+	coreProps: TableCoreProps<T, K, S>;
+	tableState: ReturnType<typeof useTableState<T, K, S>>;
 };
 
-const useTableColumns = <T>({ coreProps, tableState }: Props<T>) => {
+const useTableColumns = <T, K = RowKeyType, S = any>({ coreProps, tableState }: Props<T, K, S>) => {
 	const { columns } = coreProps;
 	const { sizeCacheMap } = tableState;
 	const rowSelectionColum = coreProps.rowSelectionProps?.rowSelectionColum;
@@ -99,6 +99,8 @@ const useTableColumns = <T>({ coreProps, tableState }: Props<T>) => {
 		const colHeadForceRenderMap = new Map<string, true>();
 		// bodyForceRender
 		const colBodyForceRenderMap = new Map<string, true>();
+		// summaryForceRender
+		const colSummaryForceRenderMap = new Map<string, true>();
 		// col的key转index和index转key
 		const colKey2Index = new Map<string, number>();
 		const colIndex2Key = new Map<number, string>();
@@ -148,6 +150,10 @@ const useTableColumns = <T>({ coreProps, tableState }: Props<T>) => {
 				// 计算colBodyForceRenderObj
 				if (leafColumn.colBodyForceRender === true) {
 					colBodyForceRenderMap.set(leafColumn.key, true);
+				}
+				// 计算colSummaryForceRenderObj
+				if (leafColumn.colSummaryForceRender === true) {
+					colSummaryForceRenderMap.set(leafColumn.key, true);
 				}
 				// 计算fixedLeftMap
 				if (leafColumn.fixed === 'left') {
@@ -206,6 +212,7 @@ const useTableColumns = <T>({ coreProps, tableState }: Props<T>) => {
 			gridTemplateColumns, // columns的grid的宽度css
 			colBodyForceRenderMap, // colBody强制渲染
 			colHeadForceRenderMap, // colHead强制渲染
+			colSummaryForceRenderMap, // colSummary强制渲染
 		};
 	}, [columnsCore, sizeCacheMap]);
 	// ======================================== part2 ========================================

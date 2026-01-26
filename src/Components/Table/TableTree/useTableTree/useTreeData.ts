@@ -1,12 +1,13 @@
 import { useMemo } from 'react';
 
+import { type RowKeyType } from '../../TableCore/TableTypes/type';
 import { type TableCoreProps } from '../../TableCore/TableTypes/typeProps';
 import { getRowKey } from '../../TableCore/TableUtils';
 import { type TableTreeExpand } from '../type';
 
 type Props<T> = {
 	treeExpand: TableTreeExpand<T>;
-	allExpandedKeyMap: Map<string, true>;
+	allExpandedKeyMap: Map<RowKeyType, true>;
 	data: TableCoreProps<T>['data'];
 	rowKey: TableCoreProps<T>['rowKey'];
 };

@@ -1,13 +1,18 @@
 import { useMemo } from 'react';
 
-import { type TableCoreTheme } from '../../TableTypes/type';
+import { type RowKeyType, type TableCoreTheme } from '../../TableTypes/type';
 import { defaultBorderWidth, defaultRowHeight } from '../../TableUtils/configValues';
 
 import type { TableCoreProps } from '../../TableTypes/typeProps';
 
 // 暴露给内部的props
-const useTableInnerProps = <T>(coreProps: TableCoreProps<T>) => {
+const useTableInnerProps = <T, K = RowKeyType, S = any>(coreProps: TableCoreProps<T, K, S>) => {
+	const summaryData = coreProps.summaryData;
+	const showSummary = Array.isArray(summaryData) && summaryData.length > 0;
+
 	const requiredProps = {
+		summaryData,
+		showSummary,
 		renderEmpty: coreProps.renderEmpty,
 		bordered: coreProps.bordered ?? true,
 		rowHeight: coreProps.rowHeight ?? defaultRowHeight,

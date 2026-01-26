@@ -2,7 +2,7 @@
 import { memo } from 'react';
 
 import TableCore from '../TableCore';
-import { type TableRowSelectionProps } from './type';
+import { type TableRowSelectionComponent, type TableRowSelectionProps } from './type';
 import useTableRowSelection from './useTableRowSelection';
 
 export const _selectionHooksProps: Parameters<typeof useTableRowSelection<any>>[0] = {
@@ -28,4 +28,4 @@ const TableRowSelection = <T extends Record<string, unknown>>(props: TableRowSel
 	return <TableCore {...tableDomProps} />;
 };
 
-export default memo(TableRowSelection) as typeof TableRowSelection;
+export default memo(TableRowSelection) as TableRowSelectionComponent;

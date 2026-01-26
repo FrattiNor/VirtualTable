@@ -3,12 +3,19 @@ import type { CSSProperties, ReactNode } from 'react';
 import { type TableCoreProps } from './typeProps';
 import { type ValueTypeKeys } from './typeUtil';
 
-export type TableComponent = <T extends Record<string, unknown>>(props: TableCoreProps<T>) => ReactNode;
+export type TableCoreComponent = <T extends Record<string, unknown>, K extends RowKeyType, S extends Record<string, unknown>>(
+	props: TableCoreProps<T, K, S>,
+) => ReactNode;
 
-export type TableRowKey<T> = ValueTypeKeys<T, string> | ((item: T) => string);
+export type RowKeyType = string | number;
+
+export type TableRowKey<T, K = RowKeyType> = ValueTypeKeys<T, K> | ((item: T) => K);
 
 // Table 列render配置
 export type TableCoreColumnRender<T> = (item: T, otherData: { index: number; highlightKeywords?: string[] }) => ReactNode;
+
+// Table 列render配置
+export type TableCoreColumnSummaryRender<T> = (item: T, otherData: { index: number }) => ReactNode;
 
 // Table 列宽度
 export type TableCoreColumnWidth = number | `${number}%`;

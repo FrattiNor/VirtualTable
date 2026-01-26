@@ -2,6 +2,7 @@ import { type CSSProperties, Fragment, memo } from 'react';
 
 import BodyRow from './BodyRow';
 import styles from './index.module.less';
+import { type RowKeyType } from '../../../TableTypes/type';
 import { getRowKey } from '../../../TableUtils';
 
 import type { TableInstance } from '../../../useTableInstance';
@@ -57,7 +58,7 @@ const BodyContent = <T,>(props: Props<T>) => {
 	} = props;
 
 	// 渲染行
-	type RenderRowProps = { itemData: T; rowIndex: number; itemRowKey: string; isPlaceholder: boolean; style?: CSSProperties };
+	type RenderRowProps = { itemData: T; rowIndex: number; itemRowKey: RowKeyType; isPlaceholder: boolean; style?: CSSProperties };
 	const renderRow = ({ style, itemData, rowIndex, itemRowKey, isPlaceholder }: RenderRowProps) => {
 		return (
 			<BodyRow

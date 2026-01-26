@@ -1,22 +1,22 @@
 import { useImperativeHandle } from 'react';
 
-import { type TableColumnConfItem } from '../../TableTypes/type';
+import { type RowKeyType, type TableColumnConfItem } from '../../TableTypes/type';
 import { type TableCoreColumns } from '../../TableTypes/typeColumn';
 import { type TableCoreProps } from '../../TableTypes/typeProps';
 
 import type useTableDomRef from '../useTableDomRef';
 import type useTableState from '../useTableState';
 
-type Props<T> = {
-	coreProps: TableCoreProps<T>;
-	tableState: ReturnType<typeof useTableState>;
+type Props<T, K, S> = {
+	coreProps: TableCoreProps<T, K, S>;
 	tableDomRef: ReturnType<typeof useTableDomRef>;
+	tableState: ReturnType<typeof useTableState<T, K, S>>;
 };
 
 // 暂时关闭loop
 const enableLoop = false;
 
-const useTableRef = <T>({ coreProps, tableState, tableDomRef }: Props<T>) => {
+const useTableRef = <T, K = RowKeyType, S = any>({ coreProps, tableState, tableDomRef }: Props<T, K, S>) => {
 	const { tableRef, columns, columnConf } = coreProps;
 	const { setResized, setSizeCacheMap } = tableState;
 	const { vScrollbarRef, hScrollbarRef } = tableDomRef;

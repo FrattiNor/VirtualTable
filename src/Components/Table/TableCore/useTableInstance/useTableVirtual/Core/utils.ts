@@ -1,3 +1,5 @@
+import { type RowKeyType } from '../../../TableTypes/type';
+
 import type { VirtualProps, VirtualSizeListItem, VirtualState } from './type';
 
 export const getSizeList = ({
@@ -14,8 +16,8 @@ export const getSizeList = ({
 	keyName?: string;
 }) => {
 	// 检测重复的rowKey
-	const rowKeysMap = new Map<string, number>();
-	const checkSameKey = (key: string) => {
+	const rowKeysMap = new Map<RowKeyType, number>();
+	const checkSameKey = (key: RowKeyType) => {
 		if (rowKeysMap.get(key) === 1) console.error(`same ${keyName ?? 'key'}: ${key}`);
 		rowKeysMap.set(key, (rowKeysMap.get(key) ?? 0) + 1);
 	};

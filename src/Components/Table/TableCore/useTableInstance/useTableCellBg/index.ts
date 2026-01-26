@@ -1,18 +1,19 @@
 import { useCallback, useEffect, useMemo } from 'react';
 
 import useFrameThrottle from '../../TableHooks/useFrameThrottle';
+import { type RowKeyType } from '../../TableTypes/type';
 import { type TableCoreProps } from '../../TableTypes/typeProps';
 
 import type useTableState from '../useTableState';
 
-type Props<T> = {
-	coreProps: TableCoreProps<T>;
-	tableState: ReturnType<typeof useTableState>;
+type Props<T, K, S> = {
+	coreProps: TableCoreProps<T, K, S>;
+	tableState: ReturnType<typeof useTableState<T, K, S>>;
 };
 
 // 表格 单元格 背景色
 // 根据点击、hover、resize决定
-const useTableCellBg = <T>({ tableState, coreProps }: Props<T>) => {
+const useTableCellBg = <T, K = RowKeyType, S = any>({ tableState, coreProps }: Props<T, K, S>) => {
 	const { throttle: throttle1 } = useFrameThrottle();
 	const { throttle: throttle2 } = useFrameThrottle();
 
@@ -64,7 +65,7 @@ const useTableCellBg = <T>({ tableState, coreProps }: Props<T>) => {
 
 	// 获取行是否clicked
 	const getRowClicked = useCallback(
-		({ rowKeys }: { rowKeys: string[] }) => {
+		({ rowKeys }: { rowKeys: K[] }) => {
 			if (rowClickedMap.size === 0) return false;
 			for (let i = 0; i < rowKeys.length; i++) {
 				if (rowClickedMap.get(rowKeys[i])) return true;
@@ -76,7 +77,7 @@ const useTableCellBg = <T>({ tableState, coreProps }: Props<T>) => {
 
 	// 获取行是否hovered
 	const getRowHovered = useCallback(
-		({ rowKeys }: { rowKeys: string[] }) => {
+		({ rowKeys }: { rowKeys: K[] }) => {
 			if (rowHoveredMap.size === 0) return false;
 			for (let i = 0; i < rowKeys.length; i++) {
 				if (rowHoveredMap.get(rowKeys[i])) return true;
@@ -88,7 +89,7 @@ const useTableCellBg = <T>({ tableState, coreProps }: Props<T>) => {
 
 	// 获取行是否hovered
 	const getRowSelected = useCallback(
-		({ rowKeys }: { rowKeys: string[] }) => {
+		({ rowKeys }: { rowKeys: K[] }) => {
 			if (!rowSelectedKeyMap) return false;
 			if (rowSelectedKeyMap.size === 0) return false;
 			for (let i = 0; i < rowKeys.length; i++) {
@@ -102,7 +103,7 @@ const useTableCellBg = <T>({ tableState, coreProps }: Props<T>) => {
 	// 获取body cell 背景色
 	// 根据resize、hover、select、click决定，存在3档颜色
 	const getBodyCellBg = useCallback(
-		({ rowKeys, colKeys, defaultBgLevel }: { rowKeys: string[]; colKeys: undefined | string[]; defaultBgLevel?: number }) => {
+		({ rowKeys, colKeys, defaultBgLevel }: { rowKeys: K[]; colKeys: undefined | string[]; defaultBgLevel?: number }) => {
 			let bgColorLevel = defaultBgLevel ?? 0;
 			// 正在进行拖拽
 			if (typeof draggingRowKey === 'string' && rowKeys.some((key) => key === draggingRowKey)) bgColorLevel += 2;
@@ -145,10 +146,10 @@ const useTableCellBg = <T>({ tableState, coreProps }: Props<T>) => {
 
 	const bodyRowMouseEnter = useMemo(() => {
 		if (rowHover) {
-			return ({ rowKeys }: { rowKeys: string[] }) => {
+			return ({ rowKeys }: { rowKeys: K[] }) => {
 				throttle1(() => {
 					setRowHoveredMap(() => {
-						const next: Map<string, true> = new Map();
+						const next: Map<K, true> = new Map();
 						for (let i = 0; i < rowKeys.length; i++) {
 							next.set(rowKeys[i], true);
 						}
@@ -162,7 +163,7 @@ const useTableCellBg = <T>({ tableState, coreProps }: Props<T>) => {
 
 	const bodyRowMouseLeave = useMemo(() => {
 		if (rowHover) {
-			return ({ rowKeys }: { rowKeys: string[] }) => {
+			return ({ rowKeys }: { rowKeys: K[] }) => {
 				throttle1(() => {
 					setRowHoveredMap((old) => {
 						let changed = false;
@@ -183,17 +184,17 @@ const useTableCellBg = <T>({ tableState, coreProps }: Props<T>) => {
 
 	const bodyRowClick = useMemo(() => {
 		if (rowClick) {
-			return ({ rowKeys }: { rowKeys: string[] }) => {
+			return ({ rowKeys }: { rowKeys: K[] }) => {
 				throttle2(() => {
 					setRowClickedMap((old) => {
 						let isSame = true;
-						const next = new Map<string, true>();
+						const next = new Map<K, true>();
 						for (let i = 0; i < rowKeys.length; i++) {
 							if (old.get(rowKeys[i]) !== true) isSame = false;
 							next.set(rowKeys[i], true);
 						}
 						if (!isSame) return next;
-						return new Map<string, true>();
+						return new Map<K, true>();
 					});
 				});
 			};

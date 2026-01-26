@@ -1,10 +1,9 @@
-.head {
-	font-weight: 600;
+.summary {
 	flex-shrink: 0;
 	overflow: hidden;
 	position: relative;
 	background-color: var(--table-bg);
-	color: var(--table-head-font-color);
+	color: var(--table-body-font-color);
 
 	// === hidden scroll bar ===
 	scrollbar-width: none !important;
@@ -14,11 +13,15 @@
 	}
 	// === hidden scroll bar ===
 
-	.head-inner {
+	.summary-inner {
 		display: grid;
 		min-width: 100%;
 		position: relative;
 		align-content: start;
 		width: max-content;
+
+		.summary-row {
+			display: contents;
+		}
 	}
 }

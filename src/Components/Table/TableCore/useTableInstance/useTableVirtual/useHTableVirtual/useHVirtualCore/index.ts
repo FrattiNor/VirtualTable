@@ -9,10 +9,11 @@ import type useTableDomRef from '../../../useTableDomRef';
 type Props = Omit<VirtualProps, 'onChange'> & {
 	bodyRef: ReturnType<typeof useTableDomRef>['bodyRef'];
 	headRef: ReturnType<typeof useTableDomRef>['headRef'];
+	summaryRef: ReturnType<typeof useTableDomRef>['headRef'];
 };
 
 const useHVirtualCore = (props: Props) => {
-	const { enabled, count, overscan, gap, getItemKey, getItemSize, bodyRef, headRef } = props;
+	const { enabled, count, overscan, gap, getItemKey, getItemSize, bodyRef, headRef, summaryRef } = props;
 
 	const { throttle } = useFrameThrottle();
 	const [virtualCore, setVirtualCore] = useState<VirtualCore>(() => new VirtualCore());
@@ -39,6 +40,7 @@ const useHVirtualCore = (props: Props) => {
 	useMemo(() => {
 		if (bodyRef.current && bodyRef.current.scrollLeft !== scrollOffset) bodyRef.current.scrollLeft = scrollOffset;
 		if (headRef.current && headRef.current.scrollLeft !== scrollOffset) headRef.current.scrollLeft = scrollOffset;
+		if (summaryRef.current && summaryRef.current.scrollLeft !== scrollOffset) summaryRef.current.scrollLeft = scrollOffset;
 	}, [scrollOffset]);
 
 	return { virtualCore, rangeStart, rangeEnd, totalSize };

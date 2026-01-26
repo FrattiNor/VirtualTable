@@ -2,7 +2,7 @@ import { useCallback, useEffect } from 'react';
 
 import useFrameThrottle from '../../TableHooks/useFrameThrottle';
 import useRefValue from '../../TableHooks/useRefValue';
-import { type TableCoreResizeFlag } from '../../TableTypes/type';
+import { type RowKeyType, type TableCoreResizeFlag } from '../../TableTypes/type';
 import { type TableCoreProps } from '../../TableTypes/typeProps';
 import { FixedTwo } from '../../TableUtils';
 import { maxColWidth, minColWidth } from '../../TableUtils/configValues';
@@ -19,14 +19,14 @@ function pauseEvent(e: Event) {
 	return false;
 }
 
-type Props<T> = {
-	coreProps: TableCoreProps<T>;
-	tableState: ReturnType<typeof useTableState>;
-	tableColumns: ReturnType<typeof useTableColumns<T>>;
+type Props<T, K, S> = {
+	coreProps: TableCoreProps<T, K, S>;
+	tableState: ReturnType<typeof useTableState<T, K, S>>;
+	tableColumns: ReturnType<typeof useTableColumns<T, K, S>>;
 };
 
 // 表格resize宽度
-const useTableResize = <T>({ tableState, tableColumns, coreProps }: Props<T>) => {
+const useTableResize = <T, K = RowKeyType, S = any>({ tableState, tableColumns, coreProps }: Props<T, K, S>) => {
 	const { throttle } = useFrameThrottle();
 	const { colIndex2Key } = tableColumns;
 	const [getResizeEndCallback] = useRefValue(coreProps.onResizeEnd);

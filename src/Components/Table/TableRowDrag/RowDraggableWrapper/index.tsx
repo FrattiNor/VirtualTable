@@ -4,9 +4,10 @@ import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 
 import { RowDraggableContext, type RowDraggableContextProps } from './RowDraggableContext';
+import { type RowKeyType } from '../../TableCore/TableTypes/type';
 
 type Props = {
-	rowKey: string;
+	rowKey: RowKeyType;
 	rowIndex: number;
 	children: JSX.Element;
 };

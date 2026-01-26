@@ -4,9 +4,9 @@ import type { TableCoreColumnGroup, TableCoreColumn } from '../TableTypes/typeCo
 import type { TableCoreProps } from '../TableTypes/typeProps';
 
 // 根据参数rowKey，获取【rowKey】
-export const getRowKey = <T>(rowKey: TableCoreProps<T>['rowKey'], item: T) => {
+export const getRowKey = <T, K>(rowKey: TableCoreProps<T, K>['rowKey'], item: T) => {
 	if (typeof rowKey === 'function') return rowKey(item);
-	return item[rowKey] as string;
+	return item[rowKey] as K;
 };
 
 // 根据span获取resize，如果是group，只要有一个子节点不能resize就不支持resize

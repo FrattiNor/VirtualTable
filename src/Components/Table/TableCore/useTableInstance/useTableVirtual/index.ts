@@ -2,6 +2,7 @@ import { type ReactNode, useCallback } from 'react';
 
 import useHTableVirtual from './useHTableVirtual';
 import useVTableVirtual from './useVTableVirtual';
+import { type RowKeyType } from '../../TableTypes/type';
 import { type TableCoreProps } from '../../TableTypes/typeProps';
 import { getRowKey } from '../../TableUtils';
 
@@ -10,24 +11,25 @@ import type useTableDomRef from '../useTableDomRef';
 import type useTableInnerProps from '../useTableInnerProps';
 import type useTableState from '../useTableState';
 
-type RenderRow<T> = (params: { itemData: T; itemRowKey: string; rowIndex: number; isPlaceholder: boolean }) => ReactNode;
+type RenderRow<T, K> = (params: { itemData: T; itemRowKey: K; rowIndex: number; isPlaceholder: boolean }) => ReactNode;
 
-type Props<T> = {
-	coreProps: TableCoreProps<T>;
-	tableState: ReturnType<typeof useTableState>;
+type Props<T, K, S> = {
+	coreProps: TableCoreProps<T, K, S>;
 	tableDomRef: ReturnType<typeof useTableDomRef>;
-	tableColumns: ReturnType<typeof useTableColumns<T>>;
-	tableInnerProps: ReturnType<typeof useTableInnerProps<T>>;
+	tableState: ReturnType<typeof useTableState<T, K, S>>;
+	tableColumns: ReturnType<typeof useTableColumns<T, K, S>>;
+	tableInnerProps: ReturnType<typeof useTableInnerProps<T, K, S>>;
 };
 
-const useTableVirtual = <T>({ coreProps, tableColumns, tableState, tableInnerProps, tableDomRef }: Props<T>) => {
+const useTableVirtual = <T, K = RowKeyType, S = any>({ coreProps, tableColumns, tableState, tableInnerProps, tableDomRef }: Props<T, K, S>) => {
 	const { data, rowKey } = tableInnerProps;
 
-	const { h_totalSize, getH_virtualCore, getHeadCellColShow, getBodyCellColShow, getBodyCellColForceShow } = useHTableVirtual({
-		tableState,
-		tableDomRef,
-		tableColumns,
-	});
+	const { h_totalSize, getH_virtualCore, getHeadCellColShow, getBodyCellColShow, getSummaryCellColShow, getBodyCellColForceShow } =
+		useHTableVirtual({
+			tableState,
+			tableDomRef,
+			tableColumns,
+		});
 
 	const {
 		v_totalSize,
@@ -48,7 +50,7 @@ const useTableVirtual = <T>({ coreProps, tableColumns, tableState, tableInnerPro
 	});
 
 	const renderBodyDom = useCallback(
-		(renderRow: RenderRow<T>) => {
+		(renderRow: RenderRow<T, K>) => {
 			const bodyDom: ReactNode[] = [];
 			if (
 				typeof v_rangeStart === 'number' &&
@@ -83,6 +85,7 @@ const useTableVirtual = <T>({ coreProps, tableColumns, tableState, tableInnerPro
 		renderBodyDom,
 		draggingRow_notShow,
 		draggingRow_offsetTop,
+		getSummaryCellColShow,
 	};
 };
 
