@@ -1,5 +1,7 @@
 import { memo } from 'react';
 
+import classNames from 'classnames';
+
 import BodyContent from './BodyContent';
 import BodyEmpty from './BodyEmpty';
 import ColSizeMeasure from './ColSizeMeasure';
@@ -17,8 +19,8 @@ type Props<T> = Pick<
 	| 'data'
 	| 'rowKey'
 	| 'gridTemplateColumns'
-	| 'bodyRef'
-	| 'bodyInnerRef'
+	| 'bodyWrapperRef'
+	| 'bodyScrollPlaceholderRef'
 	| 'rowHeight'
 	| 'getBodyStickyStyle'
 	| 'setSizeCacheMap'
@@ -33,6 +35,7 @@ type Props<T> = Pick<
 	| 'bodyRowClick'
 	| 'bodyRowMouseEnter'
 	| 'bodyRowMouseLeave'
+	| 'h_totalSize'
 	| 'v_totalSize'
 	| 'v_offsetTop'
 	| 'v_measureItemSize'
@@ -55,69 +58,74 @@ type Props<T> = Pick<
 	| 'borderWidth'
 	| 'colSizeObserverRef'
 	| 'columnsKeys'
+	| 'bodyRef'
+	| 'hiddenBodyWrapperScrollbar'
 >;
 
 const TableBody = <T,>(props: Props<T>) => {
 	const isEmpty = (props.data ?? []).length === 0;
-	const { bodyRef, bodyInnerRef, v_totalSize, columnsKeys } = props;
+	const { bodyRef, bodyWrapperRef, bodyScrollPlaceholderRef, v_totalSize, h_totalSize, columnsKeys, hiddenBodyWrapperScrollbar } = props;
 
 	return (
-		<div ref={bodyRef} className={styles['body']}>
-			<ColSizeObserver
-				resized={props.resized}
-				resizeFlag={props.resizeFlag}
-				columnsCore={props.columnsCore}
-				sizeCacheMap={props.sizeCacheMap}
-				setSizeCacheMap={props.setSizeCacheMap}
-				colSizeObserverRef={props.colSizeObserverRef}
-			/>
-			<ColSizeMeasure
-				key={columnsKeys}
-				resized={props.resized}
-				setSizeCacheMap={props.setSizeCacheMap}
-				colSizeObserverRef={props.colSizeObserverRef}
-			/>
-			<StickyObserver
-				bodyRef={props.bodyRef}
-				setPingedMap={props.setPingedMap}
-				fixedLeftMap={props.fixedLeftMap}
-				fixedRightMap={props.fixedRightMap}
-				finalColumnsArr={props.finalColumnsArr}
-				gridTemplateColumns={props.gridTemplateColumns}
-			/>
-			<div ref={bodyInnerRef} className={styles['body-inner']} style={{ minHeight: v_totalSize }}>
-				<BodyContent
-					data={props.data}
-					rowKey={props.rowKey}
-					bordered={props.bordered}
-					rowHeight={props.rowHeight}
-					getColKeys={props.getColKeys}
-					getRowKeys={props.getRowKeys}
-					borderWidth={props.borderWidth}
-					v_offsetTop={props.v_offsetTop}
-					bodyRowClick={props.bodyRowClick}
-					getBodyCellBg={props.getBodyCellBg}
-					renderBodyDom={props.renderBodyDom}
-					draggingRowKey={props.draggingRowKey}
-					finalColumnsArr={props.finalColumnsArr}
-					renderCellPrefix={props.renderCellPrefix}
-					draggingRowIndex={props.draggingRowIndex}
-					rowDraggableMode={props.rowDraggableMode}
-					highlightKeywords={props.highlightKeywords}
-					v_measureItemSize={props.v_measureItemSize}
-					bodyRowMouseEnter={props.bodyRowMouseEnter}
-					bodyRowMouseLeave={props.bodyRowMouseLeave}
-					getBodyCellColShow={props.getBodyCellColShow}
-					getBodyStickyStyle={props.getBodyStickyStyle}
-					draggingRow_notShow={props.draggingRow_notShow}
-					RowDraggableWrapper={props.RowDraggableWrapper}
-					gridTemplateColumns={props.gridTemplateColumns}
-					draggingRow_offsetTop={props.draggingRow_offsetTop}
-					getBodyCellColForceShow={props.getBodyCellColForceShow}
-					renderWidthDraggableWrapper={props.renderWidthDraggableWrapper}
+		<div ref={bodyWrapperRef} className={classNames(styles['body-wrapper'], { [styles['hidden-scroll-bar']]: hiddenBodyWrapperScrollbar })}>
+			<div ref={bodyScrollPlaceholderRef} className={styles['body-scroll-placeholder']} style={{ height: v_totalSize, width: h_totalSize }} />
+			<div ref={bodyRef} className={styles['body']}>
+				<ColSizeObserver
+					resized={props.resized}
+					resizeFlag={props.resizeFlag}
+					columnsCore={props.columnsCore}
+					sizeCacheMap={props.sizeCacheMap}
+					setSizeCacheMap={props.setSizeCacheMap}
+					colSizeObserverRef={props.colSizeObserverRef}
 				/>
+				<ColSizeMeasure
+					key={columnsKeys}
+					resized={props.resized}
+					setSizeCacheMap={props.setSizeCacheMap}
+					colSizeObserverRef={props.colSizeObserverRef}
+				/>
+				<StickyObserver
+					bodyRef={props.bodyRef}
+					setPingedMap={props.setPingedMap}
+					fixedLeftMap={props.fixedLeftMap}
+					fixedRightMap={props.fixedRightMap}
+					finalColumnsArr={props.finalColumnsArr}
+					gridTemplateColumns={props.gridTemplateColumns}
+				/>
+				<div className={styles['body-inner']} style={{ minHeight: v_totalSize }}>
+					<BodyContent
+						data={props.data}
+						rowKey={props.rowKey}
+						bordered={props.bordered}
+						rowHeight={props.rowHeight}
+						getColKeys={props.getColKeys}
+						getRowKeys={props.getRowKeys}
+						borderWidth={props.borderWidth}
+						v_offsetTop={props.v_offsetTop}
+						bodyRowClick={props.bodyRowClick}
+						getBodyCellBg={props.getBodyCellBg}
+						renderBodyDom={props.renderBodyDom}
+						draggingRowKey={props.draggingRowKey}
+						finalColumnsArr={props.finalColumnsArr}
+						renderCellPrefix={props.renderCellPrefix}
+						draggingRowIndex={props.draggingRowIndex}
+						rowDraggableMode={props.rowDraggableMode}
+						highlightKeywords={props.highlightKeywords}
+						v_measureItemSize={props.v_measureItemSize}
+						bodyRowMouseEnter={props.bodyRowMouseEnter}
+						bodyRowMouseLeave={props.bodyRowMouseLeave}
+						getBodyCellColShow={props.getBodyCellColShow}
+						getBodyStickyStyle={props.getBodyStickyStyle}
+						draggingRow_notShow={props.draggingRow_notShow}
+						RowDraggableWrapper={props.RowDraggableWrapper}
+						gridTemplateColumns={props.gridTemplateColumns}
+						draggingRow_offsetTop={props.draggingRow_offsetTop}
+						getBodyCellColForceShow={props.getBodyCellColForceShow}
+						renderWidthDraggableWrapper={props.renderWidthDraggableWrapper}
+					/>
+				</div>
+				{isEmpty && <BodyEmpty tableWidth={props.tableWidth} theme={props.theme} renderEmpty={props.renderEmpty} />}
 			</div>
-			{isEmpty && <BodyEmpty tableWidth={props.tableWidth} theme={props.theme} renderEmpty={props.renderEmpty} />}
 		</div>
 	);
 };

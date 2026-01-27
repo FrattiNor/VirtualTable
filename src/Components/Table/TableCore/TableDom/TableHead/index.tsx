@@ -13,7 +13,7 @@ type Props<T> = Pick<
 	| 'bordered'
 	| 'headRef'
 	| 'gridTemplateColumns'
-	| 'v_scrollbar'
+	| 'vScrollbarState'
 	| 'rowHeight'
 	| 'getHeadStickyStyle'
 	| 'startResize'
@@ -26,9 +26,9 @@ type Props<T> = Pick<
 >;
 
 const TableHead = <T,>(props: Props<T>) => {
-	const { headRef, gridTemplateColumns, v_scrollbar, deepLevel } = props;
-	const headGridTemplateColumns = v_scrollbar.have
-		? gridTemplateColumns + ` minmax(${v_scrollbar.widthStr}, 1fr)`
+	const { headRef, gridTemplateColumns, vScrollbarState, deepLevel } = props;
+	const headGridTemplateColumns = vScrollbarState.have
+		? gridTemplateColumns + ` minmax(${vScrollbarState.widthStr}, 1fr)`
 		: gridTemplateColumns + ` minmax(0px, 1fr)`;
 
 	return (

@@ -1,5 +1,7 @@
 import { isValidElement, type ReactNode } from 'react';
 
+import { type TableCoreScrollbarState } from '../TableTypes/type';
+
 import type { TableCoreColumnGroup, TableCoreColumn } from '../TableTypes/typeColumn';
 import type { TableCoreProps } from '../TableTypes/typeProps';
 
@@ -75,4 +77,25 @@ export const isEmptyRender = <T>(value: T) => {
 	if (typeof value === 'string' && value === '') return true;
 	if (typeof value === 'number' && isNaN(value)) return true;
 	return false;
+};
+
+// 扩展scrollbar的state
+export const getScrollbarState = (scrollbar: TableCoreScrollbarState, bordered: boolean) => {
+	const getScrollbarStateWidthArr = () => {
+		if (scrollbar.have && scrollbar.width > 0 && bordered === true) {
+			return [`${scrollbar.width}px`, 'var(--table-cell-border-width)'];
+		}
+		if (scrollbar.have && scrollbar.width > 0) {
+			return [`${scrollbar.width}px`];
+		}
+		return [`0px`];
+	};
+
+	const widthArr = getScrollbarStateWidthArr();
+
+	return {
+		widthArr,
+		widthStr: transformWidthArrToStr(widthArr),
+		...scrollbar,
+	};
 };

@@ -2,7 +2,7 @@ import { useDeferredValue, useMemo, useState } from 'react';
 
 import { type RowKeyType, type TableCoreColumnFixed, type TableCoreResizeFlag, type TableCoreScrollbarState } from '../../TableTypes/type';
 import { type TableCoreProps } from '../../TableTypes/typeProps';
-import { transformWidthArrToStr } from '../../TableUtils';
+import { getScrollbarState } from '../../TableUtils';
 
 import type useTableInnerProps from '../useTableInnerProps';
 
@@ -28,10 +28,10 @@ const useTableState = <T, K = RowKeyType, S = any>({ tableInnerProps, coreProps 
 	const [rowHoveredMap, setRowHoveredMap] = useState<Map<K, true>>(() => new Map());
 	// 列宽state  { [key]: number }
 	const [sizeCacheMap, setSizeCacheMap] = useState<Map<string, number>>(() => new Map());
-	// 纵向滚动条
-	const [_v_scrollbar, setV_scrollbar] = useState<TableCoreScrollbarState>(() => ({ have: false, width: 0 }));
-	// 横向滚动条
-	const [_h_scrollbar, setH_scrollbar] = useState<TableCoreScrollbarState>(() => ({ have: false, width: 0 }));
+	// 纵向滚动条【当宽度为0时，判断have为false】
+	const [v_scrollbar, setV_scrollbar] = useState<TableCoreScrollbarState>(() => ({ have: false, width: -1 }));
+	// 横向滚动条【当宽度为0时，判断have为false】
+	const [h_scrollbar, setH_scrollbar] = useState<TableCoreScrollbarState>(() => ({ have: false, width: -1 }));
 	// 左右固定的index { [key]: {  key: string; fixed: TableColumnFixed; } }
 	const [_pingedMap, setPingedMap] = useState<Map<string, { key: string; fixed: TableCoreColumnFixed }>>(() => new Map());
 
@@ -39,35 +39,22 @@ const useTableState = <T, K = RowKeyType, S = any>({ tableInnerProps, coreProps 
 	const pingedMap = useDeferredValue(_pingedMap);
 
 	// 滚动条宽度在bordered的情况下，额外增加border宽度
-	const v_scrollbar = useMemo(() => {
-		const haveBorder = _v_scrollbar.width !== 0 && bordered === true;
-		const widthArr = haveBorder ? [`${_v_scrollbar.width}px`, 'var(--table-cell-border-width)'] : [`${_v_scrollbar.width}px`];
-		return {
-			widthArr,
-			widthStr: transformWidthArrToStr(widthArr),
-			..._v_scrollbar,
-		};
-	}, [_v_scrollbar, bordered]);
+	const vScrollbarState = useMemo(() => getScrollbarState(v_scrollbar, bordered), [v_scrollbar, bordered]);
 
 	// 滚动条宽度在bordered的情况下，额外增加border宽度
-	const h_scrollbar = useMemo(() => {
-		const haveBorder = _h_scrollbar.width !== 0 && bordered === true;
-		const widthArr = haveBorder ? [`${_h_scrollbar.width}px`, 'var(--table-cell-border-width)'] : [`${_h_scrollbar.width}px`];
-		return {
-			widthArr,
-			widthStr: transformWidthArrToStr(widthArr),
-			..._h_scrollbar,
-		};
-	}, [_h_scrollbar, bordered]);
+	const hScrollbarState = useMemo(() => getScrollbarState(h_scrollbar, bordered), [h_scrollbar, bordered]);
+
+	// 当scrollbar都为0时【如firefox浏览器】，此时不需要渲染额外滚动条，可以直接使用bodyWrapper的滚动条
+	const hiddenBodyWrapperScrollbar = useMemo(() => !(v_scrollbar.width === 0 && h_scrollbar.width === 0), [v_scrollbar, h_scrollbar]);
 
 	return {
 		tableWidth,
 		setTableWidth,
 		sizeCacheMap,
 		setSizeCacheMap,
-		v_scrollbar,
+		vScrollbarState,
 		setV_scrollbar,
-		h_scrollbar,
+		hScrollbarState,
 		setH_scrollbar,
 		pingedMap,
 		setPingedMap,
@@ -79,6 +66,7 @@ const useTableState = <T, K = RowKeyType, S = any>({ tableInnerProps, coreProps 
 		setRowClickedMap,
 		rowHoveredMap,
 		setRowHoveredMap,
+		hiddenBodyWrapperScrollbar,
 	};
 };
 

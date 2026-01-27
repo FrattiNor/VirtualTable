@@ -54,8 +54,6 @@ export type TableCoreProps<T, K = RowKeyType, S = any> = {
 		rowClickedMap: Map<K, true>;
 		setRowClickedMap: React.Dispatch<React.SetStateAction<Map<K, true>>>;
 	};
-	// 启用阻止滚动冒泡【使用overscroll-behavior实现】
-	enableScrollStopPropagation?: boolean;
 
 	// 影响：增加选择列、选中状态行背景色修改
 	// === rowSelectProps ===

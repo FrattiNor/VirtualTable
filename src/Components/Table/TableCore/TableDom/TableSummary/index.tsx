@@ -14,7 +14,7 @@ type Props<T, K, S> = Pick<
 	| 'summaryData'
 	| 'finalColumnsArr'
 	| 'gridTemplateColumns'
-	| 'v_scrollbar'
+	| 'vScrollbarState'
 	| 'getSummaryCellColShow'
 	| 'bordered'
 	| 'getHeadStickyStyle'
@@ -25,12 +25,12 @@ type Props<T, K, S> = Pick<
 >;
 
 const TableSummary = <T, K = RowKeyType, S = any>(props: Props<T, K, S>) => {
-	const { summaryData, summaryRef, gridTemplateColumns, v_scrollbar, finalColumnsArr, getSummaryCellColShow } = props;
+	const { summaryData, summaryRef, gridTemplateColumns, vScrollbarState, finalColumnsArr, getSummaryCellColShow } = props;
 
 	if (!(Array.isArray(summaryData) && summaryData.length > 0)) return null;
 
-	const summaryGridTemplateColumns = v_scrollbar.have
-		? gridTemplateColumns + ` minmax(${v_scrollbar.widthStr}, 1fr)`
+	const summaryGridTemplateColumns = vScrollbarState.have
+		? gridTemplateColumns + ` minmax(${vScrollbarState.widthStr}, 1fr)`
 		: gridTemplateColumns + ` minmax(0px, 1fr)`;
 
 	return (

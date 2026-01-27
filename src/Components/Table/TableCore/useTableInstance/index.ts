@@ -2,9 +2,10 @@ import useTableCellBg from './useTableCellBg';
 import useTableColumns from './useTableColumns';
 import useTableDomRef from './useTableDomRef';
 import useTableInnerProps from './useTableInnerProps';
-import useTableObserver from './useTableObserver';
 import useTableRef from './useTableRef';
 import useTableResize from './useTableResize';
+import useTableScrollbarObserver from './useTableScrollbarObserver';
+import useTableScrollEvent from './useTableScrollEvent';
 import useTableState from './useTableState';
 import useTableSticky from './useTableSticky';
 import useTableUtils from './useTableUtils';
@@ -25,7 +26,8 @@ const useTableInstance = <T, K = RowKeyType, S = any>(coreProps: TableCoreProps<
 	const tableUtils = useTableUtils<T, K, S>({ tableInnerProps, tableColumns });
 
 	useTableRef<T, K, S>({ coreProps, tableState, tableDomRef });
-	useTableObserver<T, K, S>({ tableState, tableDomRef, tableVirtual, tableInnerProps });
+	useTableScrollEvent<T, K, S>({ tableState, tableDomRef, tableVirtual });
+	useTableScrollbarObserver<T, K, S>({ tableState, tableDomRef, tableVirtual });
 
 	return {
 		...tableState,

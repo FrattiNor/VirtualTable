@@ -13,7 +13,7 @@ type Props<T, K, S> = {
 
 // 表格左右固定
 const useTableSticky = <T, K = RowKeyType, S = any>({ tableColumns, tableState }: Props<T, K, S>) => {
-	const { v_scrollbar, pingedMap } = tableState;
+	const { vScrollbarState, pingedMap } = tableState;
 	const { fixedLeftMap, fixedRightMap, colKey2Index, colIndex2Key } = tableColumns;
 
 	// 根据pingedMap计算相关数据
@@ -112,7 +112,7 @@ const useTableSticky = <T, K = RowKeyType, S = any>({ tableColumns, tableState }
 					transform: 'translate3d(0,0,0)',
 					position: 'sticky',
 					zIndex: 5,
-					right: !v_scrollbar.have ? stickySize : transformWidthArrToStr([...v_scrollbar.widthArr, `${stickySize}px`]),
+					right: !vScrollbarState.have ? stickySize : transformWidthArrToStr([...vScrollbarState.widthArr, `${stickySize}px`]),
 				};
 				rightLastPinged = startKey === pingedRightStartKey;
 				const pinged = getPinged('right', endKey);
@@ -123,7 +123,7 @@ const useTableSticky = <T, K = RowKeyType, S = any>({ tableColumns, tableState }
 
 			return { stickyStyle, hiddenLeftBorder, leftLastPinged, rightLastPinged };
 		},
-		[v_scrollbar, fixedLeftMap, fixedRightMap, getPinged, pingedLeftStartKey, pingedRightStartKey],
+		[vScrollbarState, fixedLeftMap, fixedRightMap, getPinged, pingedLeftStartKey, pingedRightStartKey],
 	);
 
 	return { getBodyStickyStyle, getHeadStickyStyle };

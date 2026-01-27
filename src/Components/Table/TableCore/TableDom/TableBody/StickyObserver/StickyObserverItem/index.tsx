@@ -5,7 +5,7 @@ import styles from './index.module.less';
 import type { TableCoreColumn } from '../../../../TableTypes/typeColumn';
 import type { TableInstance } from '../../../../useTableInstance';
 
-type Props<T> = Pick<TableInstance<T>, 'setPingedMap' | 'fixedLeftMap' | 'fixedRightMap' | 'bodyRef'> & {
+type Props<T> = Pick<TableInstance<T>, 'setPingedMap' | 'fixedLeftMap' | 'fixedRightMap'> & {
 	colIndex: number;
 	leafColumn: TableCoreColumn<T>;
 	intersectionObserver: IntersectionObserver | null;

@@ -17,17 +17,16 @@ type Props<T, K, S> = {
 const enableLoop = false;
 
 const useTableRef = <T, K = RowKeyType, S = any>({ coreProps, tableState, tableDomRef }: Props<T, K, S>) => {
-	const { tableRef, columns, columnConf } = coreProps;
+	const { bodyWrapperRef } = tableDomRef;
 	const { setResized, setSizeCacheMap } = tableState;
-	const { vScrollbarRef, hScrollbarRef } = tableDomRef;
+	const { tableRef, columns, columnConf } = coreProps;
 	const { visibleConf, sortConf, fixedConf } = columnConf ?? {};
 
 	useImperativeHandle(tableRef, () => {
 		return {
 			scrollTo: ({ top, left, behavior }) => {
 				requestAnimationFrame(() => {
-					if (typeof top === 'number') vScrollbarRef.current?.scrollTo({ top, behavior });
-					if (typeof left === 'number') hScrollbarRef.current?.scrollTo({ left, behavior });
+					bodyWrapperRef.current?.scrollTo({ top, left, behavior });
 				});
 			},
 			clearResized: () => {

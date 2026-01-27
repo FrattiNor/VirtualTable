@@ -82,7 +82,6 @@ const StickyObserver = <T,>(props: Props<T>) => {
 							colIndex={colIndex}
 							key={leafColumn.key}
 							leafColumn={leafColumn}
-							bodyRef={props.bodyRef}
 							setPingedMap={props.setPingedMap}
 							fixedLeftMap={props.fixedLeftMap}
 							fixedRightMap={props.fixedRightMap}
