@@ -54,6 +54,8 @@ export type TableCoreProps<T, K = RowKeyType, S = any> = {
 		rowClickedMap: Map<K, true>;
 		setRowClickedMap: React.Dispatch<React.SetStateAction<Map<K, true>>>;
 	};
+	// TODO 单行模式【老版本chrome浏览器grid超过1000行会显示异常，可以启用单行模式，但同时Cell的RowSpan功能将会失效】
+	singleRowMode?: boolean;
 
 	// 影响：增加选择列、选中状态行背景色修改
 	// === rowSelectProps ===
