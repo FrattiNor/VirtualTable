@@ -1,4 +1,4 @@
-import TableDemo from './TableDemo';
+import TableDemo from './TableDemo2';
 
 const App = () => {
 	return <TableDemo />;
