@@ -99,3 +99,5 @@ export const getScrollbarState = (scrollbar: TableCoreScrollbarState, bordered: 
 		...scrollbar,
 	};
 };
+
+export const isMac = /Macintosh|Mac OS X/i.test(navigator.userAgent);

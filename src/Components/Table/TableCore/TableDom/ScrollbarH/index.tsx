@@ -3,6 +3,7 @@ import { memo } from 'react';
 import classNames from 'classnames';
 
 import styles from './index.module.less';
+import { isMac } from '../../TableUtils';
 import scrollbarStyles from '../../TableUtils/calcBorderWidth/index.module.less';
 import { type TableInstance } from '../../useTableInstance';
 
@@ -19,9 +20,10 @@ const ScrollbarH = <T,>(props: Props<T>) => {
 				<div
 					ref={hScrollbarRef}
 					style={{ height: hScrollbarWidth, minHeight: hScrollbarWidth, maxHeight: hScrollbarWidth }}
-					className={classNames(styles['h-scrollbar'], scrollbarStyles['scrollbar'], {
+					className={classNames(styles['h-scrollbar'], {
 						[styles['bordered']]: bordered,
-						[scrollbarStyles['bordered']]: bordered,
+						[scrollbarStyles['scrollbar']]: !isMac,
+						[scrollbarStyles['bordered']]: !isMac && bordered,
 					})}
 				>
 					<div
