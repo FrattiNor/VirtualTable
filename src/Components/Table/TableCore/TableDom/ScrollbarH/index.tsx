@@ -27,7 +27,7 @@ const ScrollbarH = <T,>(props: Props<T>) => {
 					})}
 				>
 					<div
-						className={styles['h-scrollbar-inner']}
+						className={styles['h-scrollbar-thumb']}
 						style={{
 							width: h_totalSize,
 							height: hScrollbarWidth,

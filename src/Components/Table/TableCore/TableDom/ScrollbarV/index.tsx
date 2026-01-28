@@ -25,7 +25,7 @@ const ScrollbarV = <T,>(props: Props<T>) => {
 				})}
 			>
 				<div
-					className={styles['v-scrollbar-inner']}
+					className={styles['v-scrollbar-thumb']}
 					style={{ height: v_totalSize, width: vScrollbarWidth, minWidth: vScrollbarWidth, maxWidth: vScrollbarWidth }}
 				/>
 			</div>

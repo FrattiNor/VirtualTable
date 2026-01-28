@@ -36,4 +36,9 @@
 	&.bordered::-webkit-scrollbar-track {
 		background-color: var(--table-scroll-bar-bg-bordered) !important;
 	}
+
+	&.table-body-mock.bordered::-webkit-scrollbar {
+		width: calc(var(--table-scroll-bar-width) + var(--table-cell-border-width)) !important;
+		height: calc(var(--table-scroll-bar-width) + var(--table-cell-border-width)) !important;
+	}
 }

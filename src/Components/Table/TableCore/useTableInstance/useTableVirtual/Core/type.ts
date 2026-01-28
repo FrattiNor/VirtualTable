@@ -1,7 +1,7 @@
-type Key = string | number;
+export type Key = string | number;
 
 // 对外
-export interface VirtualProps {
+export interface VirtualProps<K extends Key = Key> {
 	// 校验是否存在重复的key【使用的报错提示名】
 	keyName?: string;
 	// 启用
@@ -13,7 +13,7 @@ export interface VirtualProps {
 	// 间隔
 	gap?: { itemGap?: number; startGap?: number; endGap?: number };
 	// 【注意Memo】
-	getItemKey: (index: number) => Key;
+	getItemKey: (index: number) => K;
 	// 【注意Memo】
 	getItemSize: (index: number) => number;
 	// range变更、totalSize变更、scrollOffset变更 触发
@@ -25,19 +25,13 @@ export interface VirtualProps {
 	}) => void;
 }
 
-// 对内
-export interface VirtualInnerProps extends VirtualProps {
-	// 启用
-	enabled: boolean;
-}
+export type VirtualSizeListItem<K extends Key = Key> = { key: K; index: number; start: number; end: number; size: number; nextStart: number };
 
-export type VirtualSizeListItem = { key: Key; index: number; start: number; end: number; size: number; nextStart: number };
-
-export type VirtualState = {
+export type VirtualState<K extends Key = Key> = {
 	totalSize: number | null;
 	scrollOffset: number;
 	containerSize: number | null;
-	sizeList: Array<VirtualSizeListItem> | null;
+	sizeList: Array<VirtualSizeListItem<K>> | null;
 	rangeStart: number | null;
 	rangeEnd: number | null;
 };

@@ -1,8 +1,6 @@
-import { type RowKeyType } from '../../../TableTypes/type';
+import { type Key, type VirtualProps, type VirtualSizeListItem, type VirtualState } from './type';
 
-import type { VirtualProps, VirtualSizeListItem, VirtualState } from './type';
-
-export const getSizeList = ({
+export const getSizeList = <K extends Key = Key>({
 	gap,
 	count,
 	keyName,
@@ -10,20 +8,20 @@ export const getSizeList = ({
 	getItemSize,
 }: {
 	count: number;
-	gap: VirtualProps['gap'];
-	getItemKey: VirtualProps['getItemKey'];
-	getItemSize: VirtualProps['getItemSize'];
+	gap: VirtualProps<K>['gap'];
+	getItemKey: VirtualProps<K>['getItemKey'];
+	getItemSize: VirtualProps<K>['getItemSize'];
 	keyName?: string;
 }) => {
 	// 检测重复的rowKey
-	const rowKeysMap = new Map<RowKeyType, number>();
-	const checkSameKey = (key: RowKeyType) => {
+	const rowKeysMap = new Map<K, number>();
+	const checkSameKey = (key: K) => {
 		if (rowKeysMap.get(key) === 1) console.error(`same ${keyName ?? 'key'}: ${key}`);
 		rowKeysMap.set(key, (rowKeysMap.get(key) ?? 0) + 1);
 	};
 
 	const { itemGap = 0, startGap = 0, endGap = 0 } = gap ?? {};
-	const sizeList: Array<VirtualSizeListItem> = [];
+	const sizeList: Array<VirtualSizeListItem<K>> = [];
 	for (let index = 0; index < count; index++) {
 		const key = getItemKey(index);
 		const size = getItemSize(index);
@@ -73,7 +71,7 @@ export function binarySearch({ target, getSize, startIndex, endIndex }: BinarySe
 	return left < right ? [left, right] : [right, left];
 }
 
-export const getEmptyState = (): VirtualState => ({
+export const getEmptyState = <K extends Key>(): VirtualState<K> => ({
 	sizeList: null,
 	rangeStart: null,
 	rangeEnd: null,

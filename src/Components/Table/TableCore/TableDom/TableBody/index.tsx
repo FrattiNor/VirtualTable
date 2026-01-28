@@ -4,8 +4,6 @@ import classNames from 'classnames';
 
 import BodyContent from './BodyContent';
 import BodyEmpty from './BodyEmpty';
-import ColSizeMeasure from './ColSizeMeasure';
-import ColSizeObserver from './ColSizeObserver';
 import styles from './index.module.less';
 import StickyObserver from './StickyObserver';
 
@@ -14,7 +12,6 @@ import type { TableInstance } from '../../useTableInstance';
 type Props<T> = Pick<
 	TableInstance<T>,
 	| 'finalColumnsArr'
-	| 'columnsCore'
 	| 'bordered'
 	| 'data'
 	| 'rowKey'
@@ -23,14 +20,10 @@ type Props<T> = Pick<
 	| 'bodyScrollPlaceholderRef'
 	| 'rowHeight'
 	| 'getBodyStickyStyle'
-	| 'setSizeCacheMap'
 	| 'setPingedMap'
 	| 'fixedLeftMap'
 	| 'fixedRightMap'
 	| 'getBodyCellBg'
-	| 'sizeCacheMap'
-	| 'resized'
-	| 'resizeFlag'
 	| 'tableWidth'
 	| 'bodyRowClick'
 	| 'bodyRowMouseEnter'
@@ -56,34 +49,18 @@ type Props<T> = Pick<
 	| 'draggingRowIndex'
 	| 'draggingRowKey'
 	| 'borderWidth'
-	| 'colSizeObserverRef'
-	| 'columnsKeys'
 	| 'bodyRef'
 	| 'hiddenBodyWrapperScrollbar'
 >;
 
 const TableBody = <T,>(props: Props<T>) => {
 	const isEmpty = (props.data ?? []).length === 0;
-	const { bodyRef, bodyWrapperRef, bodyScrollPlaceholderRef, v_totalSize, h_totalSize, columnsKeys, hiddenBodyWrapperScrollbar } = props;
+	const { bodyRef, bodyWrapperRef, bodyScrollPlaceholderRef, v_totalSize, h_totalSize, hiddenBodyWrapperScrollbar } = props;
 
 	return (
 		<div ref={bodyWrapperRef} className={classNames(styles['body-wrapper'], { [styles['hidden-scroll-bar']]: hiddenBodyWrapperScrollbar })}>
 			<div ref={bodyScrollPlaceholderRef} className={styles['body-scroll-placeholder']} style={{ height: v_totalSize, width: h_totalSize }} />
 			<div ref={bodyRef} className={styles['body']}>
-				<ColSizeObserver
-					resized={props.resized}
-					resizeFlag={props.resizeFlag}
-					columnsCore={props.columnsCore}
-					sizeCacheMap={props.sizeCacheMap}
-					setSizeCacheMap={props.setSizeCacheMap}
-					colSizeObserverRef={props.colSizeObserverRef}
-				/>
-				<ColSizeMeasure
-					key={columnsKeys}
-					resized={props.resized}
-					setSizeCacheMap={props.setSizeCacheMap}
-					colSizeObserverRef={props.colSizeObserverRef}
-				/>
 				<StickyObserver
 					bodyRef={props.bodyRef}
 					setPingedMap={props.setPingedMap}

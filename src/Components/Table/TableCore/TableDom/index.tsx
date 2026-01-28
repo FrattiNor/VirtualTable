@@ -7,6 +7,7 @@ import styles from './index.module.less';
 import ScrollbarH from './ScrollbarH';
 import ScrollbarV from './ScrollbarV';
 import TableBody from './TableBody';
+import TableBodyMock from './TableBodyMock';
 import TableHead from './TableHead';
 import TableLoading from './TableLoading';
 import TableSummary from './TableSummary';
@@ -54,9 +55,9 @@ const TableDom = <T,>(coreProps: TableCoreProps<T>) => {
 					rowHeight={props.rowHeight}
 					resizeFlag={props.resizeFlag}
 					getColKeys={props.getColKeys}
-					vScrollbarState={props.vScrollbarState}
 					startResize={props.startResize}
 					getHeadCellBg={props.getHeadCellBg}
+					vScrollbarState={props.vScrollbarState}
 					finalColumnsArr={props.finalColumnsArr}
 					renderHeadPrefix={props.renderHeadPrefix}
 					getHeadCellColShow={props.getHeadCellColShow}
@@ -64,77 +65,84 @@ const TableDom = <T,>(coreProps: TableCoreProps<T>) => {
 					gridTemplateColumns={props.gridTemplateColumns}
 				/>
 				<div className={styles['table-body-container']}>
-					<TableBody
-						data={props.data}
-						theme={props.theme}
-						rowKey={props.rowKey}
+					<TableBodyMock
 						resized={props.resized}
-						bodyRef={props.bodyRef}
 						bordered={props.bordered}
-						rowHeight={props.rowHeight}
-						tableWidth={props.tableWidth}
 						resizeFlag={props.resizeFlag}
-						getColKeys={props.getColKeys}
-						getRowKeys={props.getRowKeys}
-						h_totalSize={props.h_totalSize}
 						columnsKeys={props.columnsKeys}
-						renderEmpty={props.renderEmpty}
-						v_offsetTop={props.v_offsetTop}
+						h_totalSize={props.h_totalSize}
+						v_totalSize={props.v_totalSize}
 						columnsCore={props.columnsCore}
-						v_totalSize={props.v_totalSize}
-						borderWidth={props.borderWidth}
 						sizeCacheMap={props.sizeCacheMap}
-						fixedLeftMap={props.fixedLeftMap}
-						setPingedMap={props.setPingedMap}
-						bodyRowClick={props.bodyRowClick}
-						fixedRightMap={props.fixedRightMap}
-						getBodyCellBg={props.getBodyCellBg}
-						renderBodyDom={props.renderBodyDom}
-						bodyWrapperRef={props.bodyWrapperRef}
-						draggingRowKey={props.draggingRowKey}
 						setSizeCacheMap={props.setSizeCacheMap}
-						finalColumnsArr={props.finalColumnsArr}
-						draggingRowIndex={props.draggingRowIndex}
-						rowDraggableMode={props.rowDraggableMode}
-						renderCellPrefix={props.renderCellPrefix}
-						highlightKeywords={props.highlightKeywords}
-						v_measureItemSize={props.v_measureItemSize}
-						bodyRowMouseEnter={props.bodyRowMouseEnter}
-						bodyRowMouseLeave={props.bodyRowMouseLeave}
-						getBodyCellColShow={props.getBodyCellColShow}
-						getBodyStickyStyle={props.getBodyStickyStyle}
 						colSizeObserverRef={props.colSizeObserverRef}
-						draggingRow_notShow={props.draggingRow_notShow}
-						gridTemplateColumns={props.gridTemplateColumns}
-						RowDraggableWrapper={props.RowDraggableWrapper}
-						draggingRow_offsetTop={props.draggingRow_offsetTop}
-						getBodyCellColForceShow={props.getBodyCellColForceShow}
-						bodyScrollPlaceholderRef={props.bodyScrollPlaceholderRef}
-						hiddenBodyWrapperScrollbar={props.hiddenBodyWrapperScrollbar}
-						renderWidthDraggableWrapper={props.renderWidthDraggableWrapper}
 					/>
-					<ScrollbarV
+					<div className={styles['table-body-container-inner']}>
+						<TableBody
+							data={props.data}
+							theme={props.theme}
+							rowKey={props.rowKey}
+							bodyRef={props.bodyRef}
+							bordered={props.bordered}
+							rowHeight={props.rowHeight}
+							tableWidth={props.tableWidth}
+							getColKeys={props.getColKeys}
+							getRowKeys={props.getRowKeys}
+							h_totalSize={props.h_totalSize}
+							renderEmpty={props.renderEmpty}
+							v_offsetTop={props.v_offsetTop}
+							v_totalSize={props.v_totalSize}
+							borderWidth={props.borderWidth}
+							fixedLeftMap={props.fixedLeftMap}
+							setPingedMap={props.setPingedMap}
+							bodyRowClick={props.bodyRowClick}
+							fixedRightMap={props.fixedRightMap}
+							getBodyCellBg={props.getBodyCellBg}
+							renderBodyDom={props.renderBodyDom}
+							bodyWrapperRef={props.bodyWrapperRef}
+							draggingRowKey={props.draggingRowKey}
+							finalColumnsArr={props.finalColumnsArr}
+							draggingRowIndex={props.draggingRowIndex}
+							rowDraggableMode={props.rowDraggableMode}
+							renderCellPrefix={props.renderCellPrefix}
+							highlightKeywords={props.highlightKeywords}
+							v_measureItemSize={props.v_measureItemSize}
+							bodyRowMouseEnter={props.bodyRowMouseEnter}
+							bodyRowMouseLeave={props.bodyRowMouseLeave}
+							getBodyCellColShow={props.getBodyCellColShow}
+							getBodyStickyStyle={props.getBodyStickyStyle}
+							draggingRow_notShow={props.draggingRow_notShow}
+							gridTemplateColumns={props.gridTemplateColumns}
+							RowDraggableWrapper={props.RowDraggableWrapper}
+							draggingRow_offsetTop={props.draggingRow_offsetTop}
+							getBodyCellColForceShow={props.getBodyCellColForceShow}
+							bodyScrollPlaceholderRef={props.bodyScrollPlaceholderRef}
+							hiddenBodyWrapperScrollbar={props.hiddenBodyWrapperScrollbar}
+							renderWidthDraggableWrapper={props.renderWidthDraggableWrapper}
+						/>
+						<ScrollbarV
+							bordered={props.bordered}
+							v_totalSize={props.v_totalSize}
+							vScrollbarRef={props.vScrollbarRef}
+							vScrollbarState={props.vScrollbarState}
+						/>
+					</div>
+					<ScrollbarH
 						bordered={props.bordered}
-						v_totalSize={props.v_totalSize}
+						h_totalSize={props.h_totalSize}
+						hScrollbarRef={props.hScrollbarRef}
+						hScrollbarState={props.hScrollbarState}
 						vScrollbarState={props.vScrollbarState}
-						vScrollbarRef={props.vScrollbarRef}
 					/>
 				</div>
-				<ScrollbarH
-					bordered={props.bordered}
-					h_totalSize={props.h_totalSize}
-					hScrollbarState={props.hScrollbarState}
-					vScrollbarState={props.vScrollbarState}
-					hScrollbarRef={props.hScrollbarRef}
-				/>
 				{showSummary && (
 					<TableSummary
 						bordered={props.bordered}
 						summaryData={summaryData}
 						rowHeight={props.rowHeight}
 						summaryRef={props.summaryRef}
-						vScrollbarState={props.vScrollbarState}
 						getBodyCellBg={props.getBodyCellBg}
+						vScrollbarState={props.vScrollbarState}
 						finalColumnsArr={props.finalColumnsArr}
 						bodyRowMouseEnter={props.bodyRowMouseEnter}
 						bodyRowMouseLeave={props.bodyRowMouseLeave}

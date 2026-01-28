@@ -1,13 +1,13 @@
 import { binarySearch, getEmptyState, getSizeList } from './utils';
 
-import type { VirtualInnerProps, VirtualProps, VirtualState } from './type';
+import type { Key, VirtualProps, VirtualState } from './type';
 
-class VirtualCore {
-	state: VirtualState = getEmptyState();
-	props: VirtualInnerProps = { enabled: true } as VirtualInnerProps;
+class VirtualCore<K extends Key = Key> {
+	state: VirtualState<K> = getEmptyState<K>();
+	props: VirtualProps<K> = {} as VirtualProps<K>;
 
 	// 初始化
-	constructor(virtual?: VirtualCore) {
+	constructor(virtual?: VirtualCore<K>) {
 		if (virtual) {
 			this.props = virtual.props;
 			this.state = virtual.state;
@@ -17,7 +17,7 @@ class VirtualCore {
 	// 更新sizeList，同时触发更新totalSize
 	private updateSizeList() {
 		// 更新sizeList
-		this.state.sizeList = getSizeList({
+		this.state.sizeList = getSizeList<K>({
 			gap: this.props.gap,
 			count: this.props.count,
 			keyName: this.props.keyName,
@@ -78,7 +78,7 @@ class VirtualCore {
 	// 触发更新end
 	private maybeEnd() {
 		let changed = false;
-		const emptyState = getEmptyState();
+		const emptyState = getEmptyState<K>();
 		const { totalSize, rangeStart, rangeEnd, scrollOffset, containerSize } = emptyState;
 		if (
 			this.state.totalSize !== totalSize ||
@@ -138,7 +138,7 @@ class VirtualCore {
 	}
 
 	// 更新props【外部使用】，用于更新props，并触发一系列修改
-	updateProps(props: VirtualProps) {
+	updateProps(props: VirtualProps<K>) {
 		// 判断propsChanged
 		const enabledChanged = (props.enabled ?? true) !== (this.props.enabled ?? true);
 		const countChanged = props.count !== this.props.count;
