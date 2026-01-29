@@ -37,11 +37,13 @@ type Props<T> = Pick<
 	| 'draggingRowIndex'
 	| 'draggingRowKey'
 	| 'borderWidth'
+	| 'dataId'
 >;
 
 const BodyContent = <T,>(props: Props<T>) => {
 	const {
 		data,
+		dataId,
 		rowKey,
 		v_offsetTop,
 		renderBodyDom,
@@ -62,8 +64,8 @@ const BodyContent = <T,>(props: Props<T>) => {
 	const renderRow = ({ style, itemData, rowIndex, itemRowKey, isPlaceholder }: RenderRowProps) => {
 		return (
 			<BodyRow
+				key={`${dataId}_${itemRowKey}`}
 				style={style}
-				key={itemRowKey}
 				itemData={itemData}
 				rowIndex={rowIndex}
 				itemRowKey={itemRowKey}
