@@ -5,7 +5,7 @@ import classNames from 'classnames';
 import ColSizeMeasure from './ColSizeMeasure';
 import ColSizeObserver from './ColSizeObserver';
 import styles from './index.module.less';
-import { isMac } from '../../TableUtils';
+import { isMacOrFireFox } from '../../TableUtils';
 import scrollbarStyles from '../../TableUtils/calcBorderWidth/index.module.less';
 import { type TableInstance } from '../../useTableInstance';
 
@@ -28,9 +28,9 @@ const TableBodyMock = <T,>(props: Props<T>) => {
 	return (
 		<div
 			className={classNames(styles['table-body-mock'], {
-				[scrollbarStyles['scrollbar']]: !isMac,
-				[scrollbarStyles['table-body-mock']]: !isMac,
-				[scrollbarStyles['bordered']]: !isMac && bordered,
+				[scrollbarStyles['scrollbar']]: !isMacOrFireFox,
+				[scrollbarStyles['table-body-mock']]: !isMacOrFireFox,
+				[scrollbarStyles['bordered']]: !isMacOrFireFox && bordered,
 			})}
 		>
 			<ColSizeObserver

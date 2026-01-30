@@ -100,4 +100,6 @@ export const getScrollbarState = (scrollbar: TableCoreScrollbarState, bordered: 
 	};
 };
 
-export const isMac = /Macintosh|Mac OS X/i.test(navigator.userAgent);
+const isFireFox = /firefox/i.test(navigator.userAgent);
+const isMac = /Macintosh|Mac OS X/i.test(navigator.userAgent);
+export const isMacOrFireFox = isMac || isFireFox;

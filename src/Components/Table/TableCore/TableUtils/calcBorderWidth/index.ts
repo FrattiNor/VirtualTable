@@ -1,4 +1,4 @@
-import { isMac } from '../index';
+import { isMacOrFireFox } from '../index';
 import styles from './index.module.less';
 
 const calcBorderWidth = (container: HTMLElement) => {
@@ -13,7 +13,7 @@ const calcBorderWidth = (container: HTMLElement) => {
 	calcDom.style.position = 'absolute';
 	calcDom.style.top = '0px';
 	calcDom.style.left = '0px';
-	calcDom.className = !isMac ? styles['scrollbar'] : '';
+	calcDom.className = !isMacOrFireFox ? styles['scrollbar'] : '';
 	// 插入滚动容器
 	container.appendChild(calcDom);
 	// 创建内部元素

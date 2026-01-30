@@ -3,7 +3,7 @@ import { memo } from 'react';
 import classNames from 'classnames';
 
 import styles from './index.module.less';
-import { isMac } from '../../TableUtils';
+import { isMacOrFireFox } from '../../TableUtils';
 import scrollbarStyles from '../../TableUtils/calcBorderWidth/index.module.less';
 import { type TableInstance } from '../../useTableInstance';
 
@@ -20,8 +20,8 @@ const ScrollbarV = <T,>(props: Props<T>) => {
 				style={{ width: vScrollbarWidth, minWidth: vScrollbarWidth, maxWidth: vScrollbarWidth }}
 				className={classNames(styles['v-scrollbar'], {
 					[styles['bordered']]: bordered,
-					[scrollbarStyles['scrollbar']]: !isMac,
-					[scrollbarStyles['bordered']]: !isMac && bordered,
+					[scrollbarStyles['scrollbar']]: !isMacOrFireFox,
+					[scrollbarStyles['bordered']]: !isMacOrFireFox && bordered,
 				})}
 			>
 				<div
