@@ -12,7 +12,6 @@ const useItemSizeObserver = (props: Props) => {
 
 	// 避免闭包问题
 	const propsRef = useRef(props);
-	// eslint-disable-next-line react-hooks/refs
 	propsRef.current = props;
 
 	const getItemSizeObserver = () => {

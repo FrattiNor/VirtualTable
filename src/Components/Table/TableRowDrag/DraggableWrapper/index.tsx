@@ -41,7 +41,7 @@ const DraggableWrapper = <T,>({ data, rowKey, rowDraggable, children, setDragAct
 	};
 
 	return (
-		<DndContext id="DndContext" onDragEnd={onDragEnd} onDragStart={onDragStart}>
+		<DndContext id="DndContext" onDragEnd={onDragEnd} onDragStart={onDragStart} autoScroll={false}>
 			<SortableContext id="SortableContext" items={sortableItems} strategy={verticalListSortingStrategy}>
 				{children}
 			</SortableContext>

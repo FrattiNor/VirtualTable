@@ -1,4 +1,4 @@
-import { cloneElement, type CSSProperties, useMemo, type FC } from 'react';
+import { cloneElement, type CSSProperties, useMemo, type FC, type ReactNode, isValidElement } from 'react';
 
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
@@ -9,7 +9,7 @@ import { type RowKeyType } from '../../TableCore/TableTypes/type';
 type Props = {
 	rowKey: RowKeyType;
 	rowIndex: number;
-	children: JSX.Element;
+	children: ReactNode;
 };
 
 const RowDraggableWrapper: FC<Props> = ({ rowIndex, rowKey, children }) => {
@@ -32,10 +32,12 @@ const RowDraggableWrapper: FC<Props> = ({ rowIndex, rowKey, children }) => {
 		[transition, transform, isDragging, isSorting],
 	);
 
+	if (!isValidElement(children)) return children;
+
 	const coverProps = {
 		draggableProps: attributes,
 		draggableSetNodeRef: setNodeRef,
-		style: { ...children.props.style, ..._style },
+		style: { ...(children.props as any)?.style, ..._style },
 	};
 
 	return <RowDraggableContext.Provider value={contextValue}>{cloneElement(children, coverProps)}</RowDraggableContext.Provider>;

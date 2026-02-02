@@ -6,9 +6,9 @@ import type { DataItem } from '../useData/data';
 const useColumns = () => {
 	const [longColumn, setLongColumn] = useState(true);
 
-	const columns: Table2Columns<DataItem> = useMemo(() => {
+	const columns = useMemo(() => {
 		if (longColumn === true) {
-			return [
+			const columns: Table2Columns<DataItem> = [
 				{
 					key: 'index',
 					title: 'Index',
@@ -109,12 +109,10 @@ const useColumns = () => {
 					render: ({ jobType }) => jobType,
 				},
 				{
-					align: 'center',
 					key: 'user',
 					title: '用户',
 					children: [
 						{
-							align: 'center',
 							key: 'userName',
 							title: '用户名称',
 							children: [
@@ -122,7 +120,6 @@ const useColumns = () => {
 									width: 120,
 									flexGrow: 0,
 									fixed: 'right',
-									align: 'center',
 									key: 'firstName',
 									title: 'firstName_0',
 									render: ({ firstName }) => (
@@ -159,7 +156,7 @@ const useColumns = () => {
 						{
 							width: 120,
 							flexGrow: 0,
-							// fixed: 'right',
+							fixed: 'right',
 							key: 'userId',
 							title: '用户id_2',
 							render: ({ userId }) => userId,
@@ -167,8 +164,9 @@ const useColumns = () => {
 					],
 				},
 			];
+			return columns;
 		} else {
-			return [
+			const columns: Table2Columns<DataItem> = [
 				{
 					flexGrow: 0,
 					width: 200.55555555,
@@ -200,6 +198,7 @@ const useColumns = () => {
 					render: ({ index }) => `row4_${index}`,
 				},
 			];
+			return columns;
 		}
 	}, [longColumn]);
 
