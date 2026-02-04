@@ -1,8 +1,6 @@
 .overlay {
 	gap: 16px;
 	display: flex;
-	border-radius: 2;
-	background-color: var(--table-bg);
 	user-select: none;
 	pointer-events: none;
 	padding: 0 24px;
@@ -10,7 +8,9 @@
 	min-width: 200px;
 	white-space: nowrap;
 	align-items: center;
-	box-shadow: var(--table-overlay-box-shadow);
+	background-color: var(--table-bg);
+	border-radius: var(--table-border-radius);
+	box-shadow: var(--table-draggable-overlay-box-shadow);
 
 	.icon {
 		flex-shrink: 0;
