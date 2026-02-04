@@ -29,7 +29,6 @@ type Props<T> = Pick<
 	| 'getColKeys'
 	| 'getBodyCellColShow'
 	| 'getBodyCellColForceShow'
-	| 'borderWidth'
 > & {
 	itemData: T;
 	rowIndex: number;
@@ -110,7 +109,6 @@ const BodyRow = <T,>(props: Props<T>) => {
 				itemRowKey={itemRowKey}
 				bordered={props.bordered}
 				rowHeight={props.rowHeight}
-				borderWidth={props.borderWidth}
 				bodyRowClick={props.bodyRowClick}
 				getBodyCellBg={props.getBodyCellBg}
 				colIndex={props.finalColumnsArr.length}

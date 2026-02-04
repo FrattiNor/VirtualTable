@@ -11,11 +11,6 @@
 	// 默认有borderTop
 	border-top: var(--table-cell-border-width) solid var(--table-cell-border-color);
 
-	// 第一行删除borderTop
-	&.first-row {
-		border-top: 0 solid var(--table-cell-border-color);
-	}
-
 	// bordered的情况下，默认有borderLeft
 	&.bordered {
 		border-left: var(--table-cell-border-width) solid var(--table-cell-border-color);
@@ -44,11 +39,6 @@
 		box-shadow: var(--table-sticky-box-shadow-left);
 	}
 
-	// 左固定最后一位，但是第一行，删除top包含的上边框
-	&.left-last-pinged.first-row::before {
-		top: 0;
-	}
-
 	// 右固定最后一位默认显示阴影，默认top包含上边框
 	&.right-last-pinged::before {
 		content: '';
@@ -60,11 +50,6 @@
 		pointer-events: none;
 		transition: box-shadow 0.2s;
 		box-shadow: var(--table-sticky-box-shadow-right);
-	}
-
-	// 右固定最后一位，但是第一行，删除top包含的上边框
-	&.right-last-pinged.first-row::before {
-		top: 0;
 	}
 
 	// 右固定最后一位，但是bordered，默认right包含左边框

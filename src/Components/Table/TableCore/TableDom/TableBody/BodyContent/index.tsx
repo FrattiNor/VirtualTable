@@ -36,7 +36,6 @@ type Props<T> = Pick<
 	| 'rowDraggableMode'
 	| 'draggingRowIndex'
 	| 'draggingRowKey'
-	| 'borderWidth'
 	| 'dataId'
 >;
 
@@ -74,7 +73,6 @@ const BodyContent = <T,>(props: Props<T>) => {
 				getColKeys={props.getColKeys}
 				getRowKeys={props.getRowKeys}
 				isPlaceholder={isPlaceholder}
-				borderWidth={props.borderWidth}
 				bodyRowClick={props.bodyRowClick}
 				getBodyCellBg={props.getBodyCellBg}
 				getBodyCellColShow={getBodyCellColShow}

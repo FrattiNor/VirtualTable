@@ -23,10 +23,12 @@ const useTableVirtual = <T, K = RowKeyType, S = any>({ coreProps, tableColumns, 
 	const draggingRowIndex = coreProps.rowDraggableProps?.draggingRowIndex;
 
 	const v_virtual = useVVirtualCore({
+		// 隐藏第一行的上border
+		gap: { startGap: -borderWidth },
 		count: data?.length ?? 0,
 		bodyRef: tableDomRef.bodyRef,
 		getItemKey: useCallback((index: number) => getRowKey(rowKey, data?.[index]) as RowKeyType, [rowKey, data]),
-		getItemSize: useCallback((index: number) => (index === 0 ? rowHeight - borderWidth : rowHeight), [rowHeight, borderWidth]),
+		getItemSize: useCallback(() => rowHeight, [rowHeight]),
 	});
 
 	const v_sizeList = v_virtual.sizeList;

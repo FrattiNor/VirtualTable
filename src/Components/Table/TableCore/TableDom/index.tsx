@@ -1,4 +1,4 @@
-import { Fragment, memo } from 'react';
+import { type CSSProperties, Fragment, memo } from 'react';
 
 import classNames from 'classnames';
 
@@ -17,28 +17,39 @@ import { type TableCoreProps } from '../TableTypes/typeProps';
 
 const TableDom = <T,>(coreProps: TableCoreProps<T>) => {
 	const props = useTableInstance(coreProps);
-	const { pagination, style, loading, className } = coreProps;
+	const { pagination, style, loading, className, borderWidth } = coreProps;
 	const { data, hScrollbarState, theme, bordered, resizeFlag, showSummary, summaryData } = props;
 
+	// 是空Table
 	const isEmpty = (data ?? []).length === 0;
+
+	// 存在分页器
 	const havePagination = !isEmpty && pagination;
+
+	// 存在横向滚动条
 	const haveHScrollbar = hScrollbarState.have && hScrollbarState.width > 0;
 
-	return (
-		<TableLoading
-			style={style}
-			loading={loading}
-			loadingMaxHeight={400}
-			className={classNames(
-				{
-					[themeStyles['theme-dark']]: theme === 'dark',
-					[themeStyles['theme-light']]: theme === 'light',
-				},
+	// Wrapper Class 样式
+	const wrapperClassName = classNames(
+		{
+			[themeStyles['theme-dark']]: theme === 'dark',
+			[themeStyles['theme-light']]: theme === 'light',
+		},
+		styles['table-wrapper'],
+		className,
+	);
 
-				styles['table-wrapper'],
-				className,
-			)}
-		>
+	// Wrapper Style 样式
+	const wrapperStyle: CSSProperties = { ...style };
+
+	// 如果有传borderWidth参数，覆盖class内主题宽度
+	if (typeof borderWidth === 'number') {
+		// @ts-ignore
+		wrapperStyle['--table-cell-border-width'] = `${borderWidth}px`;
+	}
+
+	return (
+		<TableLoading loading={loading} loadingMaxHeight={400} style={wrapperStyle} className={wrapperClassName}>
 			<div
 				className={classNames(styles['table'], {
 					[styles['bordered']]: bordered,
@@ -93,7 +104,6 @@ const TableDom = <T,>(coreProps: TableCoreProps<T>) => {
 							renderEmpty={props.renderEmpty}
 							v_offsetTop={props.v_offsetTop}
 							v_totalSize={props.v_totalSize}
-							borderWidth={props.borderWidth}
 							fixedLeftMap={props.fixedLeftMap}
 							setPingedMap={props.setPingedMap}
 							bodyRowClick={props.bodyRowClick}

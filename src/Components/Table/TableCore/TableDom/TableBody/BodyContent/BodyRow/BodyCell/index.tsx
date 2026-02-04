@@ -86,7 +86,6 @@ const BodyCell = <T,>(props: Props<T>) => {
 			className={classNames(styles['body-cell'], {
 				[styles['bordered']]: bordered,
 				[styles['first-col']]: colIndexStart === 0,
-				[styles['first-row']]: rowIndexStart === 0,
 				[styles['left-last-pinged']]: leftLastPinged,
 				[styles['right-last-pinged']]: rightLastPinged,
 				[styles['hidden-left-border']]: colIndexStart !== 0 && hiddenLeftBorder,
