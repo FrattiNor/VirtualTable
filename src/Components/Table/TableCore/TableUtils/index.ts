@@ -55,8 +55,14 @@ export const getNotLeafColumnByIndex = <T>(splitColumns: Array<TableCoreColumnGr
 };
 
 // 将数字精度置为2
+// 使用toFixed会进行四舍五入，容易导致最终整合后大于总数
 export const FixedTwo = (v: number) => {
-	return Number(v.toFixed(2));
+	const vStr = String(v);
+	const vSplit = vStr.split('.');
+	const integer = vSplit[0] as string;
+	const decimal = vSplit?.[1] as string | undefined;
+	if (decimal === undefined) return v;
+	return Number(`${integer}.${decimal.slice(0, 2)}`);
 };
 
 // 将宽度数组转换为calc
