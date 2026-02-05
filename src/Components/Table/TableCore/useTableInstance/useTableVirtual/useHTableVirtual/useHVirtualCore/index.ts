@@ -33,9 +33,10 @@ const useHVirtualCore = (props: Props) => {
 	}, [enabled, count, overscan, gap, getItemKey, getItemSize]);
 
 	const rangeEnd = virtualCore.state.rangeEnd;
-	const totalSize = virtualCore.state.totalSize ?? 0;
 	const rangeStart = virtualCore.state.rangeStart;
 	const scrollOffset = virtualCore.state.scrollOffset;
+	// 通过observer计算出来的子size之和可能会超出父元素，执行Math.round避免这个问题
+	const totalSize = Math.floor(virtualCore.state.totalSize ?? 0);
 
 	useMemo(() => {
 		if (bodyRef.current && bodyRef.current.scrollLeft !== scrollOffset) bodyRef.current.scrollLeft = scrollOffset;

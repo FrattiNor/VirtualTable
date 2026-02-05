@@ -18,7 +18,7 @@ const enableLoop = false;
 
 const useTableRef = <T, K = RowKeyType, S = any>({ coreProps, tableState, tableDomRef }: Props<T, K, S>) => {
 	const { bodyWrapperRef } = tableDomRef;
-	const { setResized, setSizeCacheMap } = tableState;
+	const { setResized } = tableState;
 	const { tableRef, columns, columnConf } = coreProps;
 	const { visibleConf, sortConf, fixedConf } = columnConf ?? {};
 
@@ -30,10 +30,7 @@ const useTableRef = <T, K = RowKeyType, S = any>({ coreProps, tableState, tableD
 				});
 			},
 			clearResized: () => {
-				setResized((old) => {
-					if (old === true) setSizeCacheMap(new Map());
-					return false;
-				});
+				setResized(false);
 			},
 			getOriginColumnsConf: () => {
 				const loopColumns = (c: TableCoreColumns<T>) => {

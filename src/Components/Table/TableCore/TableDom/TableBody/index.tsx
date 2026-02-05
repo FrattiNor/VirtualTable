@@ -69,7 +69,7 @@ const TableBody = <T,>(props: Props<T>) => {
 					finalColumnsArr={props.finalColumnsArr}
 					gridTemplateColumns={props.gridTemplateColumns}
 				/>
-				<div className={styles['body-inner']} style={{ minHeight: v_totalSize }}>
+				<div className={styles['body-inner']} style={{ height: v_totalSize }}>
 					<BodyContent
 						data={props.data}
 						dataId={props.dataId}

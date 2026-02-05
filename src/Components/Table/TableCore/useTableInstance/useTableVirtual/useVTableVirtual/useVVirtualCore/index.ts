@@ -35,11 +35,11 @@ const useVVirtualCore = (props: Props) => {
 		return null;
 	}, [enabled, count, overscan, gap, getItemKey, getItemSize]);
 
-	const scrollOffset = virtualCore.state.scrollOffset;
-	const rangeStart = virtualCore.state.rangeStart;
 	const rangeEnd = virtualCore.state.rangeEnd;
-	const totalSize = virtualCore.state.totalSize ?? 0;
 	const sizeList = virtualCore.state.sizeList;
+	const rangeStart = virtualCore.state.rangeStart;
+	const scrollOffset = virtualCore.state.scrollOffset;
+	const totalSize = Math.floor(virtualCore.state.totalSize ?? 0);
 
 	useMemo(() => {
 		if (bodyRef.current && bodyRef.current.scrollTop !== scrollOffset) bodyRef.current.scrollTop = scrollOffset;

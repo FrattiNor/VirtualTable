@@ -2,7 +2,7 @@ import { memo, useEffect, useState } from 'react';
 
 import ColSizeObserverItem from './ColSizeObserverItem';
 import styles from './index.module.less';
-import { FixedTwo, getDisplayNone, getLeafColumn } from '../../../TableUtils';
+import { getDisplayNone, getLeafColumn } from '../../../TableUtils';
 import { maxColWidth, minColWidth } from '../../../TableUtils/configValues';
 
 import type { TableInstance } from '../../../useTableInstance';
@@ -19,7 +19,7 @@ const ColSizeObserver = <T,>(props: Props<T>) => {
 			items.forEach((item) => {
 				const key = getKey(item);
 				if (typeof key === 'string') {
-					const size = Math.min(Math.max(FixedTwo(getSize(item)), minColWidth), maxColWidth);
+					const size = Math.min(Math.max(getSize(item), minColWidth), maxColWidth);
 					if (old.get(key) !== size) {
 						old.set(key, size);
 						changed = true;

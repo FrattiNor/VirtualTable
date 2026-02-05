@@ -23,6 +23,8 @@ type Props<T> = Pick<
 	| 'columnsKeys'
 >;
 
+// 模拟垂直滚动条是否显示
+// 目的：使计算colSize和计算垂直滚动条保持同步
 const TableBodyMock = <T,>(props: Props<T>) => {
 	const { v_totalSize, h_totalSize, bordered, columnsKeys } = props;
 	return (
@@ -41,12 +43,7 @@ const TableBodyMock = <T,>(props: Props<T>) => {
 				setSizeCacheMap={props.setSizeCacheMap}
 				colSizeObserverRef={props.colSizeObserverRef}
 			/>
-			<ColSizeMeasure
-				key={columnsKeys}
-				resized={props.resized}
-				setSizeCacheMap={props.setSizeCacheMap}
-				colSizeObserverRef={props.colSizeObserverRef}
-			/>
+			<ColSizeMeasure key={columnsKeys} setSizeCacheMap={props.setSizeCacheMap} colSizeObserverRef={props.colSizeObserverRef} />
 			<div className={styles['body-scroll-mock-placeholder']} style={{ height: v_totalSize, width: h_totalSize }} />
 		</div>
 	);
