@@ -1,7 +1,7 @@
 import styles from './index.module.less';
 import useColumns from './useColumns';
 import useData from './useData';
-import { Table2 } from '../../Components/Table';
+import { Table2 } from '../../TableComponents';
 
 const TableDemo = () => {
 	const columns = useColumns();

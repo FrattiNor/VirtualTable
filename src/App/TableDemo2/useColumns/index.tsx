@@ -1,5 +1,4 @@
-import { type Table2Columns } from '../../../Components/Table';
-
+import type { Table2Columns } from '../../../TableComponents';
 import type { AreaOnOffListItem } from '../useData';
 
 const useColumns = () => {
@@ -88,6 +87,14 @@ const useColumns = () => {
 			render: () => '-',
 			fixed: 'right',
 		},
+		...Array(900)
+			.fill('')
+			.map((_, index) => ({
+				// 更新时间
+				title: `${index}`,
+				key: `${index}`,
+				render: () => '-',
+			})),
 	];
 
 	return columns;
