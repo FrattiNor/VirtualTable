@@ -94,6 +94,7 @@ const TableDom = <T,>(coreProps: TableCoreProps<T>) => {
 							theme={props.theme}
 							dataId={props.dataId}
 							rowKey={props.rowKey}
+							v_items={props.v_items}
 							bodyRef={props.bodyRef}
 							bordered={props.bordered}
 							rowHeight={props.rowHeight}
@@ -109,13 +110,13 @@ const TableDom = <T,>(coreProps: TableCoreProps<T>) => {
 							bodyRowClick={props.bodyRowClick}
 							fixedRightMap={props.fixedRightMap}
 							getBodyCellBg={props.getBodyCellBg}
-							renderBodyDom={props.renderBodyDom}
 							bodyWrapperRef={props.bodyWrapperRef}
 							draggingRowKey={props.draggingRowKey}
 							finalColumnsArr={props.finalColumnsArr}
 							draggingRowIndex={props.draggingRowIndex}
 							rowDraggableMode={props.rowDraggableMode}
 							renderCellPrefix={props.renderCellPrefix}
+							getPlaceholderRow={props.getPlaceholderRow}
 							highlightKeywords={props.highlightKeywords}
 							v_measureItemSize={props.v_measureItemSize}
 							bodyRowMouseEnter={props.bodyRowMouseEnter}

@@ -23,7 +23,6 @@ type Props<T> = Pick<
 	| 'v_offsetTop'
 	| 'v_measureItemSize'
 	| 'highlightKeywords'
-	| 'renderBodyDom'
 	| 'renderCellPrefix'
 	| 'getRowKeys'
 	| 'getColKeys'
@@ -37,6 +36,8 @@ type Props<T> = Pick<
 	| 'draggingRowIndex'
 	| 'draggingRowKey'
 	| 'dataId'
+	| 'v_items'
+	| 'getPlaceholderRow'
 >;
 
 const BodyContent = <T,>(props: Props<T>) => {
@@ -44,8 +45,8 @@ const BodyContent = <T,>(props: Props<T>) => {
 		data,
 		dataId,
 		rowKey,
+		v_items,
 		v_offsetTop,
-		renderBodyDom,
 		rowDraggableMode,
 		gridTemplateColumns,
 		RowDraggableWrapper,
@@ -53,6 +54,7 @@ const BodyContent = <T,>(props: Props<T>) => {
 		draggingRow_offsetTop,
 		draggingRowIndex,
 		draggingRowKey,
+		getPlaceholderRow,
 		getBodyCellColShow,
 		getBodyCellColForceShow,
 		renderWidthDraggableWrapper,
@@ -121,12 +123,17 @@ const BodyContent = <T,>(props: Props<T>) => {
 		return renderWidthDraggableWrapper(
 			<Fragment>
 				<div className={styles['draggable-mode-content']} style={contentStyle}>
-					{renderBodyDom(({ itemData, itemRowKey, rowIndex, isPlaceholder }) => {
-						return (
-							<RowDraggableWrapper key={`${isPlaceholder}-${itemRowKey}`} rowKey={itemRowKey} rowIndex={rowIndex}>
-								{renderRow({ itemData, rowIndex, itemRowKey, isPlaceholder })}
-							</RowDraggableWrapper>
-						);
+					{v_items.map(({ index: rowIndex }) => {
+						const itemData = data[rowIndex];
+						if (itemData) {
+							const itemRowKey = getRowKey(rowKey, itemData);
+							const isPlaceholder = getPlaceholderRow(rowIndex);
+							return (
+								<RowDraggableWrapper key={`${isPlaceholder}-${itemRowKey}`} rowKey={itemRowKey} rowIndex={rowIndex}>
+									{renderRow({ itemData, rowIndex, itemRowKey, isPlaceholder })}
+								</RowDraggableWrapper>
+							);
+						}
 					})}
 				</div>
 				{renderDraggingRow()}
@@ -137,8 +144,13 @@ const BodyContent = <T,>(props: Props<T>) => {
 	// 不存在行拖拽
 	return (
 		<div className={styles['body-content']} style={contentStyle}>
-			{renderBodyDom(({ itemData, itemRowKey, rowIndex, isPlaceholder }) => {
-				return renderRow({ itemData, rowIndex, itemRowKey, isPlaceholder });
+			{v_items.map(({ index: rowIndex }) => {
+				const itemData = data[rowIndex];
+				if (itemData) {
+					const itemRowKey = getRowKey(rowKey, itemData);
+					const isPlaceholder = getPlaceholderRow(rowIndex);
+					return renderRow({ itemData, rowIndex, itemRowKey, isPlaceholder });
+				}
 			})}
 		</div>
 	);

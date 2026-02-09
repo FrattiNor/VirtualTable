@@ -88,13 +88,28 @@ const useTableVirtual = <T, K = RowKeyType, S = any>({ coreProps, tableColumns, 
 		return !(draggingRowIndex >= v_rangeStart && draggingRowIndex <= v_rangeEnd);
 	}, [v_rangeStart, v_rangeEnd, draggingRowIndex]);
 
+	const v_items = useMemo(() => {
+		if (Array.isArray(v_sizeList) && typeof v_rangeStart === 'number' && typeof v_rangeEnd === 'number') {
+			return v_sizeList.slice(v_rangeStart, v_rangeEnd + 1);
+		}
+		return [];
+	}, [v_sizeList, v_rangeStart, v_rangeEnd]);
+
+	const getPlaceholderRow = useCallback(
+		(rowIndex: number) => {
+			if (typeof v_rangeStart_origin === 'number' && typeof v_rangeEnd_origin === 'number') {
+				return !(rowIndex >= v_rangeStart_origin && rowIndex <= v_rangeEnd_origin);
+			}
+			return false;
+		},
+		[v_rangeStart_origin, v_rangeEnd_origin],
+	);
+
 	return {
 		v_totalSize,
 		v_offsetTop,
-		v_rangeStart,
-		v_rangeEnd,
-		v_rangeStart_origin,
-		v_rangeEnd_origin,
+		v_items,
+		getPlaceholderRow,
 		getV_virtualCore,
 		v_measureItemSize,
 		draggingRow_offsetTop,

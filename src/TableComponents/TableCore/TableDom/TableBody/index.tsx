@@ -34,7 +34,6 @@ type Props<T> = Pick<
 	| 'v_measureItemSize'
 	| 'theme'
 	| 'highlightKeywords'
-	| 'renderBodyDom'
 	| 'renderCellPrefix'
 	| 'renderEmpty'
 	| 'getRowKeys'
@@ -51,6 +50,8 @@ type Props<T> = Pick<
 	| 'bodyRef'
 	| 'hiddenBodyWrapperScrollbar'
 	| 'dataId'
+	| 'v_items'
+	| 'getPlaceholderRow'
 >;
 
 const TableBody = <T,>(props: Props<T>) => {
@@ -74,6 +75,7 @@ const TableBody = <T,>(props: Props<T>) => {
 						data={props.data}
 						dataId={props.dataId}
 						rowKey={props.rowKey}
+						v_items={props.v_items}
 						bordered={props.bordered}
 						rowHeight={props.rowHeight}
 						getColKeys={props.getColKeys}
@@ -81,12 +83,12 @@ const TableBody = <T,>(props: Props<T>) => {
 						v_offsetTop={props.v_offsetTop}
 						bodyRowClick={props.bodyRowClick}
 						getBodyCellBg={props.getBodyCellBg}
-						renderBodyDom={props.renderBodyDom}
 						draggingRowKey={props.draggingRowKey}
 						finalColumnsArr={props.finalColumnsArr}
 						renderCellPrefix={props.renderCellPrefix}
 						draggingRowIndex={props.draggingRowIndex}
 						rowDraggableMode={props.rowDraggableMode}
+						getPlaceholderRow={props.getPlaceholderRow}
 						highlightKeywords={props.highlightKeywords}
 						v_measureItemSize={props.v_measureItemSize}
 						bodyRowMouseEnter={props.bodyRowMouseEnter}
