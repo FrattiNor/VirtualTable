@@ -35,7 +35,6 @@ type Props<T> = Pick<
 	| 'rowDraggableMode'
 	| 'draggingRowIndex'
 	| 'draggingRowKey'
-	| 'dataId'
 	| 'v_items'
 	| 'getPlaceholderRow'
 >;
@@ -43,7 +42,6 @@ type Props<T> = Pick<
 const BodyContent = <T,>(props: Props<T>) => {
 	const {
 		data,
-		dataId,
 		rowKey,
 		v_items,
 		v_offsetTop,
@@ -65,7 +63,7 @@ const BodyContent = <T,>(props: Props<T>) => {
 	const renderRow = ({ style, itemData, rowIndex, itemRowKey, isPlaceholder }: RenderRowProps) => {
 		return (
 			<BodyRow
-				key={`${dataId}_${itemRowKey}`}
+				key={itemRowKey}
 				style={style}
 				itemData={itemData}
 				rowIndex={rowIndex}

@@ -8,6 +8,7 @@ import type { TableCoreProps } from '../TableTypes/typeProps';
 // 根据参数rowKey，获取【rowKey】
 export const getRowKey = <T, K>(rowKey: TableCoreProps<T, K>['rowKey'], item: T) => {
 	if (typeof rowKey === 'function') return rowKey(item);
+	if (item === undefined || item === null) return undefined as unknown as K;
 	return item[rowKey] as K;
 };
 

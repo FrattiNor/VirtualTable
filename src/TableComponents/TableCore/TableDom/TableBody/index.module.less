@@ -5,6 +5,7 @@
 	flex-shrink: 1;
 	overflow: auto;
 	position: relative;
+	overflow-anchor: none;
 
 	&.hidden-scroll-bar {
 		// === hidden scroll bar ===
@@ -17,6 +18,7 @@
 	}
 
 	.body-scroll-placeholder {
+		min-height: 1px;
 		position: absolute;
 	}
 
@@ -29,6 +31,7 @@
 		position: sticky;
 		background-color: var(--table-bg);
 		color: var(--table-body-font-color);
+		// 针对更换数据源，滚动焦点不对情况
 		overflow-anchor: none;
 
 		.body-inner {

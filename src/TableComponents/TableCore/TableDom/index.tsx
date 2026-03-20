@@ -92,7 +92,6 @@ const TableDom = <T,>(coreProps: TableCoreProps<T>) => {
 						<TableBody
 							data={props.data}
 							theme={props.theme}
-							dataId={props.dataId}
 							rowKey={props.rowKey}
 							v_items={props.v_items}
 							bodyRef={props.bodyRef}

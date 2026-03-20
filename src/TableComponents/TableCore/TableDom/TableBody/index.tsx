@@ -49,7 +49,6 @@ type Props<T> = Pick<
 	| 'draggingRowKey'
 	| 'bodyRef'
 	| 'hiddenBodyWrapperScrollbar'
-	| 'dataId'
 	| 'v_items'
 	| 'getPlaceholderRow'
 >;
@@ -73,7 +72,6 @@ const TableBody = <T,>(props: Props<T>) => {
 				<div className={styles['body-inner']} style={{ height: v_totalSize }}>
 					<BodyContent
 						data={props.data}
-						dataId={props.dataId}
 						rowKey={props.rowKey}
 						v_items={props.v_items}
 						bordered={props.bordered}

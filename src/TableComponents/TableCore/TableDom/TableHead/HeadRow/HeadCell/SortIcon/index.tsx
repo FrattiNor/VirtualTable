@@ -17,8 +17,8 @@ const SortIcon: FC<Props> = ({ sortValue }) => {
 				viewBox="0 0 1024 1024"
 				focusable="false"
 				data-icon="caret-up"
-				width="1em"
-				height="1em"
+				width="11px"
+				height="11px"
 				fill="currentColor"
 				aria-hidden="true"
 			>
@@ -29,8 +29,8 @@ const SortIcon: FC<Props> = ({ sortValue }) => {
 				viewBox="0 0 1024 1024"
 				focusable="false"
 				data-icon="caret-down"
-				width="1em"
-				height="1em"
+				width="11px"
+				height="11px"
 				fill="currentColor"
 				aria-hidden="true"
 			>
