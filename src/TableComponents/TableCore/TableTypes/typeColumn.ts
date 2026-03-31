@@ -51,6 +51,8 @@ type _TableCoreColumn<T, S = any> = {
 	onCellTitle?: TableCoreColumnOnCellTitle<T>;
 	// 配置cell style
 	onCellStyle?: TableCoreColumnOnCellStyle<T>;
+	// 配置summary cell span
+	onSummaryCellSpan?: TableCoreColumnOnCellSpan<S>;
 	// 配置head style
 	headStyle?: CSSProperties;
 	// 启用列排序

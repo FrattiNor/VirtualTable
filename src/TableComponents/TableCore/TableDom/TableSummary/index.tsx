@@ -41,17 +41,27 @@ const TableSummary = <T, K = RowKeyType, S = any>(props: Props<T, K, S>) => {
 					return (
 						<div key={itemRowKey} className={styles['summary-row']}>
 							{finalColumnsArr.map((splitColumns, colIndex) => {
-								if (!getSummaryCellColShow({ colIndexStart: colIndex, colIndexEnd: colIndex })) return null;
 								const leafColumn = getLeafColumn(splitColumns);
+								const { rowSpan = 1, colSpan = 1 } = leafColumn.onSummaryCellSpan
+									? leafColumn.onSummaryCellSpan(itemData, rowIndex)
+									: {};
+								if (rowSpan <= 0 || colSpan <= 0) return null;
+								const rowIndexStart = rowIndex;
+								const rowIndexEnd = rowIndex + rowSpan - 1;
+								const colIndexStart = colIndex;
+								const colIndexEnd = colIndex + colSpan - 1;
+								if (!getSummaryCellColShow({ colIndexStart, colIndexEnd })) return null;
 								return (
 									<SummaryCell
 										key={leafColumn.key}
 										itemData={itemData}
-										colIndex={colIndex}
-										rowIndex={rowIndex}
 										itemRowKey={itemRowKey}
 										leafColumn={leafColumn}
 										bordered={props.bordered}
+										colIndexEnd={colIndexEnd}
+										rowIndexEnd={rowIndexEnd}
+										rowIndexStart={rowIndexStart}
+										colIndexStart={colIndexStart}
 										getBodyCellBg={props.getBodyCellBg}
 										bodyRowMouseEnter={props.bodyRowMouseEnter}
 										bodyRowMouseLeave={props.bodyRowMouseLeave}

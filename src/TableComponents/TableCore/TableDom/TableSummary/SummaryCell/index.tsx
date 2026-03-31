@@ -15,8 +15,10 @@ type Props<T, K, S> = Pick<
 > & {
 	itemData: S;
 	itemRowKey: string;
-	colIndex: number;
-	rowIndex: number;
+	colIndexStart: number;
+	colIndexEnd: number;
+	rowIndexStart: number;
+	rowIndexEnd: number;
 	leafColumn: TableCoreColumn<T, S>;
 };
 
@@ -26,8 +28,10 @@ const SummaryCell = <T, K, S>(props: Props<T, K, S>) => {
 		leafColumn,
 		bordered,
 		itemData,
-		rowIndex,
-		colIndex,
+		colIndexStart,
+		colIndexEnd,
+		rowIndexStart,
+		rowIndexEnd,
 		itemRowKey,
 		getHeadStickyStyle,
 		getBodyCellBg,
@@ -35,7 +39,7 @@ const SummaryCell = <T, K, S>(props: Props<T, K, S>) => {
 		bodyRowMouseLeave,
 	} = props;
 
-	const index = rowIndex;
+	const index = rowIndexStart;
 	const colKey = leafColumn.key;
 	const summaryRender = leafColumn.summaryRender;
 
@@ -64,15 +68,15 @@ const SummaryCell = <T, K, S>(props: Props<T, K, S>) => {
 			onMouseLeave={bodyRowMouseLeave ? () => bodyRowMouseLeave({ rowKeys }) : undefined}
 			className={classNames(styles['summary-cell'], {
 				[styles['bordered']]: bordered,
-				[styles['first-col']]: colIndex === 0,
+				[styles['first-col']]: colIndexStart === 0,
 				[styles['left-last-pinged']]: leftLastPinged,
 				[styles['right-last-pinged']]: rightLastPinged,
-				[styles['hidden-left-border']]: colIndex !== 0 && hiddenLeftBorder,
+				[styles['hidden-left-border']]: colIndexStart !== 0 && hiddenLeftBorder,
 			})}
 			style={{
 				backgroundColor,
-				gridRow: `${rowIndex + 1}/${rowIndex + 2}`,
-				gridColumn: `${colIndex + 1}/${colIndex + 2}`,
+				gridRow: `${rowIndexStart + 1}/${rowIndexEnd + 2}`,
+				gridColumn: `${colIndexStart + 1}/${colIndexEnd + 2}`,
 				justifyContent: align === 'center' ? 'center' : align === 'right' ? 'flex-end' : 'flex-start',
 				...stickyStyle,
 			}}

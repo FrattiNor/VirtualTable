@@ -55,7 +55,7 @@ const TableDom = <T,>(coreProps: TableCoreProps<T>) => {
 					[styles['bordered']]: bordered,
 					[styles['any-resize']]: !!resizeFlag,
 					// bordered为false，但是显示border-bottom的情况，非空，没有横向滚动条
-					[styles['no-bordered-and-show-border-bottom']]: !isEmpty && !bordered && !haveHScrollbar,
+					[styles['no-bordered-and-show-border-bottom']]: showSummary || (!isEmpty && !bordered && !haveHScrollbar),
 				})}
 			>
 				<TableHead
