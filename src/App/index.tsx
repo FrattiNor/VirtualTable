@@ -1,7 +1,7 @@
-import TableDemo from './TableDemo2';
+import FullDemo from './FullDemo';
 
 const App = () => {
-	return <TableDemo />;
+	return <FullDemo />;
 };
 
 export default App;
