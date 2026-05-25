@@ -1,7 +1,8 @@
-import { type RefObject, useState, useRef, useMemo, useCallback } from 'react';
+import { type RefObject, type CSSProperties, useState, useRef, useMemo, useCallback, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 
 import styles from './index.module.less';
-import { Table2, type Table2Ref, type Table2Columns, type Table2Sorter } from '../../TableComponents';
+import { Table2, TableCoreFilterIcon, type Table2Ref, type Table2Columns, type Table2Sorter } from '../../TableComponents';
 
 type DemoItem = {
 	id: string;
@@ -96,6 +97,22 @@ const Toggle = ({ active, onChange }: { active: boolean; onChange: (v: boolean) 
 	</button>
 );
 
+type CheckboxFilterKeys = 'department' | 'city' | 'status';
+type TextFilterKeys = 'id' | 'name' | 'age' | 'salary' | 'email' | 'joinDate' | 'score';
+
+type FilterState = {
+	department: string[];
+	city: string[];
+	status: string[];
+	id: string;
+	name: string;
+	age: string;
+	salary: string;
+	email: string;
+	joinDate: string;
+	score: string;
+};
+
 const PAGE_SIZE = 50;
 
 const FullDemo = () => {
@@ -122,8 +139,29 @@ const FullDemo = () => {
 	const [cellSpanEnabled, setCellSpanEnabled] = useState(false);
 	const [headerGroupEnabled, setHeaderGroupEnabled] = useState(false);
 	const [scrollToTop, setScrollToTop] = useState(0);
+	const [filterEnabled, setFilterEnabled] = useState(true);
+	const [filterState, setFilterState] = useState<FilterState>({
+		department: [], city: [], status: [],
+		id: '', name: '', age: '', salary: '', email: '', joinDate: '', score: '',
+	});
+	const [filterDraft, setFilterDraft] = useState<FilterState>({
+		department: [], city: [], status: [],
+		id: '', name: '', age: '', salary: '', email: '', joinDate: '', score: '',
+	});
+	const [activeFilterKey, setActiveFilterKey] = useState<string | null>(null);
 
 	const [data, setData] = useState<DemoItem[]>(() => generateData(500, false));
+
+	useEffect(() => {
+		const handler = (e: MouseEvent) => {
+			const target = e.target as HTMLElement;
+			if (!target.closest('[data-filter-dropdown]') && !target.closest('[data-filter-trigger]')) {
+				setActiveFilterKey(null);
+			}
+		};
+		document.addEventListener('mousedown', handler);
+		return () => document.removeEventListener('mousedown', handler);
+	}, []);
 
 	const regenerateData = useCallback(() => {
 		setLoading(true);
@@ -133,11 +171,53 @@ const FullDemo = () => {
 		}, 600);
 	}, [dataCount, treeEnabled]);
 
+	const filteredData = useMemo(() => {
+		let result = data;
+		if (filterState.department.length > 0) {
+			result = result.filter((item) => filterState.department.includes(item.department));
+		}
+		if (filterState.city.length > 0) {
+			result = result.filter((item) => filterState.city.includes(item.city));
+		}
+		if (filterState.status.length > 0) {
+			result = result.filter((item) => filterState.status.includes(item.status));
+		}
+		if (filterState.id) {
+			const kw = filterState.id.toLowerCase();
+			result = result.filter((item) => String(item.id).toLowerCase().includes(kw));
+		}
+		if (filterState.name) {
+			const kw = filterState.name.toLowerCase();
+			result = result.filter((item) => item.name.toLowerCase().includes(kw));
+		}
+		if (filterState.age) {
+			const kw = filterState.age.toLowerCase();
+			result = result.filter((item) => String(item.age).includes(kw));
+		}
+		if (filterState.salary) {
+			const kw = filterState.salary.toLowerCase();
+			result = result.filter((item) => String(item.salary).includes(kw));
+		}
+		if (filterState.email) {
+			const kw = filterState.email.toLowerCase();
+			result = result.filter((item) => item.email.toLowerCase().includes(kw));
+		}
+		if (filterState.joinDate) {
+			const kw = filterState.joinDate.toLowerCase();
+			result = result.filter((item) => item.joinDate.toLowerCase().includes(kw));
+		}
+		if (filterState.score) {
+			const kw = filterState.score.toLowerCase();
+			result = result.filter((item) => String(item.score).includes(kw));
+		}
+		return result;
+	}, [data, filterState]);
+
 	const paginatedData = useMemo(() => {
-		if (!showPagination) return data;
+		if (!showPagination) return filteredData;
 		const start = (currentPage - 1) * PAGE_SIZE;
-		return data.slice(start, start + PAGE_SIZE);
-	}, [data, showPagination, currentPage]);
+		return filteredData.slice(start, start + PAGE_SIZE);
+	}, [filteredData, showPagination, currentPage]);
 
 	const displayData = useMemo(() => {
 		if (showEmpty) return [];
@@ -146,15 +226,202 @@ const FullDemo = () => {
 
 	const summaryData: SummaryItem[] | undefined = useMemo(() => {
 		if (!showSummary) return undefined;
+		const src = filteredData;
+		if (src.length === 0) return undefined;
 		return [
 			{
-				totalCount: data.length,
-				avgAge: (data.reduce((s, d) => s + d.age, 0) / data.length).toFixed(1),
-				avgSalary: (data.reduce((s, d) => s + d.salary, 0) / data.length).toFixed(0),
-				avgScore: (data.reduce((s, d) => s + d.score, 0) / data.length).toFixed(1),
+				totalCount: src.length,
+				avgAge: (src.reduce((s, d) => s + d.age, 0) / src.length).toFixed(1),
+				avgSalary: (src.reduce((s, d) => s + d.salary, 0) / src.length).toFixed(0),
+				avgScore: (src.reduce((s, d) => s + d.score, 0) / src.length).toFixed(1),
 			},
 		];
-	}, [showSummary, data]);
+	}, [showSummary, filteredData]);
+
+	const toggleFilterDraft = useCallback((colKey: CheckboxFilterKeys, value: string) => {
+		setFilterDraft((prev) => {
+			const arr = prev[colKey] as string[];
+			const next = arr.includes(value) ? arr.filter((v: string) => v !== value) : [...arr, value];
+			return { ...prev, [colKey]: next };
+		});
+	}, []);
+
+	const confirmFilter = useCallback((colKey: keyof FilterState) => {
+		setFilterState((prev) => ({ ...prev, [colKey]: filterDraft[colKey] }));
+		setActiveFilterKey(null);
+	}, [filterDraft]);
+
+	const resetFilterDraft = useCallback((colKey: keyof FilterState) => {
+		setFilterDraft((prev) => {
+			const old = prev[colKey];
+			return { ...prev, [colKey]: Array.isArray(old) ? [] : '' };
+		});
+	}, []);
+
+	const clearAllFilters = useCallback(() => {
+		setFilterState({
+			department: [], city: [], status: [],
+			id: '', name: '', age: '', salary: '', email: '', joinDate: '', score: '',
+		});
+		setFilterDraft({
+			department: [], city: [], status: [],
+			id: '', name: '', age: '', salary: '', email: '', joinDate: '', score: '',
+		});
+	}, []);
+
+	const filterIconRefs = useRef<Record<string, HTMLDivElement | null>>({});
+
+	const getDropdownPosition = useCallback((colKey: string): CSSProperties => {
+		const iconEl = filterIconRefs.current[colKey];
+		if (!iconEl) return { display: 'none' };
+		const rect = iconEl.getBoundingClientRect();
+		return {
+			position: 'fixed',
+			top: rect.bottom + 4,
+			left: rect.left,
+			zIndex: 9999,
+		};
+	}, []);
+
+	const renderFilterDropdown = useCallback(
+		(colKey: CheckboxFilterKeys, options: string[]) => {
+			if (!filterEnabled) return undefined;
+			const isOpen = activeFilterKey === colKey;
+			const selected = filterDraft[colKey] as string[];
+			const filtered = (filterState[colKey] as string[]).length > 0;
+
+			return (
+				<div
+					ref={(el) => { filterIconRefs.current[colKey] = el; }}
+					data-filter-trigger
+				>
+					<TableCoreFilterIcon
+						visible={isOpen}
+						filtered={filtered}
+						onClick={() => {
+							if (isOpen) {
+								setActiveFilterKey(null);
+							} else {
+								setFilterDraft((prev) => ({ ...prev, [colKey]: [...(filterState[colKey] as string[])] }));
+								setActiveFilterKey(colKey);
+							}
+						}}
+					>
+						<svg viewBox="64 64 896 896" width="12" height="12" fill="currentColor">
+							<path d="M349 838c0 17.7 14.2 32 31.8 32h262.4c17.6 0 31.8-14.3 31.8-32V642H349v196zm531.1-684H143.9c-24.5 0-39.8 26.7-27.5 48l221.3 376.3V842c0 11 9 20 20 20h328c11 0 20-9 20-20V578.3L907.7 202c12.2-21.3-3.1-48-27.6-48z" />
+						</svg>
+					</TableCoreFilterIcon>
+					{isOpen && createPortal(
+						<div style={getDropdownPosition(colKey)} data-filter-dropdown>
+							<div className={styles.filterDropdown}>
+								<div className={styles.filterList}>
+									{options.map((opt) => (
+										<div
+											key={opt}
+											className={styles.filterItem}
+											onClick={() => toggleFilterDraft(colKey, opt)}
+										>
+											<input
+												type="checkbox"
+												checked={selected.includes(opt)}
+												readOnly
+												style={{ pointerEvents: 'none' }}
+											/>
+											<span>{opt}</span>
+										</div>
+									))}
+								</div>
+								<div className={styles.filterFooter}>
+									<button className={styles.filterFooterBtn} onClick={() => resetFilterDraft(colKey)}>
+										重置
+									</button>
+									<button className={`${styles.filterFooterBtn} ${styles.confirm}`} onClick={() => confirmFilter(colKey)}>
+										确定
+									</button>
+								</div>
+							</div>
+						</div>,
+						document.body,
+					)}
+				</div>
+			);
+		},
+		[filterEnabled, activeFilterKey, filterState, filterDraft, toggleFilterDraft, confirmFilter, resetFilterDraft, getDropdownPosition],
+	);
+
+	const renderTextFilter = useCallback(
+		(colKey: TextFilterKeys, placeholder: string) => {
+			if (!filterEnabled) return undefined;
+			const isOpen = activeFilterKey === colKey;
+			const draftValue = filterDraft[colKey] as string;
+			const filtered = !!(filterState[colKey] as string);
+
+			return (
+				<div
+					ref={(el) => { filterIconRefs.current[colKey] = el; }}
+					data-filter-trigger
+				>
+					<TableCoreFilterIcon
+						visible={isOpen}
+						filtered={filtered}
+						onClick={() => {
+							if (isOpen) {
+								setActiveFilterKey(null);
+							} else {
+								setFilterDraft((prev) => ({ ...prev, [colKey]: filterState[colKey] as string }));
+								setActiveFilterKey(colKey);
+							}
+						}}
+					>
+						<svg viewBox="64 64 896 896" width="12" height="12" fill="currentColor">
+							<path d="M349 838c0 17.7 14.2 32 31.8 32h262.4c17.6 0 31.8-14.3 31.8-32V642H349v196zm531.1-684H143.9c-24.5 0-39.8 26.7-27.5 48l221.3 376.3V842c0 11 9 20 20 20h328c11 0 20-9 20-20V578.3L907.7 202c12.2-21.3-3.1-48-27.6-48z" />
+						</svg>
+					</TableCoreFilterIcon>
+					{isOpen && createPortal(
+						<div style={getDropdownPosition(colKey)} data-filter-dropdown>
+							<div className={styles.filterDropdown}>
+								<div className={styles.filterSearchBox}>
+									<input
+										className={styles.filterSearchInput}
+										placeholder={placeholder}
+										value={draftValue}
+										onChange={(e) => setFilterDraft((prev) => ({ ...prev, [colKey]: e.target.value }))}
+										onKeyDown={(e) => {
+											if (e.key === 'Enter') confirmFilter(colKey);
+										}}
+									/>
+								</div>
+								<div className={styles.filterFooter}>
+									<button className={styles.filterFooterBtn} onClick={() => resetFilterDraft(colKey)}>
+										重置
+									</button>
+									<button className={`${styles.filterFooterBtn} ${styles.confirm}`} onClick={() => confirmFilter(colKey)}>
+										确定
+									</button>
+								</div>
+							</div>
+						</div>,
+						document.body,
+					)}
+				</div>
+			);
+		},
+		[filterEnabled, activeFilterKey, filterState, filterDraft, confirmFilter, resetFilterDraft, getDropdownPosition],
+	);
+
+	const getColHighlight = useCallback((colKey: keyof FilterState): string[] | undefined => {
+		const colFilter = filterState[colKey];
+		const kws: string[] = [];
+		if (Array.isArray(colFilter) && colFilter.length > 0) {
+			kws.push(...colFilter);
+		} else if (typeof colFilter === 'string' && colFilter) {
+			kws.push(colFilter);
+		}
+		if (highlightKeywords.length > 0) {
+			kws.push(...highlightKeywords);
+		}
+		return kws.length > 0 ? kws : undefined;
+	}, [filterState, highlightKeywords]);
 
 	const columns: Table2Columns<DemoItem, SummaryItem> = useMemo(() => {
 		const baseColumns: Table2Columns<DemoItem, SummaryItem> = [
@@ -164,14 +431,16 @@ const FullDemo = () => {
 				width: 120,
 				fixed: 'left',
 				resize: true,
-				highlightKeywords: highlightKeywords.length > 0 ? highlightKeywords : undefined,
+				filter: renderTextFilter('id', '搜索ID...'),
+				highlightKeywords: getColHighlight('id'),
 			},
 			{
 				title: '姓名',
 				key: 'name',
 				width: 150,
 				resize: true,
-				highlightKeywords: highlightKeywords.length > 0 ? highlightKeywords : undefined,
+				filter: renderTextFilter('name', '搜索姓名...'),
+				highlightKeywords: getColHighlight('name'),
 			},
 			{
 				title: '年龄',
@@ -180,6 +449,8 @@ const FullDemo = () => {
 				align: 'center',
 				resize: true,
 				sorter: true,
+				filter: renderTextFilter('age', '搜索年龄...'),
+				highlightKeywords: getColHighlight('age'),
 				onCellStyle: (item) => {
 					if (item.age > 45) return { color: '#f5222d', fontWeight: 600 };
 					if (item.age < 25) return { color: '#1890ff' };
@@ -193,14 +464,16 @@ const FullDemo = () => {
 				width: 120,
 				resize: true,
 				sorter: true,
+				filter: renderFilterDropdown('department', departments),
+				highlightKeywords: getColHighlight('department'),
 				onCellSpan: cellSpanEnabled
 					? (item, index) => {
-							if (index > 0 && item.department === data[index - 1]?.department) {
+							if (index > 0 && item.department === filteredData[index - 1]?.department) {
 								return { rowSpan: 0 };
 							}
 							let span = 1;
-							for (let i = index + 1; i < data.length; i++) {
-								if (data[i].department === item.department) span++;
+							for (let i = index + 1; i < filteredData.length; i++) {
+								if (filteredData[i].department === item.department) span++;
 								else break;
 							}
 							return { rowSpan: span };
@@ -213,7 +486,8 @@ const FullDemo = () => {
 				width: 120,
 				resize: true,
 				sorter: true,
-				highlightKeywords: highlightKeywords.length > 0 ? highlightKeywords : undefined,
+				filter: renderFilterDropdown('city', cities),
+				highlightKeywords: getColHighlight('city'),
 			},
 			{
 				title: '薪资',
@@ -222,6 +496,8 @@ const FullDemo = () => {
 				align: 'right',
 				resize: true,
 				sorter: true,
+				filter: renderTextFilter('salary', '搜索薪资...'),
+				highlightKeywords: getColHighlight('salary'),
 				render: (item) => <span>¥{item.salary.toLocaleString()}</span>,
 				onCellStyle: (item) => {
 					if (item.salary > 20000) return { color: '#52c41a', fontWeight: 600 };
@@ -235,6 +511,8 @@ const FullDemo = () => {
 				width: 100,
 				align: 'center',
 				resize: true,
+				filter: renderFilterDropdown('status', statuses),
+				highlightKeywords: getColHighlight('status'),
 				render: (item) => {
 					const colorMap: Record<string, string> = { 在职: '#52c41a', 休假: '#faad14', 出差: '#1890ff', 离职: '#ff4d4f' };
 					return <span style={{ color: colorMap[item.status] || '#999' }}>● {item.status}</span>;
@@ -245,7 +523,8 @@ const FullDemo = () => {
 				key: 'email',
 				width: 220,
 				resize: true,
-				highlightKeywords: highlightKeywords.length > 0 ? highlightKeywords : undefined,
+				filter: renderTextFilter('email', '搜索邮箱...'),
+				highlightKeywords: getColHighlight('email'),
 			},
 			{
 				title: '入职日期',
@@ -253,6 +532,8 @@ const FullDemo = () => {
 				width: 140,
 				resize: true,
 				sorter: true,
+				filter: renderTextFilter('joinDate', '搜索日期...'),
+				highlightKeywords: getColHighlight('joinDate'),
 			},
 			{
 				title: '评分',
@@ -261,6 +542,8 @@ const FullDemo = () => {
 				align: 'center',
 				resize: true,
 				sorter: true,
+				filter: renderTextFilter('score', '搜索评分...'),
+				highlightKeywords: getColHighlight('score'),
 				render: (item) => {
 					const score = item.score;
 					let color = '#52c41a';
@@ -292,7 +575,8 @@ const FullDemo = () => {
 					width: 120,
 					fixed: 'left',
 					resize: true,
-					highlightKeywords: highlightKeywords.length > 0 ? highlightKeywords : undefined,
+					filter: renderTextFilter('id', '搜索ID...'),
+					highlightKeywords: getColHighlight('id'),
 				},
 				{
 					key: 'personalGroup',
@@ -303,7 +587,8 @@ const FullDemo = () => {
 							key: 'name',
 							width: 150,
 							resize: true,
-							highlightKeywords: highlightKeywords.length > 0 ? highlightKeywords : undefined,
+							filter: renderTextFilter('name', '搜索姓名...'),
+							highlightKeywords: getColHighlight('name'),
 						},
 						{
 							title: '年龄',
@@ -312,6 +597,8 @@ const FullDemo = () => {
 							align: 'center' as const,
 							resize: true,
 							sorter: true,
+							filter: renderTextFilter('age', '搜索年龄...'),
+							highlightKeywords: getColHighlight('age'),
 							summaryRender: (item: SummaryItem) => <span style={{ fontWeight: 600 }}>{item.avgAge}</span>,
 						},
 						{
@@ -319,7 +606,8 @@ const FullDemo = () => {
 							key: 'email',
 							width: 220,
 							resize: true,
-							highlightKeywords: highlightKeywords.length > 0 ? highlightKeywords : undefined,
+							filter: renderTextFilter('email', '搜索邮箱...'),
+							highlightKeywords: getColHighlight('email'),
 						},
 					],
 				},
@@ -327,14 +615,23 @@ const FullDemo = () => {
 					key: 'workGroup',
 					title: '工作信息',
 					children: [
-						{ title: '部门', key: 'department', width: 120, resize: true, sorter: true },
+						{
+							title: '部门',
+							key: 'department',
+							width: 120,
+							resize: true,
+							sorter: true,
+							filter: renderFilterDropdown('department', departments),
+							highlightKeywords: getColHighlight('department'),
+						},
 						{
 							title: '城市',
 							key: 'city',
 							width: 120,
 							resize: true,
 							sorter: true,
-							highlightKeywords: highlightKeywords.length > 0 ? highlightKeywords : undefined,
+							filter: renderFilterDropdown('city', cities),
+							highlightKeywords: getColHighlight('city'),
 						},
 						{
 							title: '薪资',
@@ -343,6 +640,8 @@ const FullDemo = () => {
 							align: 'right' as const,
 							resize: true,
 							sorter: true,
+							filter: renderTextFilter('salary', '搜索薪资...'),
+							highlightKeywords: getColHighlight('salary'),
 							render: (item: DemoItem) => <span>¥{item.salary.toLocaleString()}</span>,
 							summaryRender: (item: SummaryItem) => <span style={{ fontWeight: 600 }}>¥{Number(item.avgSalary).toLocaleString()}</span>,
 						},
@@ -352,12 +651,14 @@ const FullDemo = () => {
 							width: 100,
 							align: 'center' as const,
 							resize: true,
+							filter: renderFilterDropdown('status', statuses),
+							highlightKeywords: getColHighlight('status'),
 							render: (item: DemoItem) => {
 								const colorMap: Record<string, string> = { 在职: '#52c41a', 休假: '#faad14', 出差: '#1890ff', 离职: '#ff4d4f' };
 								return <span style={{ color: colorMap[item.status] || '#999' }}>● {item.status}</span>;
 							},
 						},
-						{ title: '入职日期', key: 'joinDate', width: 140, resize: true, sorter: true },
+						{ title: '入职日期', key: 'joinDate', width: 140, resize: true, sorter: true, filter: renderTextFilter('joinDate', '搜索日期...'), highlightKeywords: getColHighlight('joinDate') },
 						{
 							title: '评分',
 							key: 'score',
@@ -365,6 +666,8 @@ const FullDemo = () => {
 							align: 'center' as const,
 							resize: true,
 							sorter: true,
+							filter: renderTextFilter('score', '搜索评分...'),
+							highlightKeywords: getColHighlight('score'),
 							render: (item: DemoItem) => {
 								const s = item.score;
 								let c = '#52c41a';
@@ -393,7 +696,7 @@ const FullDemo = () => {
 		}
 
 		return baseColumns;
-	}, [highlightKeywords, cellSpanEnabled, data, headerGroupEnabled]);
+	}, [cellSpanEnabled, filteredData, headerGroupEnabled, renderFilterDropdown, renderTextFilter, getColHighlight]);
 
 	const treeExpand = useMemo(() => {
 		if (!treeEnabled) return undefined;
@@ -489,7 +792,12 @@ const FullDemo = () => {
 		tableRef.current?.scrollTo({ top: scrollToTop, behavior: 'smooth' });
 	}, [scrollToTop]);
 
-	const totalPages = Math.ceil(data.length / PAGE_SIZE);
+	const totalPages = Math.ceil(filteredData.length / PAGE_SIZE);
+
+	const hasActiveFilters =
+		filterState.department.length > 0 || filterState.city.length > 0 || filterState.status.length > 0 ||
+		!!filterState.id || !!filterState.name || !!filterState.age || !!filterState.salary ||
+		!!filterState.email || !!filterState.joinDate || !!filterState.score;
 
 	return (
 		<div className={styles.app} data-theme={theme}>
@@ -498,6 +806,7 @@ const FullDemo = () => {
 				<div className={styles.headerRight}>
 					<span style={{ fontSize: 12, color: '#888' }}>数据量: {displayData.length} 行</span>
 					<span style={{ fontSize: 12, color: '#888' }}>选中: {selectedKeys.length} 行</span>
+					{hasActiveFilters && <span style={{ fontSize: 12, color: '#1890ff' }}>筛选中</span>}
 				</div>
 			</div>
 
@@ -546,6 +855,91 @@ const FullDemo = () => {
 							<span className={styles.label}>分页器</span>
 							<Toggle active={showPagination} onChange={setShowPagination} />
 						</div>
+					</div>
+
+					<div className={styles.section}>
+						<div className={styles.sectionTitle}>🔎 列筛选</div>
+						<div className={styles.controlRow}>
+							<span className={styles.label}>启用列筛选</span>
+							<Toggle active={filterEnabled} onChange={(v) => { setFilterEnabled(v); if (!v) clearAllFilters(); }} />
+						</div>
+						{hasActiveFilters && (
+							<div className={styles.controlRow}>
+								<button className={styles.btn} onClick={clearAllFilters}>
+									清除所有筛选
+								</button>
+							</div>
+						)}
+						{filterState.department.length > 0 && (
+							<div className={styles.controlRow}>
+								<span className={styles.label} style={{ color: '#1890ff' }}>
+									部门: {filterState.department.join('、')}
+								</span>
+							</div>
+						)}
+						{filterState.city.length > 0 && (
+							<div className={styles.controlRow}>
+								<span className={styles.label} style={{ color: '#1890ff' }}>
+									城市: {filterState.city.join('、')}
+								</span>
+							</div>
+						)}
+						{filterState.status.length > 0 && (
+							<div className={styles.controlRow}>
+								<span className={styles.label} style={{ color: '#1890ff' }}>
+									状态: {filterState.status.join('、')}
+								</span>
+							</div>
+						)}
+						{filterState.id && (
+							<div className={styles.controlRow}>
+								<span className={styles.label} style={{ color: '#1890ff' }}>
+									ID: "{filterState.id}"
+								</span>
+							</div>
+						)}
+						{filterState.name && (
+							<div className={styles.controlRow}>
+								<span className={styles.label} style={{ color: '#1890ff' }}>
+									姓名: "{filterState.name}"
+								</span>
+							</div>
+						)}
+						{filterState.age && (
+							<div className={styles.controlRow}>
+								<span className={styles.label} style={{ color: '#1890ff' }}>
+									年龄: "{filterState.age}"
+								</span>
+							</div>
+						)}
+						{filterState.salary && (
+							<div className={styles.controlRow}>
+								<span className={styles.label} style={{ color: '#1890ff' }}>
+									薪资: "{filterState.salary}"
+								</span>
+							</div>
+						)}
+						{filterState.email && (
+							<div className={styles.controlRow}>
+								<span className={styles.label} style={{ color: '#1890ff' }}>
+									邮箱: "{filterState.email}"
+								</span>
+							</div>
+						)}
+						{filterState.joinDate && (
+							<div className={styles.controlRow}>
+								<span className={styles.label} style={{ color: '#1890ff' }}>
+									入职日期: "{filterState.joinDate}"
+								</span>
+							</div>
+						)}
+						{filterState.score && (
+							<div className={styles.controlRow}>
+								<span className={styles.label} style={{ color: '#1890ff' }}>
+									评分: "{filterState.score}"
+								</span>
+							</div>
+						)}
 					</div>
 
 					<div className={styles.section}>
@@ -710,7 +1104,7 @@ const FullDemo = () => {
 											return (
 												<div className={styles.paginationWrapper}>
 													<span className={styles.pageInfo}>
-														共 {data.length} 条，第 {currentPage}/{totalPages} 页
+														共 {filteredData.length} 条，第 {currentPage}/{totalPages} 页
 													</span>
 													<button className={styles.pageBtn} disabled={currentPage <= 1} onClick={() => setCurrentPage(1)}>
 														首页
@@ -757,11 +1151,10 @@ const FullDemo = () => {
 
 			<div className={styles.infoBar}>
 				<span>💡 左侧面板可控制所有功能开关</span>
-				<span>列宽可拖拽调整 | 点击表头排序 | 固定列左右滚动</span>
+				<span>列宽可拖拽调整 | 点击表头排序 | 固定列左右滚动 | 表头筛选图标筛选数据</span>
 			</div>
 		</div>
 	);
 };
 
 export default FullDemo;
-
