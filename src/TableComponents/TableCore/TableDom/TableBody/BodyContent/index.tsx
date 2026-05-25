@@ -24,6 +24,7 @@ const BodyContent = <T,>() => {
 		renderWidthDraggableWrapper,
 	} = ctx;
 
+	// 渲染行
 	type RenderRowProps = { itemData: T; rowIndex: number; itemRowKey: RowKeyType; isPlaceholder: boolean; style?: CSSProperties };
 	const renderRow = ({ style, itemData, rowIndex, itemRowKey, isPlaceholder }: RenderRowProps) => {
 		return (
@@ -38,9 +39,12 @@ const BodyContent = <T,>() => {
 		);
 	};
 
+	// content样式
 	const contentStyle = { gridTemplateColumns: gridTemplateColumns + ` minmax(0px, 1fr)`, transform: `translate3d(0,${v_offsetTop}px,0)` };
 
+	// 如果存在行拖拽
 	if (rowDraggableMode && RowDraggableWrapper && typeof renderWidthDraggableWrapper === 'function') {
+		// 渲染正在拖拽的行【当此行被虚拟列表隐藏】
 		const renderDraggingRow = () => {
 			if (typeof draggingRowIndex === 'number' && draggingRow_notShow && RowDraggableWrapper) {
 				const itemData = data[draggingRowIndex];
@@ -85,6 +89,7 @@ const BodyContent = <T,>() => {
 		);
 	}
 
+	// 不存在行拖拽
 	return (
 		<div className={styles['body-content']} style={contentStyle}>
 			{v_items.map(({ index: rowIndex }) => {

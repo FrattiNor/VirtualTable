@@ -28,6 +28,7 @@ const BodyCellPlaceholder = <T,>(props: PlaceholderSpecificProps) => {
 
 	const backgroundColor = getBodyCellBg({ rowKeys, colKeys: undefined });
 
+	// 动态监测行高
 	useLayoutEffect(() => {
 		if (ref.current) {
 			return v_measureItemSize(rowIndex, ref.current);

@@ -36,15 +36,25 @@ const BodyCell = <T,>(props: CellSpecificProps) => {
 	const colKey = leafColumn.key;
 	const render = leafColumn.render;
 
+	// 行keys
 	const rowKeys = useMemo(() => getRowKeys(rowIndexStart, rowIndexEnd), [rowIndexStart, rowIndexEnd]);
+	// 列keys
 	const colKeys = useMemo(() => getColKeys(colIndexStart, colIndexEnd), [colIndexStart, colIndexEnd]);
+	// 合并 全局高亮关键字 和 列高亮关键字
 	const mergeHighlightKeywords = getMergeHighlightKeywords(highlightKeywords, leafColumn.highlightKeywords);
+	// 最终渲染结果
 	const renderDom = getRenderDom({ itemData, index, colKey, render, highlightKeywords: mergeHighlightKeywords });
+	// 当前cell的title
 	const title = typeof leafColumn.onCellTitle === 'function' ? leafColumn.onCellTitle(itemData, index) : getCellTitle(renderDom);
+	// 是否可省略
 	const canEllipsis = isStrNum(renderDom);
+	// 当前cell的背景色
 	const backgroundColor = getBodyCellBg({ rowKeys, colKeys });
+	// 当前cell的sticky情况
 	const { stickyStyle, hiddenLeftBorder, leftLastPinged, rightLastPinged } = getBodyStickyStyle({ colKeys });
+	// 当前cell配置的style
 	const style = typeof leafColumn.onCellStyle === 'function' ? leafColumn.onCellStyle(itemData, index) : undefined;
+	// 当前cell配置的align
 	const align = leafColumn.align;
 
 	return (

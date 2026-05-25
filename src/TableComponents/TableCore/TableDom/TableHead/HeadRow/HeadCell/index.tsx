@@ -39,21 +39,37 @@ const HeadCell = <T,>(props: ContextualProps) => {
 	const ctx = useTableInstanceContext<T>();
 	const { sorter, finalColumnsArr, bordered, rowHeight, getColKeys, getHeadStickyStyle, getHeadCellBg, renderHeadPrefix, resizeFlag, startResize } = ctx;
 
+	// sort的一些参数
 	const sortKey = sorter?.sortKey;
 	const sortValue = sorter?.sortValue;
 	const onSortChange = sorter?.onSortChange;
+	// 是否可以sort
 	const couldSort = isLeaf && column.sorter === true;
+	// 当前cell的sort的值
 	const currentSortValue = sortKey === column.key ? sortValue : undefined;
+	// 是否可以resize
 	const resize = useMemo(() => getResize(finalColumnsArr, colIndexStart, colIndexEnd), [finalColumnsArr, colIndexStart, colIndexEnd]);
+	// 列keys
 	const colKeys = useMemo(() => getColKeys(colIndexStart, colIndexEnd), [colIndexStart, colIndexEnd]);
+	// 最终渲染结果
 	const renderDom = !isEmptyRender(column.title) ? column.title : '-';
+	// 筛选dom
 	const filterDom = column.filter;
+	// 当前head的title
 	const title = getCellTitle(renderDom);
+	// 是否可省略
 	const canEllipsis = isStrNum(renderDom);
+	// 当前head的背景色
 	const backgroundColor = getHeadCellBg({ colKeys });
+	// 当前head的sticky情况
 	const { stickyStyle, hiddenLeftBorder, leftLastPinged, rightLastPinged } = getHeadStickyStyle({ colKeys });
+	// 当前head配置的style
 	const style = column.headStyle;
+	// 当前head配置的align
+	// 叶子节点默认为left
+	// 父节点如果span为1默认为left，否则为center
 	const align = column.align ?? (isLeaf ? 'left' : colIndexStart === colIndexEnd ? 'left' : 'center');
+	// cell 点击触发sort变更
 	const onClick = () => {
 		if (couldSort) {
 			const nextSortValue = currentSortValue === undefined ? 'asc' : currentSortValue === 'asc' ? 'desc' : undefined;
@@ -84,6 +100,7 @@ const HeadCell = <T,>(props: ContextualProps) => {
 			}}
 		>
 			{(() => {
+				// head主要内容
 				const content = (
 					<Fragment>
 						{isLeaf && typeof renderHeadPrefix === 'function' ? renderHeadPrefix(column.key) : undefined}
@@ -95,8 +112,10 @@ const HeadCell = <T,>(props: ContextualProps) => {
 					</Fragment>
 				);
 
+				// 不存在filter 且 不存在sort
 				if (!filterDom && !couldSort && !renderHeadPrefix) return content;
 
+				// 存在filter 或 操作sort
 				return (
 					<Fragment>
 						<div

@@ -29,9 +29,11 @@ const ColSizeObserver = <T,>() => {
 		});
 	};
 
+	// ResizeObserver
 	useEffect(() => {
 		if (!resizeFlag && colSizeObserverRef.current) {
 			const _observer = new ResizeObserver((entries) => {
+				// display none的情况直接跳过执行
 				if (getDisplayNone(entries[0].contentRect)) return;
 				sizeCacheChangeBatch(
 					entries,

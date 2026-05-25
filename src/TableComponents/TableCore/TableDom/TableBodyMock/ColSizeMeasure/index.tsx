@@ -3,6 +3,8 @@ import { useLayoutEffect } from 'react';
 import { useTableInstanceContext } from '../../../TableContext';
 import { maxColWidth, minColWidth } from '../../../TableUtils/configValues';
 
+// 单独提取组件目的为通过key强制触发useLayoutEffect执行计算colSize
+// 如果在外层使用key触发强制渲染会导致colSizeObserverRef无法获取到dom
 const ColSizeMeasure = <T,>() => {
 	const { setSizeCacheMap, colSizeObserverRef } = useTableInstanceContext<T>();
 
@@ -24,9 +26,11 @@ const ColSizeMeasure = <T,>() => {
 		});
 	};
 
+	// first calc
 	useLayoutEffect(() => {
 		if (colSizeObserverRef.current) {
 			const element = colSizeObserverRef.current;
+			// 直接执行一次
 			sizeCacheChangeBatch(
 				Array.from(element.children),
 				(node) => node.getAttribute('data-key'),

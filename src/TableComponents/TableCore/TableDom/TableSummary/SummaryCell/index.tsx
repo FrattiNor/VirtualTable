@@ -18,6 +18,7 @@ type CellSpecificProps = {
 	leafColumn: TableCoreColumn<any, any>;
 };
 
+// summary使用body的hover和head的sticky
 const SummaryCell = (props: CellSpecificProps) => {
 	const {
 		leafColumn,
@@ -36,13 +37,21 @@ const SummaryCell = (props: CellSpecificProps) => {
 	const colKey = leafColumn.key;
 	const summaryRender = leafColumn.summaryRender;
 
+	// 行keys
 	const rowKeys = [itemRowKey] as RowKeyType[];
+	// 列keys
 	const colKeys = [colKey];
+	// 最终渲染结果
 	const renderDom = getSummaryRenderDom({ itemData, index, summaryRender });
+	// 当前cell的title
 	const title = getCellTitle(renderDom);
+	// 是否可省略
 	const canEllipsis = isStrNum(renderDom);
+	// 当前cell的背景色
 	const backgroundColor = getBodyCellBg({ rowKeys, colKeys });
+	// 当前cell的sticky情况
 	const { stickyStyle, hiddenLeftBorder, leftLastPinged, rightLastPinged } = getHeadStickyStyle({ colKeys });
+	// 当前cell配置的align
 	const align = leafColumn.align;
 
 	return (

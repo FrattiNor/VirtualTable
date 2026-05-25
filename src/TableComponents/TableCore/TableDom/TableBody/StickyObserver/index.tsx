@@ -13,6 +13,7 @@ const StickyObserver = <T,>() => {
 	const { finalColumnsArr, bodyRef, setPingedMap, gridTemplateColumns, fixedLeftMap, fixedRightMap } = ctx;
 	const [intersectionObserver, setIntersectionObserver] = useState<IntersectionObserver | null>(null);
 
+	// IntersectionObserver
 	useEffect(() => {
 		if (bodyRef.current) {
 			const _observer = new IntersectionObserver(
@@ -25,6 +26,9 @@ const StickyObserver = <T,>() => {
 								const _fixed = entry.target.getAttribute('data-fixed');
 								if (key !== null && _fixed !== null) {
 									const fixed = _fixed as TableCoreColumnFixed;
+									// 触发pinged
+									// 缩放 可能导致无法达到1
+									// 确保left是左侧遮挡，right是右侧遮挡
 									if (
 										entry.intersectionRatio < 0.975 &&
 										((fixed === 'left' && entry.boundingClientRect.left < (entry.rootBounds?.left ?? 0)) ||
@@ -35,6 +39,7 @@ const StickyObserver = <T,>() => {
 											changed = true;
 										}
 									}
+									// 未触发pinged
 									else if (old.has(key)) {
 										old.delete(key);
 										changed = true;
@@ -47,6 +52,7 @@ const StickyObserver = <T,>() => {
 					});
 				},
 				{
+					// 缩放可能导致无法达到1
 					threshold: [0.975],
 					root: bodyRef.current,
 				},

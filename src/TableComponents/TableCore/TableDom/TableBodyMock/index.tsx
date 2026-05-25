@@ -7,6 +7,8 @@ import { useTableInstanceContext } from '../../TableContext';
 import { isMacOrFireFox } from '../../TableUtils';
 import scrollbarStyles from '../../TableUtils/calcBorderWidth/index.module.less';
 
+// 模拟垂直滚动条是否显示
+// 目的：使计算colSize和计算垂直滚动条保持同步
 const TableBodyMock = <T,>() => {
 	const props = useTableInstanceContext<T>();
 	const { v_totalSize, h_totalSize, bordered, columnsKeys } = props;

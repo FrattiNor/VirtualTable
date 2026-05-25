@@ -15,9 +15,11 @@ type RowSpecificProps = {
 	rowIndex: number;
 	itemRowKey: RowKeyType;
 	isPlaceholder: boolean;
+	// ==== 给RowDraggableWrapper组件注入使用 ====
 	style?: CSSProperties;
 	draggableProps?: Record<string, any>;
 	draggableSetNodeRef?: (node: HTMLElement | null) => void;
+	// ==== 给RowDraggableWrapper组件注入使用 ====
 };
 
 const BodyRow = <T,>(props: RowSpecificProps) => {
@@ -50,12 +52,15 @@ const BodyRow = <T,>(props: RowSpecificProps) => {
 			{finalColumnsArr.map((splitColumns, colIndex) => {
 				const leafColumn = getLeafColumn(splitColumns);
 				const { rowSpan = 1, colSpan = 1 } = leafColumn.onCellSpan ? leafColumn.onCellSpan(itemData, rowIndex) : {};
+				// span为0，不渲染
 				if (rowSpan <= 0 || colSpan <= 0) return null;
 				const rowIndexStart = rowIndex;
 				const rowIndexEnd = rowIndex + rowSpan - 1;
 				const colIndexStart = colIndex;
 				const colIndexEnd = colIndex + colSpan - 1;
+				// colVirtual，不渲染
 				if (!getBodyCellColShow({ colIndexStart, colIndexEnd })) return null;
+				// 占位行且rowSpan为1和非强制渲染，不渲染
 				if (isPlaceholder && rowSpan === 1 && !getBodyCellColForceShow({ colIndexStart, colIndexEnd })) return null;
 				return (
 					<BodyCell
