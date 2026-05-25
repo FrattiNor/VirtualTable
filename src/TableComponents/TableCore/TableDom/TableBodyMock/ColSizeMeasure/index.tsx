@@ -1,15 +1,10 @@
-import { memo, useLayoutEffect } from 'react';
+import { useLayoutEffect } from 'react';
 
+import { useTableInstanceContext } from '../../../TableContext';
 import { maxColWidth, minColWidth } from '../../../TableUtils/configValues';
 
-import type { TableInstance } from '../../../useTableInstance';
-
-type Props<T> = Pick<TableInstance<T>, 'setSizeCacheMap' | 'colSizeObserverRef'>;
-
-// 单独提取组件目的为通过key强制触发useLayoutEffect执行计算colSize
-// 如果在外层使用key触发强制渲染会导致colSizeObserverRef无法获取到dom
-const ColSizeMeasure = <T,>(props: Props<T>) => {
-	const { setSizeCacheMap, colSizeObserverRef } = props;
+const ColSizeMeasure = <T,>() => {
+	const { setSizeCacheMap, colSizeObserverRef } = useTableInstanceContext<T>();
 
 	const sizeCacheChangeBatch = <B,>(items: Array<B>, getKey: (item: B) => string | null, getSize: (item: B) => number) => {
 		setSizeCacheMap((old) => {
@@ -29,11 +24,9 @@ const ColSizeMeasure = <T,>(props: Props<T>) => {
 		});
 	};
 
-	// first calc
 	useLayoutEffect(() => {
 		if (colSizeObserverRef.current) {
 			const element = colSizeObserverRef.current;
-			// 直接执行一次
 			sizeCacheChangeBatch(
 				Array.from(element.children),
 				(node) => node.getAttribute('data-key'),
@@ -45,4 +38,4 @@ const ColSizeMeasure = <T,>(props: Props<T>) => {
 	return null;
 };
 
-export default memo(ColSizeMeasure) as typeof ColSizeMeasure;
+export default ColSizeMeasure;

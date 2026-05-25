@@ -1,31 +1,10 @@
-import { memo } from 'react';
-
 import HeadCellPlaceholder from './HeadCellPlaceholder';
 import HeadRow from './HeadRow';
 import styles from './index.module.less';
+import { useTableInstanceContext } from '../../TableContext';
 
-import type { TableInstance } from '../../useTableInstance';
-
-type Props<T> = Pick<
-	TableInstance<T>,
-	| 'deepLevel'
-	| 'finalColumnsArr'
-	| 'bordered'
-	| 'headRef'
-	| 'gridTemplateColumns'
-	| 'vScrollbarState'
-	| 'rowHeight'
-	| 'getHeadStickyStyle'
-	| 'startResize'
-	| 'resizeFlag'
-	| 'getHeadCellBg'
-	| 'getHeadCellColShow'
-	| 'renderHeadPrefix'
-	| 'getColKeys'
-	| 'sorter'
->;
-
-const TableHead = <T,>(props: Props<T>) => {
+const TableHead = <T,>() => {
+	const props = useTableInstanceContext<T>();
 	const { headRef, gridTemplateColumns, vScrollbarState, deepLevel } = props;
 	const headGridTemplateColumns = vScrollbarState.have
 		? gridTemplateColumns + ` minmax(${vScrollbarState.widthStr}, 1fr)`
@@ -37,34 +16,16 @@ const TableHead = <T,>(props: Props<T>) => {
 				{Array(deepLevel + 1)
 					.fill(undefined)
 					.map((_, rowIndex) => (
-						<HeadRow
-							key={rowIndex}
-							rowIndex={rowIndex}
-							sorter={props.sorter}
-							bordered={props.bordered}
-							rowHeight={props.rowHeight}
-							deepLevel={props.deepLevel}
-							resizeFlag={props.resizeFlag}
-							getColKeys={props.getColKeys}
-							startResize={props.startResize}
-							getHeadCellBg={props.getHeadCellBg}
-							finalColumnsArr={props.finalColumnsArr}
-							renderHeadPrefix={props.renderHeadPrefix}
-							getHeadCellColShow={props.getHeadCellColShow}
-							getHeadStickyStyle={props.getHeadStickyStyle}
-						/>
+						<HeadRow key={rowIndex} rowIndex={rowIndex} />
 					))}
 
 				<HeadCellPlaceholder
 					rowIndexStart={0}
 					rowIndexEnd={deepLevel}
-					bordered={props.bordered}
-					rowHeight={props.rowHeight}
-					finalColumnsArr={props.finalColumnsArr}
 				/>
 			</div>
 		</div>
 	);
 };
 
-export default memo(TableHead) as typeof TableHead;
+export default TableHead;

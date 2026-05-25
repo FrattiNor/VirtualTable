@@ -1,15 +1,12 @@
-import { memo } from 'react';
-
 import classNames from 'classnames';
 
 import styles from './index.module.less';
+import { useTableInstanceContext } from '../../TableContext';
 import { isMacOrFireFox } from '../../TableUtils';
 import scrollbarStyles from '../../TableUtils/calcBorderWidth/index.module.less';
-import { type TableInstance } from '../../useTableInstance';
 
-type Props<T> = Pick<TableInstance<T>, 'hScrollbarState' | 'vScrollbarState' | 'bordered' | 'hScrollbarRef' | 'h_totalSize'>;
-
-const ScrollbarH = <T,>(props: Props<T>) => {
+const ScrollbarH = <T,>() => {
+	const props = useTableInstanceContext<T>();
 	const { hScrollbarState, vScrollbarState, bordered, hScrollbarRef, h_totalSize } = props;
 
 	if (hScrollbarState.have && hScrollbarState.width > 0) {
@@ -57,4 +54,4 @@ const ScrollbarH = <T,>(props: Props<T>) => {
 	return null;
 };
 
-export default memo(ScrollbarH) as typeof ScrollbarH;
+export default ScrollbarH;

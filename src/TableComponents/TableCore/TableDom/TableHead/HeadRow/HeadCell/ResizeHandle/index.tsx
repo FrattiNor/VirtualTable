@@ -1,5 +1,3 @@
-import { memo } from 'react';
-
 import classNames from 'classnames';
 
 import styles from './index.module.less';
@@ -25,4 +23,4 @@ const ResizeHandle = <T,>(props: Props<T>) => {
 	);
 };
 
-export default memo(ResizeHandle) as typeof ResizeHandle;
+export default ResizeHandle as typeof ResizeHandle;

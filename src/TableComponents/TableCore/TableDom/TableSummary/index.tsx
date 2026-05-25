@@ -1,31 +1,12 @@
-import { memo } from 'react';
-
 import styles from './index.module.less';
 import SummaryCell from './SummaryCell';
 import SummaryCellPlaceholder from './SummaryCellPlaceholder';
-import { type RowKeyType } from '../../TableTypes/type';
+import { useTableInstanceContext } from '../../TableContext';
 import { getLeafColumn } from '../../TableUtils';
 
-import type { TableInstance } from '../../useTableInstance';
-
-type Props<T, K, S> = Pick<
-	TableInstance<T, K, S>,
-	| 'summaryRef'
-	| 'summaryData'
-	| 'finalColumnsArr'
-	| 'gridTemplateColumns'
-	| 'vScrollbarState'
-	| 'getSummaryCellColShow'
-	| 'bordered'
-	| 'getHeadStickyStyle'
-	| 'getBodyCellBg'
-	| 'bodyRowMouseEnter'
-	| 'bodyRowMouseLeave'
-	| 'rowHeight'
->;
-
-const TableSummary = <T, K = RowKeyType, S = any>(props: Props<T, K, S>) => {
-	const { summaryData, summaryRef, gridTemplateColumns, vScrollbarState, finalColumnsArr, getSummaryCellColShow } = props;
+const TableSummary = <T,>() => {
+	const ctx = useTableInstanceContext<T>();
+	const { summaryData, summaryRef, gridTemplateColumns, vScrollbarState, finalColumnsArr, getSummaryCellColShow } = ctx;
 
 	if (!(Array.isArray(summaryData) && summaryData.length > 0)) return null;
 
@@ -57,27 +38,17 @@ const TableSummary = <T, K = RowKeyType, S = any>(props: Props<T, K, S>) => {
 										itemData={itemData}
 										itemRowKey={itemRowKey}
 										leafColumn={leafColumn}
-										bordered={props.bordered}
 										colIndexEnd={colIndexEnd}
 										rowIndexEnd={rowIndexEnd}
 										rowIndexStart={rowIndexStart}
 										colIndexStart={colIndexStart}
-										getBodyCellBg={props.getBodyCellBg}
-										bodyRowMouseEnter={props.bodyRowMouseEnter}
-										bodyRowMouseLeave={props.bodyRowMouseLeave}
-										getHeadStickyStyle={props.getHeadStickyStyle}
 									/>
 								);
 							})}
 							<SummaryCellPlaceholder
 								rowIndex={rowIndex}
 								itemRowKey={itemRowKey}
-								bordered={props.bordered}
-								rowHeight={props.rowHeight}
-								getBodyCellBg={props.getBodyCellBg}
-								colIndex={props.finalColumnsArr.length}
-								bodyRowMouseEnter={props.bodyRowMouseEnter}
-								bodyRowMouseLeave={props.bodyRowMouseLeave}
+								colIndex={finalColumnsArr.length}
 							/>
 						</div>
 					);
@@ -87,4 +58,4 @@ const TableSummary = <T, K = RowKeyType, S = any>(props: Props<T, K, S>) => {
 	);
 };
 
-export default memo(TableSummary) as typeof TableSummary;
+export default TableSummary;

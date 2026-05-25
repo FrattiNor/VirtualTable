@@ -1,5 +1,3 @@
-import { memo } from 'react';
-
 import emptyLight from './emptyLight.png';
 import styles from './index.module.less';
 
@@ -47,4 +45,4 @@ const BodyEmpty = <T,>({ theme, tableWidth, renderEmpty }: Props<T>) => {
 	);
 };
 
-export default memo(BodyEmpty) as typeof BodyEmpty;
+export default BodyEmpty as typeof BodyEmpty;

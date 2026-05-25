@@ -1,6 +1,4 @@
 /* eslint-disable react-refresh/only-export-components */
-import { memo } from 'react';
-
 import TableCore from '../TableCore';
 import { type TableTreeComponent, type TableTreeProps } from './type';
 import useTableTree from './useTableTree';
@@ -35,4 +33,4 @@ const TableTree = <T extends Record<string, unknown>>(props: TableTreeProps<T>) 
 	return <TableCore {...tableDomProps} />;
 };
 
-export default memo(TableTree) as TableTreeComponent;
+export default TableTree as TableTreeComponent;

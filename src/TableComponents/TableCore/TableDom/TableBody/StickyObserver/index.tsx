@@ -1,21 +1,18 @@
-import { memo, useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 
 import styles from './index.module.less';
 import StickyObserverItem from './StickyObserverItem';
+import { useTableInstanceContext } from '../../../TableContext';
 import useFrameThrottle from '../../../TableHooks/useFrameThrottle';
 import { type TableCoreColumnFixed } from '../../../TableTypes/type';
 import { getLeafColumn } from '../../../TableUtils';
 
-import type { TableInstance } from '../../../useTableInstance';
-
-type Props<T> = Pick<TableInstance<T>, 'fixedLeftMap' | 'fixedRightMap' | 'finalColumnsArr' | 'bodyRef' | 'setPingedMap' | 'gridTemplateColumns'>;
-
-const StickyObserver = <T,>(props: Props<T>) => {
+const StickyObserver = <T,>() => {
 	const { throttle } = useFrameThrottle();
-	const { finalColumnsArr, bodyRef, setPingedMap, gridTemplateColumns } = props;
+	const ctx = useTableInstanceContext<T>();
+	const { finalColumnsArr, bodyRef, setPingedMap, gridTemplateColumns, fixedLeftMap, fixedRightMap } = ctx;
 	const [intersectionObserver, setIntersectionObserver] = useState<IntersectionObserver | null>(null);
 
-	// IntersectionObserver
 	useEffect(() => {
 		if (bodyRef.current) {
 			const _observer = new IntersectionObserver(
@@ -28,9 +25,6 @@ const StickyObserver = <T,>(props: Props<T>) => {
 								const _fixed = entry.target.getAttribute('data-fixed');
 								if (key !== null && _fixed !== null) {
 									const fixed = _fixed as TableCoreColumnFixed;
-									// 触发pinged
-									// 缩放可能导致无法达到1
-									// 确保left是左侧遮挡，right是右侧遮挡
 									if (
 										entry.intersectionRatio < 0.975 &&
 										((fixed === 'left' && entry.boundingClientRect.left < (entry.rootBounds?.left ?? 0)) ||
@@ -41,7 +35,6 @@ const StickyObserver = <T,>(props: Props<T>) => {
 											changed = true;
 										}
 									}
-									// 未触发pinged
 									else if (old.has(key)) {
 										old.delete(key);
 										changed = true;
@@ -54,7 +47,6 @@ const StickyObserver = <T,>(props: Props<T>) => {
 					});
 				},
 				{
-					// 缩放可能导致无法达到1
 					threshold: [0.975],
 					root: bodyRef.current,
 				},
@@ -82,9 +74,9 @@ const StickyObserver = <T,>(props: Props<T>) => {
 							colIndex={colIndex}
 							key={leafColumn.key}
 							leafColumn={leafColumn}
-							setPingedMap={props.setPingedMap}
-							fixedLeftMap={props.fixedLeftMap}
-							fixedRightMap={props.fixedRightMap}
+							setPingedMap={setPingedMap}
+							fixedLeftMap={fixedLeftMap}
+							fixedRightMap={fixedRightMap}
 							intersectionObserver={intersectionObserver}
 						/>
 					);
@@ -94,4 +86,4 @@ const StickyObserver = <T,>(props: Props<T>) => {
 	);
 };
 
-export default memo(StickyObserver) as typeof StickyObserver;
+export default StickyObserver;

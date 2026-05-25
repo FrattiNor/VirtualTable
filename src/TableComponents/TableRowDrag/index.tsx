@@ -1,6 +1,4 @@
 /* eslint-disable react-refresh/only-export-components */
-import { memo } from 'react';
-
 import TableCore from '../TableCore';
 import { type TableRowDragComponent, type TableRowDragProps } from './type';
 import useRowDraggable from './useRowDraggable';
@@ -28,4 +26,4 @@ const TableRowDrag = <T extends Record<string, unknown>>(props: TableRowDragProp
 	return <TableCore {...tableDomProps} />;
 };
 
-export default memo(TableRowDrag) as TableRowDragComponent;
+export default TableRowDrag as TableRowDragComponent;

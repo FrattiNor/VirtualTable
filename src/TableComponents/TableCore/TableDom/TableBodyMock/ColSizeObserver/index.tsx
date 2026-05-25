@@ -1,15 +1,13 @@
-import { memo, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import ColSizeObserverItem from './ColSizeObserverItem';
 import styles from './index.module.less';
+import { useTableInstanceContext } from '../../../TableContext';
 import { getDisplayNone, getLeafColumn } from '../../../TableUtils';
 import { maxColWidth, minColWidth } from '../../../TableUtils/configValues';
 
-import type { TableInstance } from '../../../useTableInstance';
-
-type Props<T> = Pick<TableInstance<T>, 'columnsCore' | 'setSizeCacheMap' | 'resizeFlag' | 'sizeCacheMap' | 'resized' | 'colSizeObserverRef'>;
-
-const ColSizeObserver = <T,>(props: Props<T>) => {
+const ColSizeObserver = <T,>() => {
+	const props = useTableInstanceContext<T>();
 	const { columnsCore, setSizeCacheMap, resizeFlag, colSizeObserverRef } = props;
 	const [resizeObserver, setResizeObserver] = useState<ResizeObserver | null>(null);
 
@@ -31,11 +29,9 @@ const ColSizeObserver = <T,>(props: Props<T>) => {
 		});
 	};
 
-	// ResizeObserver
 	useEffect(() => {
 		if (!resizeFlag && colSizeObserverRef.current) {
 			const _observer = new ResizeObserver((entries) => {
-				// display none的情况直接跳过执行
 				if (getDisplayNone(entries[0].contentRect)) return;
 				sizeCacheChangeBatch(
 					entries,
@@ -71,4 +67,4 @@ const ColSizeObserver = <T,>(props: Props<T>) => {
 	);
 };
 
-export default memo(ColSizeObserver) as typeof ColSizeObserver;
+export default ColSizeObserver;

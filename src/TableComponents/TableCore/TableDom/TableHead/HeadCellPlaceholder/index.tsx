@@ -1,18 +1,17 @@
-import { memo } from 'react';
-
 import classNames from 'classnames';
 
 import styles from './index.module.less';
+import { useTableInstanceContext } from '../../../TableContext';
 
-import type { TableInstance } from '../../../useTableInstance';
-
-type Props<T> = Pick<TableInstance<T>, 'bordered' | 'rowHeight' | 'finalColumnsArr'> & {
+type PlaceholderSpecificProps = {
 	rowIndexStart: number;
 	rowIndexEnd: number;
 };
 
-const HeadCellPlaceholder = <T,>(props: Props<T>) => {
-	const { bordered, rowIndexStart, rowIndexEnd, finalColumnsArr, rowHeight } = props;
+const HeadCellPlaceholder = <T,>(props: PlaceholderSpecificProps) => {
+	const { rowIndexStart, rowIndexEnd } = props;
+	const ctx = useTableInstanceContext<T>();
+	const { bordered, finalColumnsArr, rowHeight } = ctx;
 	const colIndex = finalColumnsArr.length;
 
 	return (
@@ -31,4 +30,4 @@ const HeadCellPlaceholder = <T,>(props: Props<T>) => {
 	);
 };
 
-export default memo(HeadCellPlaceholder) as typeof HeadCellPlaceholder;
+export default HeadCellPlaceholder as typeof HeadCellPlaceholder;

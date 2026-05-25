@@ -1,79 +1,50 @@
-import { memo, useMemo } from 'react';
+import { useMemo } from 'react';
 
 import classNames from 'classnames';
 
 import Highlight from './Highlight';
 import styles from './index.module.less';
 import { getMergeHighlightKeywords, getRenderDom } from './utils';
+import { useTableInstanceContext } from '../../../../../TableContext';
 import { getCellTitle, isStrNum } from '../../../../../TableUtils';
 
 import type { TableCoreColumn } from '../../../../../TableTypes/typeColumn';
-import type { TableInstance } from '../../../../../useTableInstance';
 
-type Props<T> = Pick<
-	TableInstance<T>,
-	| 'bordered'
-	| 'getBodyStickyStyle'
-	| 'getBodyCellBg'
-	| 'bodyRowClick'
-	| 'bodyRowMouseEnter'
-	| 'bodyRowMouseLeave'
-	| 'highlightKeywords'
-	| 'renderCellPrefix'
-	| 'getRowKeys'
-	| 'getColKeys'
-> & {
-	itemData: T;
+type CellSpecificProps = {
+	itemData: any;
 	colIndexStart: number;
 	colIndexEnd: number;
 	rowIndexStart: number;
 	rowIndexEnd: number;
-	leafColumn: TableCoreColumn<T>;
+	leafColumn: TableCoreColumn<any>;
 };
 
-const BodyCell = <T,>(props: Props<T>) => {
+const BodyCell = <T,>(props: CellSpecificProps) => {
 	const {
 		leafColumn,
-		bordered,
 		itemData,
 		colIndexStart,
 		colIndexEnd,
 		rowIndexStart,
 		rowIndexEnd,
-		highlightKeywords,
-		getRowKeys,
-		getColKeys,
-		getBodyStickyStyle,
-		getBodyCellBg,
-		bodyRowClick,
-		bodyRowMouseEnter,
-		bodyRowMouseLeave,
-		renderCellPrefix,
 	} = props;
+
+	const ctx = useTableInstanceContext<T>();
+	const { bordered, highlightKeywords, getRowKeys, getColKeys, getBodyStickyStyle, getBodyCellBg, bodyRowClick, bodyRowMouseEnter, bodyRowMouseLeave, renderCellPrefix } = ctx;
 
 	const index = rowIndexStart;
 	const colKey = leafColumn.key;
 	const render = leafColumn.render;
 
-	// 行keys
 	const rowKeys = useMemo(() => getRowKeys(rowIndexStart, rowIndexEnd), [rowIndexStart, rowIndexEnd]);
-	// 列keys
 	const colKeys = useMemo(() => getColKeys(colIndexStart, colIndexEnd), [colIndexStart, colIndexEnd]);
-	// 合并 全局高亮关键字 和 列高亮关键字
 	const mergeHighlightKeywords = getMergeHighlightKeywords(highlightKeywords, leafColumn.highlightKeywords);
-	// 最终渲染结果
 	const renderDom = getRenderDom({ itemData, index, colKey, render, highlightKeywords: mergeHighlightKeywords });
-	// 当前cell的title
 	const title = typeof leafColumn.onCellTitle === 'function' ? leafColumn.onCellTitle(itemData, index) : getCellTitle(renderDom);
-	// 是否可省略
 	const canEllipsis = isStrNum(renderDom);
-	// 当前cell的背景色
 	const backgroundColor = getBodyCellBg({ rowKeys, colKeys });
-	// 当前cell的sticky情况
 	const { stickyStyle, hiddenLeftBorder, leftLastPinged, rightLastPinged } = getBodyStickyStyle({ colKeys });
-	// 当前cell配置的style
 	const style = typeof leafColumn.onCellStyle === 'function' ? leafColumn.onCellStyle(itemData, index) : undefined;
-	// 当前cell配置的align
 	const align = leafColumn.align;
 
 	return (
@@ -111,4 +82,4 @@ const BodyCell = <T,>(props: Props<T>) => {
 	);
 };
 
-export default memo(BodyCell) as typeof BodyCell;
+export default BodyCell as typeof BodyCell;

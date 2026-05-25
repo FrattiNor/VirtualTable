@@ -1,6 +1,4 @@
 /* eslint-disable react-refresh/only-export-components */
-import { memo } from 'react';
-
 import TableCore from '../TableCore';
 import { type TableRowSelectionComponent, type TableRowSelectionProps } from './type';
 import useTableRowSelection from './useTableRowSelection';
@@ -28,4 +26,4 @@ const TableRowSelection = <T extends Record<string, unknown>>(props: TableRowSel
 	return <TableCore {...tableDomProps} />;
 };
 
-export default memo(TableRowSelection) as TableRowSelectionComponent;
+export default TableRowSelection as TableRowSelectionComponent;

@@ -1,63 +1,48 @@
-import { memo } from 'react';
-
 import classNames from 'classnames';
 
 import styles from './index.module.less';
 import { getSummaryRenderDom } from './utils';
+import { useTableInstanceContext } from '../../../TableContext';
 import { getCellTitle, isStrNum } from '../../../TableUtils';
 
+import type { RowKeyType } from '../../../TableTypes/type';
 import type { TableCoreColumn } from '../../../TableTypes/typeColumn';
-import type { TableInstance } from '../../../useTableInstance';
 
-type Props<T, K, S> = Pick<
-	TableInstance<T, K, S>,
-	'bordered' | 'getHeadStickyStyle' | 'getBodyCellBg' | 'bodyRowMouseEnter' | 'bodyRowMouseLeave'
-> & {
-	itemData: S;
+type CellSpecificProps = {
+	itemData: any;
 	itemRowKey: string;
 	colIndexStart: number;
 	colIndexEnd: number;
 	rowIndexStart: number;
 	rowIndexEnd: number;
-	leafColumn: TableCoreColumn<T, S>;
+	leafColumn: TableCoreColumn<any, any>;
 };
 
-// summary使用body的hover和head的sticky
-const SummaryCell = <T, K, S>(props: Props<T, K, S>) => {
+const SummaryCell = (props: CellSpecificProps) => {
 	const {
 		leafColumn,
-		bordered,
 		itemData,
 		colIndexStart,
 		colIndexEnd,
 		rowIndexStart,
 		rowIndexEnd,
 		itemRowKey,
-		getHeadStickyStyle,
-		getBodyCellBg,
-		bodyRowMouseEnter,
-		bodyRowMouseLeave,
 	} = props;
+
+	const ctx = useTableInstanceContext();
+	const { bordered, getHeadStickyStyle, getBodyCellBg, bodyRowMouseEnter, bodyRowMouseLeave } = ctx;
 
 	const index = rowIndexStart;
 	const colKey = leafColumn.key;
 	const summaryRender = leafColumn.summaryRender;
 
-	// 行keys
-	const rowKeys = [itemRowKey] as K[];
-	// 列keys
+	const rowKeys = [itemRowKey] as RowKeyType[];
 	const colKeys = [colKey];
-	// 最终渲染结果
 	const renderDom = getSummaryRenderDom({ itemData, index, summaryRender });
-	// 当前cell的title
 	const title = getCellTitle(renderDom);
-	// 是否可省略
 	const canEllipsis = isStrNum(renderDom);
-	// 当前cell的背景色
 	const backgroundColor = getBodyCellBg({ rowKeys, colKeys });
-	// 当前cell的sticky情况
 	const { stickyStyle, hiddenLeftBorder, leftLastPinged, rightLastPinged } = getHeadStickyStyle({ colKeys });
-	// 当前cell配置的align
 	const align = leafColumn.align;
 
 	return (
@@ -86,4 +71,4 @@ const SummaryCell = <T, K, S>(props: Props<T, K, S>) => {
 	);
 };
 
-export default memo(SummaryCell) as typeof SummaryCell;
+export default SummaryCell;

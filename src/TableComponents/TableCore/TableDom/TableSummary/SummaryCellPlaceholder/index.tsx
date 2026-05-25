@@ -1,21 +1,23 @@
-import { memo } from 'react';
-
 import classNames from 'classnames';
 
 import styles from './index.module.less';
+import { useTableInstanceContext } from '../../../TableContext';
 
-import type { TableInstance } from '../../../useTableInstance';
+import type { RowKeyType } from '../../../TableTypes/type';
 
-type Props<T, K, S> = Pick<TableInstance<T, K, S>, 'bordered' | 'rowHeight' | 'bodyRowMouseEnter' | 'bodyRowMouseLeave' | 'getBodyCellBg'> & {
+type PlaceholderSpecificProps = {
 	rowIndex: number;
 	colIndex: number;
 	itemRowKey: string;
 };
 
-const SummaryCellPlaceholder = <T, K, S>(props: Props<T, K, S>) => {
-	const { itemRowKey, bordered, rowIndex, colIndex, rowHeight, getBodyCellBg, bodyRowMouseEnter, bodyRowMouseLeave } = props;
+const SummaryCellPlaceholder = (props: PlaceholderSpecificProps) => {
+	const { itemRowKey, rowIndex, colIndex } = props;
 
-	const rowKeys = [itemRowKey] as K[];
+	const ctx = useTableInstanceContext();
+	const { bordered, rowHeight, getBodyCellBg, bodyRowMouseEnter, bodyRowMouseLeave } = ctx;
+
+	const rowKeys = [itemRowKey] as RowKeyType[];
 
 	const backgroundColor = getBodyCellBg({ rowKeys, colKeys: undefined });
 
@@ -37,4 +39,4 @@ const SummaryCellPlaceholder = <T, K, S>(props: Props<T, K, S>) => {
 	);
 };
 
-export default memo(SummaryCellPlaceholder) as typeof SummaryCellPlaceholder;
+export default SummaryCellPlaceholder;
