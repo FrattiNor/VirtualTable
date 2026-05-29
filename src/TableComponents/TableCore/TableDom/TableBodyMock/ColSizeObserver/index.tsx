@@ -10,7 +10,7 @@ import type { TableInstance } from '../../../useTableInstance';
 type Props<T> = Pick<TableInstance<T>, 'columnsCore' | 'setSizeCacheMap' | 'resizeFlag' | 'sizeCacheMap' | 'resized' | 'colSizeObserverRef'>;
 
 const ColSizeObserver = <T,>(props: Props<T>) => {
-	const { columnsCore, setSizeCacheMap, resizeFlag, colSizeObserverRef } = props;
+	const { columnsCore, setSizeCacheMap, resizeFlag, resized, colSizeObserverRef } = props;
 	const [resizeObserver, setResizeObserver] = useState<ResizeObserver | null>(null);
 
 	const sizeCacheChangeBatch = <B,>(items: Array<B>, getKey: (item: B) => string | null, getSize: (item: B) => number) => {
@@ -33,7 +33,7 @@ const ColSizeObserver = <T,>(props: Props<T>) => {
 
 	// ResizeObserver
 	useEffect(() => {
-		if (!resizeFlag && colSizeObserverRef.current) {
+		if (!resized && !resizeFlag && colSizeObserverRef.current) {
 			const _observer = new ResizeObserver((entries) => {
 				// display none的情况直接跳过执行
 				if (getDisplayNone(entries[0].contentRect)) return;
@@ -51,7 +51,7 @@ const ColSizeObserver = <T,>(props: Props<T>) => {
 				setResizeObserver(null);
 			};
 		}
-	}, [resizeFlag]);
+	}, [resized, resizeFlag]);
 
 	return (
 		<div ref={colSizeObserverRef} data-row="col-size-observer" className={styles['col-size-observer']}>

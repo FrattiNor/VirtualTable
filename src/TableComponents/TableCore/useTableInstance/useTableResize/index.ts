@@ -40,11 +40,11 @@ const useTableResize = <T, K = RowKeyType, S = any>({ tableState, tableColumns, 
 					// 更新宽度
 					setResized(true);
 					setSizeCacheMap((old) => {
-						const next = new Map(old);
+						const copyOld = new Map(old);
 						// 移动列的数量
 						const count = resizeFlag.children.size;
 						// 整体移动距离【一定是整数】
-						const moveX = e.pageX - resizeFlag.pageX;
+						const moveX = Math.round(e.pageX - resizeFlag.pageX);
 						// 剩余移动距离
 						let remainingMoveX = moveX % count;
 						// 每列移动距离
@@ -64,22 +64,24 @@ const useTableResize = <T, K = RowKeyType, S = any>({ tableState, tableColumns, 
 							const afterMoveWidth = clientWidth + currentMoveX;
 							// 判定宽度小于最小宽度
 							if (afterMoveWidth < minColWidth) {
-								next.set(key, minColWidth);
+								copyOld.set(key, minColWidth);
 								remainingMoveX = remainingMoveX + Math.round(afterMoveWidth - minColWidth);
 								return currentMoveX - Math.round(afterMoveWidth - minColWidth);
 							}
 							// 判断宽度大于最大宽度
 							else if (afterMoveWidth > maxColWidth) {
-								next.set(key, maxColWidth);
+								copyOld.set(key, maxColWidth);
 								remainingMoveX = remainingMoveX + Math.round(afterMoveWidth - maxColWidth);
 								return currentMoveX - Math.round(afterMoveWidth - maxColWidth);
 							}
 							// 判断宽度在合理范围
 							else {
-								next.set(key, FixedTwo(afterMoveWidth));
+								copyOld.set(key, FixedTwo(afterMoveWidth));
 								return currentMoveX;
 							}
 						});
+						const next = new Map<string, number>();
+						copyOld.forEach((value, key) => next.set(key, Math.round(value)));
 						return next;
 					});
 				});
