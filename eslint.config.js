@@ -1,6 +1,6 @@
 import js from '@eslint/js';
 import { defineConfig, globalIgnores } from 'eslint/config';
-import eslintPluginImport from 'eslint-plugin-import';
+import eslintPluginImportX from 'eslint-plugin-import-x';
 import reactRefresh from 'eslint-plugin-react-refresh';
 import globals from 'globals';
 import tseslint from 'typescript-eslint';
@@ -17,12 +17,12 @@ export default defineConfig([
 	},
 	{
 		plugins: {
-			import: eslintPluginImport,
+			'import-x': eslintPluginImportX,
 		},
 		rules: {
 			'@typescript-eslint/ban-ts-comment': 'off',
 			'@typescript-eslint/no-explicit-any': 'off',
-			'import/order': [
+			'import-x/order': [
 				'error',
 				{
 					groups: ['builtin', 'external', 'unknown', ['internal', 'parent', 'sibling', 'index', 'object'], 'type'],
